@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../home/home_screen.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
@@ -174,12 +175,14 @@ class OtpScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("OTP Verified"),
-                        ),
-                      );
-                    },
+  Navigator.pushReplacement(
+    context,
+
+    MaterialPageRoute(
+      builder: (context) => const HomeScreen(),
+    ),
+  );
+},
 
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF006400),
