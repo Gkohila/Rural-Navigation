@@ -176,7 +176,7 @@ class _AppHeader extends StatelessWidget {
                 color: SmartNavColors.primary,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0,
-                fontSize: 12,
+                fontSize: 13,
               ),
               ),
             ),
@@ -244,7 +244,7 @@ class _RouteSearchBar extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 6),
                   SizedBox(
                     width: fieldsWidth.clamp(0, double.infinity),
                     child: Column(
@@ -496,17 +496,25 @@ class _PublicTransportSheet extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-              Wrap(
-                spacing: SmartNavSpacing.filterChipGap,
-                runSpacing: SmartNavSpacing.filterChipGap,
-                children: [
-                  for (var i = 0; i < StaticRouteData.filterChips.length; i++)
-                    _FilterChip(
-                      label: StaticRouteData.filterChips[i],
-                      showCheck: i == 1,
-                    ),
-                ],
-              ),
+              
+              SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+
+  child: Row(
+    children: [
+
+      for (var i = 0; i < StaticRouteData.filterChips.length; i++) ...[
+
+        _FilterChip(
+          label: StaticRouteData.filterChips[i],
+          showCheck: i == 1,
+        ),
+
+        const SizedBox(width: 10),
+      ],
+    ],
+  ),
+),
               const SizedBox(height: 20),
               const _RouteResultsList(),
             ],
@@ -771,9 +779,9 @@ class _EvPromoCardState extends State<_EvPromoCard>
                       minimumSize: const Size(0, buttonHeight),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 22,
-                        vertical: 8,
-                      ),
+  horizontal: 12,
+  vertical: 10,
+),
                       shape: const StadiumBorder(),
                       elevation: 0,
                     ),

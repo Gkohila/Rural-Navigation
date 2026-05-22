@@ -11,6 +11,7 @@ import '../../widgets/home/hero/weather_hero_scenario.dart';
 import '../../widgets/home/bottom_navbar.dart';
 import '../../widgets/home/quick_action_card.dart';
 import '../../widgets/home/route_card.dart';
+import '../../features/maps/screens/route_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -246,13 +247,27 @@ class _QuickActionsSection extends StatelessWidget {
                   SizedBox(
                     width: itemWidth,
                     child: QuickActionCard(
-                      icon: action.icon,
-                      label: action.label,
-                      iconBackgroundColor: action.bg,
-                      iconColor: action.fg,
-                      animateDelayMs: action.delay,
-                      floatPhaseMs: action.float,
-                    ),
+  icon: action.icon,
+  label: action.label,
+  iconBackgroundColor: action.bg,
+  iconColor: action.fg,
+  animateDelayMs: action.delay,
+  floatPhaseMs: action.float,
+
+  onTap: () {
+
+    if (action.label == 'Find Bus/Train') {
+
+      Navigator.push(
+        context,
+
+        MaterialPageRoute(
+          builder: (context) => const RouteSearchScreen(),
+        ),
+      );
+    }
+  },
+),
                   ),
               ],
             );
