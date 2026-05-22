@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+
 import 'screens/auth/login_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const SmartNavApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SmartNavApp extends StatelessWidget {
+  const SmartNavApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Tenkasi SmartNav',
+
       debugShowCheckedModeBanner: false,
-      home: LoginScreen(),
+
+      theme: AppTheme.light,
+
+      home: const LoginScreen(),
     );
   }
 }
