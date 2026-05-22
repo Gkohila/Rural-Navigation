@@ -1,0 +1,214 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Tenkasi SmartNav - Set Departure</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e2e2e2",
+                    "tertiary-fixed-dim": "#e9bdae",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1a1c1c",
+                    "outline-variant": "#c0c9bb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#004a75",
+                    "on-surface-variant": "#41493e",
+                    "on-primary-container": "#90d689",
+                    "surface-container-low": "#f3f3f3",
+                    "secondary": "#00639a",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#91d78a",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#91d78a",
+                    "background": "#f9f9f9",
+                    "primary-container": "#1b5e20",
+                    "tertiary": "#51342a",
+                    "on-secondary-container": "#00436a",
+                    "secondary-fixed-dim": "#96ccff",
+                    "primary-fixed": "#acf4a4",
+                    "surface-tint": "#2a6b2c",
+                    "surface-dim": "#dadada",
+                    "inverse-surface": "#2f3131",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f9f9f9",
+                    "on-primary-fixed": "#002203",
+                    "inverse-on-surface": "#f1f1f1",
+                    "primary": "#00450d",
+                    "secondary-container": "#51b2fe",
+                    "on-tertiary-container": "#e8bbad",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary-fixed-variant": "#5e3f35",
+                    "tertiary-container": "#6b4a3f",
+                    "surface-container-high": "#e8e8e8",
+                    "outline": "#717a6d",
+                    "surface-container": "#eeeeee",
+                    "on-secondary-fixed": "#001d32",
+                    "secondary-fixed": "#cee5ff",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdbcf",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#2d150d",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "on-background": "#1a1c1c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "card-gap": "24px",
+                    "container-padding-mobile": "16px",
+                    "container-padding-desktop": "48px"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "body-lg": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .time-picker-column {
+            mask-image: linear-gradient(to bottom, transparent, black 40%, black 60%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 40%, black 60%, transparent);
+        }
+        .bottom-sheet-overlay {
+            background-color: rgba(26, 28, 28, 0.6);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Map Background Simulation -->
+<div class="fixed inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center" data-location="Tenkasi" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB0-I6fnPPPC7q6Urc-237Fz4T-cIbiQf6xVFl1WvbPeIIgv25PGINMszTHSZf35bnzN_txklr2YDpE5qrYeH0MkwJ7NjkrZCvVnjjswt-rSlMQt0j3RzBJItsrum5KJop6gdeLTIk3MwQtCZcG8RFygkWvGgAgjsNnrqMEUPcm_OjaWFfpcn9MT7Zy31agr320f8NwjIVNgtvnIcUuJrVza5HRrFBYPmjOFgndXupnZPblgNO3om6PbEquH3zCXWVGz4f-dZ-Sp4QA')"></div>
+</div>
+<!-- Top App Bar (From Shared Components) -->
+<header class="flex justify-between items-center px-container-mobile py-unit w-full sticky top-0 z-50 bg-surface dark:bg-background shadow-sm dark:shadow-none">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA3CWMlWgfWrD-7AOfBeqfqLxpSNK-F8WE8_xgGTllcvjIv-w4iNGePrp3r75BpBiTN82BcdI9Ia1JlUUcAbBuewCm3M1Zhld_H-oq21h9WsS5mYvkTNMNioMmRfYP_54EPuJKk4RIigyWHOZLkFrToHUKe8fy7UKRT__kNSVvCVrwnP669RquFdp_8vtGLzkfeCabKrQDR-uOJo7Zsoy-8s1OpOB_4OE16dzW7uYHzvjSmhgUirUpZ_y6OWGZWoZ9au_EENyGneyn">
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Tenkasi SmartNav</h1>
+</div>
+<button class="px-4 py-1.5 rounded-full border border-outline text-label-lg hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+            EN/தமிழ்
+        </button>
+</header>
+<!-- Main Content Canvas (Background Map Hidden by Bottom Sheet) -->
+<main class="relative z-10 p-gutter">
+<!-- The content is largely obscured by the modal -->
+</main>
+<!-- Bottom Sheet Modal Overlay -->
+<div class="fixed inset-0 z-[60] bottom-sheet-overlay flex flex-col justify-end">
+<!-- Modal Content Container -->
+<div class="bg-surface w-full max-w-2xl mx-auto rounded-t-[32px] shadow-2xl overflow-hidden animate-slide-up">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center py-4">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full"></div>
+</div>
+<!-- Modal Header / Tab Bar -->
+<div class="px-gutter pb-gutter">
+<div class="flex bg-surface-container-low rounded-full p-1.5 mb-8">
+<button class="flex-1 py-3 px-4 rounded-full font-label-lg text-on-primary-container bg-primary-container transition-all">Leave</button>
+<button class="flex-1 py-3 px-4 rounded-full font-label-lg text-on-surface-variant hover:bg-surface-container transition-all">Arrive</button>
+<button class="flex-1 py-3 px-4 rounded-full font-label-lg text-on-surface-variant hover:bg-surface-container transition-all">Last</button>
+</div>
+<!-- Time Picker -->
+<div class="relative flex justify-center items-center h-48 overflow-hidden mb-8">
+<!-- Selection Indicator -->
+<div class="absolute inset-x-0 h-16 border-y border-outline-variant pointer-events-none"></div>
+<div class="flex items-center gap-8 px-4 w-full justify-center">
+<!-- Hours -->
+<div class="time-picker-column h-full flex flex-col items-center gap-4 text-headline-md font-headline-md text-on-surface-variant">
+<span class="opacity-20">09</span>
+<span class="text-primary font-bold">10</span>
+<span class="opacity-20">11</span>
+</div>
+<!-- Separator -->
+<div class="text-headline-md font-headline-md text-outline-variant">:</div>
+<!-- Minutes -->
+<div class="time-picker-column h-full flex flex-col items-center gap-4 text-headline-md font-headline-md text-on-surface-variant">
+<span class="opacity-20">32</span>
+<span class="text-primary font-bold">33</span>
+<span class="opacity-20">34</span>
+</div>
+<!-- AM/PM -->
+<div class="time-picker-column h-full flex flex-col items-center gap-4 text-headline-md font-headline-md text-on-surface-variant">
+<span class="opacity-20">AM</span>
+<span class="text-primary font-bold">AM</span>
+<span class="opacity-20">PM</span>
+</div>
+</div>
+</div>
+<!-- Date Selector -->
+<div class="flex items-center justify-between px-gutter py-4 bg-surface-container-lowest rounded-xl border border-outline-variant mb-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<div class="flex flex-col items-center">
+<span class="font-label-lg text-on-surface">Today</span>
+<span class="font-label-sm text-on-surface-variant">Fri, 20 Oct</span>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container-high active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<!-- Reset Link -->
+<div class="text-center mb-8">
+<button class="text-secondary font-label-lg underline underline-offset-4 hover:text-primary transition-colors">
+                        Reset to current time
+                    </button>
+</div>
+<!-- Action Buttons -->
+<div class="flex gap-4 mb-gutter">
+<button class="flex-1 py-4 px-6 rounded-full border-[1.5px] border-tertiary text-tertiary font-label-lg hover:bg-surface-container-high active:scale-95 transition-all">
+                        Cancel
+                    </button>
+<button class="flex-1 py-4 px-6 rounded-full bg-primary-container text-on-primary-container font-label-lg shadow-sm hover:shadow-md active:scale-95 transition-all">
+                        Set Time
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar (From Shared Components) - Suppressed as per UX Goal for transactional state but showing structure -->
+<!-- (Note: The prompt implies a focused modal state, so Nav is usually hidden, but the shared components instructions mention rendering if top-level. Since this is a modal over a top-level, it's suppressed here.) -->
+</body></html>
