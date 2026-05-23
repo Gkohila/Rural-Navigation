@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
+import '../../../screens/home/home_screen.dart';
+import '../../../screens/profile/profile_screen.dart';
 
 /// Fixed bottom navigation matching the HTML nav bar.
 class SmartNavBottomBar extends StatelessWidget {
@@ -46,7 +48,32 @@ class SmartNavBottomBar extends StatelessWidget {
                 return _BottomNavButton(
                   item: item,
                   isSelected: isSelected,
-                  onTap: () => onItemSelected?.call(index),
+                  onTap: () {
+
+  onItemSelected?.call(index);
+
+  if (index == 0) {
+
+    Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+    );
+  }
+
+  else if (index == 3) {
+
+    Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) => const ProfileScreen(),
+      ),
+    );
+  }
+},
                 );
               }),
             ),

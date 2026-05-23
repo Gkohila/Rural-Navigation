@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'screens/auth/login_screen.dart';
 import 'theme/app_theme.dart';
+import 'screens/profile/profile_screen.dart';
 
 void main() {
 
