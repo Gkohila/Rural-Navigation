@@ -5,7 +5,10 @@ import 'package:smartnav/features/maps/widgets/route_card.dart';
 import 'package:smartnav/features/maps/widgets/route_map_painter.dart';
 import 'package:smartnav/features/maps/widgets/transport_button.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
-
+import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
+import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
+import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
+import 'package:intl/intl.dart';
 /// Tenkasi SmartNav route results screen — pixel match to designs/code.html.
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -15,16 +18,24 @@ class RouteSearchScreen extends StatefulWidget {
 }
 
 class _RouteSearchScreenState extends State<RouteSearchScreen>
+ 
     with SingleTickerProviderStateMixin {
+    
   int _bottomNavIndex = 1;
   int _selectedTransportIndex = 2;
+  List<String> selectedModes = [];
   late final AnimationController _sheetAnimController;
   late final Animation<double> _sheetFade;
   late final Animation<Offset> _sheetSlide;
 
+  
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
+
+  selectedModes = [];
+
+  
     _sheetAnimController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 420),
@@ -109,84 +120,80 @@ class _RouteSearchScreenState extends State<RouteSearchScreen>
 
 // ——— Top navigation bar ———
 class _AppHeader extends StatelessWidget {
-  const _AppHeader();
+const _AppHeader();
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: SmartNavSpacing.containerPaddingMobile,
-        vertical: SmartNavSpacing.headerVertical,
+@override
+Widget build(BuildContext context) {
+return Container(
+width: double.infinity,
+padding: const EdgeInsets.symmetric(
+horizontal: SmartNavSpacing.containerPaddingMobile,
+vertical: SmartNavSpacing.headerVertical,
+),
+decoration: BoxDecoration(
+color: SmartNavColors.surface,
+boxShadow: SmartNavElevation.header,
+),
+child: Row(
+children: [
+Container(
+width: 36,
+height: 36,
+decoration: const BoxDecoration(
+color: SmartNavColors.primaryContainer,
+shape: BoxShape.circle,
+),
+child: const Icon(
+Icons.person,
+color: SmartNavColors.onPrimaryContainer,
+size: 20,
+),
+),
+
+
+      const SizedBox(width: 10),
+
+      Expanded(
+        child: Text(
+          'Tenkasi SmartNav',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: SmartNavTextStyles.headlineMdBold,
+        ),
       ),
-      decoration: BoxDecoration(
-        color: SmartNavColors.surface,
-        boxShadow: SmartNavElevation.header,
+
+      const SizedBox(width: 8),
+
+      TextButton(
+        onPressed: () {},
+        style: TextButton.styleFrom(
+          foregroundColor: SmartNavColors.primary,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 4,
+          ),
+          minimumSize: Size.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: Text(
+          'EN/தமிழ்',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: SmartNavTextStyles.labelLg.copyWith(
+            color: SmartNavColors.primary,
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+          ),
+        ),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          const langButtonWidth = 72.0;
-          final titleMaxWidth = constraints.maxWidth - 36 - 10 - 8 - langButtonWidth;
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: const BoxDecoration(
-                      color: SmartNavColors.primaryContainer,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      color: SmartNavColors.onPrimaryContainer,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: titleMaxWidth.clamp(0, double.infinity),
-                    child: Text(
-                      'Tenkasi SmartNav',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: SmartNavTextStyles.headlineMdBold,
-                    ),
-                  ),
-                ],
-              ),
-              TextButton(
-            onPressed: () {},
-            style: TextButton.styleFrom(
-              foregroundColor: SmartNavColors.primary,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              'EN/தமிழ்',
-              maxLines: 1,
-              style: SmartNavTextStyles.labelLg.copyWith(
-                color: SmartNavColors.primary,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0,
-                fontSize: 13,
-              ),
-              ),
-            ),
-          ],
-          );
-        },
-      ),
-    );
-  }
+    ],
+  ),
+);
+
+
 }
+}
+
 
 // ——— Origin / destination search card ———
 class _RouteSearchBar extends StatelessWidget {
@@ -426,17 +433,30 @@ class _MapSection extends StatelessWidget {
 }
 
 // ——— Public transport bottom sheet (overlaps map) ———
-class _PublicTransportSheet extends StatelessWidget {
+class _PublicTransportSheet extends StatefulWidget {
   const _PublicTransportSheet({
     required this.selectedTransportIndex,
     required this.onTransportSelected,
+    
   });
 
   final int selectedTransportIndex;
   final ValueChanged<int> onTransportSelected;
+ @override
+State<_PublicTransportSheet> createState() =>
+    _PublicTransportSheetState();
+}
+
+class _PublicTransportSheetState
+    extends State<_PublicTransportSheet> {
+
+  List<String> selectedModes = [];
+  DateTime selectedTime = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
+
+
     return Transform.translate(
       offset: const Offset(0, -SmartNavSpacing.sheetOverlap),
       child: DecoratedBox(
@@ -487,12 +507,13 @@ class _PublicTransportSheet extends StatelessWidget {
                 children: [
                   for (var i = 0; i < StaticRouteData.transportModes.length; i++)
                     TransportButton(
-                      icon: StaticRouteData.transportModes[i].icon,
-                      label: StaticRouteData.transportModes[i].label,
-                      isSelected: i == selectedTransportIndex,
-                      iconFilled: StaticRouteData.transportModes[i].iconFilled,
-                      onTap: () => onTransportSelected(i),
-                    ),
+  icon: StaticRouteData.transportModes[i].icon,
+  label: StaticRouteData.transportModes[i].label,
+  isSelected: i == widget.selectedTransportIndex,
+  iconFilled:
+      StaticRouteData.transportModes[i].iconFilled,
+  onTap: () => widget.onTransportSelected(i),
+),
                 ],
               ),
               const SizedBox(height: 12),
@@ -505,12 +526,79 @@ class _PublicTransportSheet extends StatelessWidget {
 
       for (var i = 0; i < StaticRouteData.filterChips.length; i++) ...[
 
-        _FilterChip(
-          label: StaticRouteData.filterChips[i],
-          showCheck: i == 1,
-        ),
+       _FilterChip(
+  label: StaticRouteData.filterChips[i],
+showCheck: i == 1 && selectedModes.isNotEmpty,
 
-        const SizedBox(width: 10),
+  onTap: () {
+
+  // Leave popup
+if (i == 0) {
+
+  showDialog(
+
+    context: context,
+
+    barrierColor: Colors.transparent,
+
+    builder: (_) => DepartureTimeDialog(
+
+      initialTime: selectedTime,
+
+      onTimeSelected: (DateTime time) {
+
+        setState(() {
+          selectedTime = time;
+        });
+
+      },
+    ),
+  );
+}
+
+  // Preferred modes popup
+  if (i == 1) {
+
+    showDialog(
+      context: context,
+
+      builder: (_) => TransportPreferencesDialog(
+
+        onApply: (modes) {
+
+        },
+      ),
+    );
+  }
+
+  // Filter popup
+   // Filter popup
+if (i == 2) {
+
+  showDialog(
+
+    context: context,
+
+    barrierColor: Colors.black54,
+
+    builder: (_) => Center(
+
+      child: FilterOptionsDialog(
+
+        onApply: (selectedFilter) {
+
+          print(selectedFilter);
+
+        },
+      ),
+    ),
+  );
+}
+},
+),
+
+const SizedBox(width: 10),
+
       ],
     ],
   ),
@@ -587,17 +675,21 @@ class _SheetIconButton extends StatelessWidget {
 }
 
 class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    this.showCheck = false,
-  });
+ const _FilterChip({
+  required this.label,
+  this.showCheck = false,
+  this.onTap,
+});
 
   final String label;
   final bool showCheck;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GestureDetector(
+  onTap: onTap,
+  child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
         color: SmartNavColors.surfaceContainer,
@@ -626,6 +718,7 @@ class _FilterChip extends StatelessWidget {
           ),
         ],
       ),
+  ),
     );
   }
 }

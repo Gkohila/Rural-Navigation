@@ -35,7 +35,7 @@ abstract final class StaticRouteData {
 
   static const List<String> filterChips = [
     'Leave 4:50 PM',
-    'Train +1',
+    'Preferred modes',
     'Filter by',
   ];
 
