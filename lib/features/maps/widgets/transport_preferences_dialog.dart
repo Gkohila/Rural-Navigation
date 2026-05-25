@@ -306,3 +306,23 @@ Row(
     );
   }
 }
+Future<List<String>?> showTransportPreferencesDialog(
+  BuildContext context,
+  List<String> selectedModes,
+) async {
+
+  List<String>? result;
+
+  await showDialog(
+    context: context,
+    builder: (_) {
+      return TransportPreferencesDialog(
+        onApply: (modes) {
+          result = modes;
+        },
+      );
+    },
+  );
+
+  return result;
+}

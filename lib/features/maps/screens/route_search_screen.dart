@@ -9,6 +9,9 @@ import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
 import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
 import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
 import 'package:intl/intl.dart';
+import 'package:smartnav/features/maps/widgets/live_google_map.dart';
+import '../widgets/floating_route_search_bar.dart';
+import 'package:smartnav/features/maps/widgets/free_live_map.dart';
 /// Tenkasi SmartNav route results screen — pixel match to designs/code.html.
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -72,45 +75,74 @@ void initState() {
           top: true,
           bottom: false,
           child: Stack(
-            fit: StackFit.expand,
+            fit: StackFit.expand,        
             children: [
-              ListView(
-                shrinkWrap: false,
-                clipBehavior: Clip.none,
-                physics: const BouncingScrollPhysics(),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: const EdgeInsets.only(bottom: 140),
-                children: [
-                  const _AppHeader(),
-                  const _RouteSearchBar(),
-                  const _MapSection(),
-                  FadeTransition(
-                    opacity: _sheetFade,
-                    child: SlideTransition(
-                      position: _sheetSlide,
-                      child: _PublicTransportSheet(
-                        selectedTransportIndex: _selectedTransportIndex,
-                        onTransportSelected: (index) {
-                          setState(() => _selectedTransportIndex = index);
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: SmartNavBottomBar(
-                  selectedIndex: _bottomNavIndex,
-                  onItemSelected: (index) {
-                    setState(() => _bottomNavIndex = index);
-                  },
-                ),
-              ),
-            ],
+
+  // LIVE GOOGLE MAP
+  const Positioned.fill(
+    child: FreeLiveMap(),
+  ),
+
+Positioned(
+    top: 14,
+    left: 14,
+    right: 14,
+    child: const FloatingRouteSearchBar(),
+  ),
+  // TOP SEARCH AREA
+
+
+  // DRAGGABLE PUBLIC TRANSPORT SHEET
+  DraggableScrollableSheet(
+    initialChildSize: 0.38,
+    minChildSize: 0.22,
+    maxChildSize: 0.82,
+    expand: false,
+    builder: (context, scrollController) {
+
+      return FadeTransition(
+        opacity: _sheetFade,
+        child: SlideTransition(
+  position: _sheetSlide,
+
+ child: _PublicTransportSheet(
+  scrollController: scrollController,
+
+  selectedTransportIndex:
+      _selectedTransportIndex,
+
+  onTransportSelected: (index) {
+
+    setState(() {
+
+      _selectedTransportIndex = index;
+    });
+  },
+),
+),
+      );
+    },
+  ),
+
+  // BOTTOM NAV BAR
+  Positioned(
+    left: 0,
+    right: 0,
+    bottom: 0,
+    child: SmartNavBottomBar(
+      selectedIndex: _bottomNavIndex,
+      onItemSelected: (index) {
+
+        setState(() {
+
+          _bottomNavIndex = index;
+        });
+      },
+    ),
+  ),
+],
+
+
           ),
         ),
       ),
@@ -434,12 +466,14 @@ class _MapSection extends StatelessWidget {
 
 // ——— Public transport bottom sheet (overlaps map) ———
 class _PublicTransportSheet extends StatefulWidget {
+
   const _PublicTransportSheet({
+    required this.scrollController,
     required this.selectedTransportIndex,
     required this.onTransportSelected,
-    
   });
 
+  final ScrollController scrollController;
   final int selectedTransportIndex;
   final ValueChanged<int> onTransportSelected;
  @override
@@ -457,159 +491,238 @@ class _PublicTransportSheetState
   Widget build(BuildContext context) {
 
 
-    return Transform.translate(
-      offset: const Offset(0, -SmartNavSpacing.sheetOverlap),
-      child: DecoratedBox(
+
+
+      return Container(
+
         decoration: BoxDecoration(
+
           color: SmartNavColors.surface,
+
           borderRadius: const BorderRadius.vertical(
-            top: Radius.circular(SmartNavSpacing.sheetTopRadius),
+            top: Radius.circular(
+              SmartNavSpacing.sheetTopRadius,
+            ),
           ),
+
           boxShadow: SmartNavElevation.sheet,
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: Container(
-                  width: 48,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: SmartNavColors.surfaceVariant,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Public transport',
-                    style: SmartNavTextStyles.headlineMd,
-                  ),
-                  Row(
-                    children: [
-                      _SheetIconButton(icon: Icons.tune),
-                      const SizedBox(width: 8),
-                      _SheetIconButton(icon: Icons.share),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              _SpacedRow(
-                height: 84,
-                spacing: SmartNavSpacing.transportChipGap,
-                children: [
-                  for (var i = 0; i < StaticRouteData.transportModes.length; i++)
-                    TransportButton(
-  icon: StaticRouteData.transportModes[i].icon,
-  label: StaticRouteData.transportModes[i].label,
-  isSelected: i == widget.selectedTransportIndex,
-  iconFilled:
-      StaticRouteData.transportModes[i].iconFilled,
-  onTap: () => widget.onTransportSelected(i),
-),
-                ],
-              ),
-              const SizedBox(height: 12),
-              
-              SingleChildScrollView(
-  scrollDirection: Axis.horizontal,
 
-  child: Row(
+       
+
+          child: Padding(
+
+            padding: const EdgeInsets.fromLTRB(
+              24,
+              20,
+              24,
+              24,
+            ),
+
+           child: SingleChildScrollView(
+
+  controller: widget.scrollController,
+
+  child: Column(
+
+    mainAxisSize: MainAxisSize.min,
+
+    crossAxisAlignment:
+        CrossAxisAlignment.stretch,
+
     children: [
 
-      for (var i = 0; i < StaticRouteData.filterChips.length; i++) ...[
+                Center(
+                  child: Container(
+                    width: 48,
+                    height: 5,
 
-       _FilterChip(
-  label: StaticRouteData.filterChips[i],
-showCheck: i == 1 && selectedModes.isNotEmpty,
+                    decoration: BoxDecoration(
+                      color:
+                          SmartNavColors.surfaceVariant,
 
-  onTap: () {
+                      borderRadius:
+                          BorderRadius.circular(999),
+                    ),
+                  ),
+                ),
 
-  // Leave popup
-if (i == 0) {
+                const SizedBox(height: 20),
 
-  showDialog(
+                Row(
 
-    context: context,
+                  mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
 
-    barrierColor: Colors.transparent,
+                  children: [
 
-    builder: (_) => DepartureTimeDialog(
+                    Text(
+                      'Public transport',
+                      style:
+                          SmartNavTextStyles.headlineMd,
+                    ),
 
-      initialTime: selectedTime,
+                    Row(
+                      children: [
 
-      onTimeSelected: (DateTime time) {
+                        _SheetIconButton(
+                          icon: Icons.tune,
+                        ),
 
-        setState(() {
-          selectedTime = time;
-        });
+                        const SizedBox(width: 8),
 
-      },
-    ),
-  );
-}
+                        _SheetIconButton(
+                          icon: Icons.share,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
 
-  // Preferred modes popup
-  if (i == 1) {
+                const SizedBox(height: 20),
 
-    showDialog(
-      context: context,
+                _SpacedRow(
 
-      builder: (_) => TransportPreferencesDialog(
+                  height: 84,
 
-        onApply: (modes) {
+                  spacing:
+                      SmartNavSpacing.transportChipGap,
 
-        },
-      ),
+                  children: [
+
+                    for (
+                      var i = 0;
+                      i <
+                          StaticRouteData
+                              .transportModes
+                              .length;
+                      i++
+                    )
+
+                      TransportButton(
+
+                        icon:
+                            StaticRouteData
+                                .transportModes[i]
+                                .icon,
+
+                        label:
+                            StaticRouteData
+                                .transportModes[i]
+                                .label,
+
+                        isSelected:
+                            i ==
+                                widget
+                                    .selectedTransportIndex,
+
+                        iconFilled:
+                            StaticRouteData
+                                .transportModes[i]
+                                .iconFilled,
+
+                        onTap: () =>
+                            widget
+                                .onTransportSelected(i),
+                      ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                SingleChildScrollView(
+
+                  scrollDirection: Axis.horizontal,
+
+                  child: Row(
+
+                    children: [
+
+                      for (
+                        var i = 0;
+                        i <
+                            StaticRouteData
+                                .filterChips
+                                .length;
+                        i++
+                      ) ...[
+
+                        _FilterChip(
+
+                          label:
+                              StaticRouteData
+                                  .filterChips[i],
+
+                          showCheck:
+                              i == 1 &&
+                                  selectedModes
+                                      .isNotEmpty,
+
+                          onTap: () async {
+
+  // LEAVE TIME
+  if (i == 0) {
+
+    final pickedTime =
+        await showDepartureTimeDialog(
+      context,
+      selectedTime,
     );
+
+    if (pickedTime != null) {
+
+      setState(() {
+
+        selectedTime = pickedTime;
+      });
+    }
   }
 
-  // Filter popup
-   // Filter popup
-if (i == 2) {
+  // PREFERRED MODES
+  else if (i == 1) {
 
-  showDialog(
-
-    context: context,
-
-    barrierColor: Colors.black54,
-
-    builder: (_) => Center(
-
-      child: FilterOptionsDialog(
-
-        onApply: (selectedFilter) {
-
-          print(selectedFilter);
-
-        },
-      ),
-    ),
-  );
-}
-},
-),
-
-const SizedBox(width: 10),
-
-      ],
-    ],
-  ),
-),
-              const SizedBox(height: 20),
-              const _RouteResultsList(),
-            ],
-          ),
-        ),
-      ),
+    final modes =
+        await showTransportPreferencesDialog(
+      context,
+      selectedModes,
     );
+
+    if (modes != null) {
+
+      setState(() {
+
+        selectedModes = modes;
+      });
+    }
+  }
+
+  // FILTER BY
+  else if (i == 2) {
+
+    await showFilterOptionsDialog(
+      context,
+    );
+  }
+},
+                        ),
+
+                        const SizedBox(width: 10),
+                      ],
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                const _RouteResultsList(),
+
+                const SizedBox(height: 100),
+              ],
+            ),
+          ),
+        
+      ),
+      );
   }
 }
 
