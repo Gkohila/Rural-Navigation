@@ -1,0 +1,283 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Tenkasi SmartNav - Route Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f9f9f9;
+        }
+        .timeline-line {
+            width: 8px;
+            background: #e2e2e2;
+            border-radius: 4px;
+        }
+        .timeline-active {
+            background: #51b2fe; /* secondary-container */
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#e9bdae",
+                        "on-primary-container": "#90d689",
+                        "surface-bright": "#f9f9f9",
+                        "secondary-container": "#51b2fe",
+                        "on-secondary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#5e3f35",
+                        "tertiary-container": "#6b4a3f",
+                        "surface-tint": "#2a6b2c",
+                        "primary": "#00450d",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdbcf",
+                        "secondary-fixed-dim": "#96ccff",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-fixed": "#2d150d",
+                        "surface": "#f9f9f9",
+                        "secondary": "#00639a",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-container": "#1b5e20",
+                        "inverse-primary": "#91d78a",
+                        "surface-container": "#eeeeee",
+                        "on-primary-fixed-variant": "#0c5216",
+                        "inverse-surface": "#2f3131",
+                        "primary-fixed-dim": "#91d78a",
+                        "on-secondary-fixed-variant": "#004a75",
+                        "on-surface": "#1a1c1c",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-fixed": "#cee5ff",
+                        "outline-variant": "#c0c9bb",
+                        "on-surface-variant": "#41493e",
+                        "on-tertiary-container": "#e8bbad",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#717a6d",
+                        "on-primary-fixed": "#002203",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-secondary-fixed": "#001d32",
+                        "tertiary": "#51342a",
+                        "primary-fixed": "#acf4a4",
+                        "on-background": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#dadada",
+                        "on-secondary-container": "#00436a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "16px",
+                        "container-padding-desktop": "48px",
+                        "card-gap": "24px",
+                        "gutter": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-sm": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["40px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["20px", { "lineHeight": "30px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center px-container-mobile py-unit w-full sticky top-0 z-50 bg-surface dark:bg-background shadow-sm dark:shadow-none">
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-center justify-center p-2 rounded-full hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed">arrow_back</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1 rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">directions_bus</span>
+<span class="font-bold text-on-surface">147C</span>
+</div>
+</div>
+<div class="flex items-center">
+<button class="font-label-lg text-label-lg text-primary dark:text-primary-fixed hover:bg-surface-container-high px-4 py-2 rounded-full transition-colors active:scale-95">
+                EN/தமிழ்
+            </button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pb-32">
+<!-- Map Preview -->
+<div class="w-full h-48 bg-surface-container overflow-hidden">
+<img alt="Interactive map view of Tenkasi region" class="w-full h-full object-cover grayscale-[20%]" data-alt="A detailed digital map view of the Tenkasi region in Tamil Nadu, showing the lush greenery of the Western Ghats foothills and intricate street networks. The map uses a clean, modern style with soft greens for nature and muted greys for roads, accented by a bright blue route line. The lighting is bright and airy, reflecting a warm, sunny day in a tropical landscape. The aesthetic is professional and functional." data-location="Tenkasi" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbknkk1LNAR8GslxOfS1sUXFlgKbG231JWFUErC738NZudMyBe26m7pSx2X7d69Fdzl-y53NqoQ0Ereg_YFARTiN-1gUmjf57c0oupQEMn89FbDUoTcDTeJJf2Ynx7v7JRKMZq5ICNjRrZoasyuAZlwd3fJlxC5ZU31lzbsC7a8dSvj2dJv4kOUedIUoH1m76qCViYAQQFKeXTfWKdGUvlcs3KdSTq8SIzv3STchK_ntTSOjPGt2cF5m7nwKqkCQLi5_g8YJouBY9G">
+</div>
+<!-- Route Sheet -->
+<div class="bg-surface rounded-t-[32px] -mt-8 relative z-10 px-container-mobile pt-8">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full mx-auto mb-8"></div>
+<!-- Timeline Section -->
+<div class="relative flex">
+<!-- Visual Vertical Line -->
+<div class="absolute left-[11px] top-6 bottom-6 w-[8px] flex flex-col items-center">
+<div class="w-2 h-12 bg-surface-container-highest rounded-full"></div>
+<div class="w-2 h-full bg-secondary-container rounded-full my-1"></div>
+<div class="w-2 h-20 bg-surface-container-highest rounded-full"></div>
+</div>
+<!-- Stops Content -->
+<div class="flex flex-col gap-10 w-full pl-10">
+<!-- Origin -->
+<div class="relative flex justify-between items-start">
+<div class="absolute -left-10 top-0 w-8 h-8 flex items-center justify-center bg-surface z-20">
+<span class="material-symbols-outlined text-on-surface-variant">location_on</span>
+</div>
+<div>
+<h3 class="font-headline-md text-[18px] text-on-surface leading-tight">Tenkasi Junction</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tamil Nadu, India</p>
+</div>
+<span class="font-label-lg text-on-surface">5:24 pm</span>
+</div>
+<!-- Walk Instruction -->
+<div class="relative flex justify-between items-center py-2 border-b border-outline-variant">
+<div class="absolute -left-10 w-8 h-8 flex items-center justify-center bg-surface z-20">
+<span class="material-symbols-outlined text-on-surface-variant">directions_walk</span>
+</div>
+<div class="flex items-center gap-2 group cursor-pointer">
+<span class="font-body-md text-body-md text-on-surface">Walk 2 min (120 m)</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">chevron_right</span>
+</div>
+</div>
+<!-- Main Bus Stop -->
+<div class="relative flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="absolute -left-10 top-0 w-8 h-8 flex items-center justify-center bg-secondary-container rounded-full z-20 shadow-sm border-2 border-surface">
+<span class="material-symbols-outlined text-on-secondary text-[16px]" style="font-variation-settings: &quot;FILL&quot; 1;">directions_bus</span>
+</div>
+<div>
+<h3 class="font-headline-md text-[18px] text-on-surface leading-tight">New Bus Stand</h3>
+<div class="mt-2 inline-flex items-center gap-2 bg-surface-container-high px-3 py-1 rounded-lg">
+<span class="font-bold text-on-surface text-label-sm">147C</span>
+<span class="text-on-surface-variant text-label-sm">To Shencottah</span>
+</div>
+<p class="text-secondary font-label-sm mt-1">Scheduled</p>
+</div>
+<span class="font-headline-md text-[24px] text-on-surface">5:25 <span class="text-label-sm">pm</span></span>
+</div>
+<!-- Crowd Indicators -->
+<div class="bg-surface-container-low p-4 rounded-xl mt-2">
+<p class="font-label-sm text-on-surface-variant mb-3 uppercase tracking-wider">What's it like on board?</p>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<button class="flex items-center gap-2 bg-surface px-4 py-2 rounded-full border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">groups</span>
+<span class="font-label-lg">Crowded</span>
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+<button class="flex items-center gap-2 bg-surface px-4 py-2 rounded-full border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">device_thermostat</span>
+<span class="font-label-lg">A little warm</span>
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 border-y border-outline-variant cursor-pointer group">
+<span class="font-body-md text-on-surface-variant">Also at 5:45 pm (scheduled)</span>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+<div class="flex items-center gap-2 py-2 cursor-pointer text-secondary">
+<span class="material-symbols-outlined">expand_more</span>
+<span class="font-label-lg">Ride 12 stops (15 min)</span>
+</div>
+</div>
+<!-- Intermediate Stop Highlight -->
+<div class="relative flex justify-between items-start">
+<div class="absolute -left-10 top-1 w-8 h-8 flex items-center justify-center bg-surface z-20">
+<div class="w-3 h-3 rounded-full border-2 border-secondary-container bg-surface"></div>
+</div>
+<div>
+<h3 class="font-body-lg text-body-lg text-on-surface"><br></h3>
+</div>
+<span class="font-label-lg text-on-surface">5:35 pm</span>
+</div>
+<!-- Walk Instruction 2 -->
+<div class="relative flex justify-between items-center py-2 border-b border-outline-variant">
+<div class="absolute -left-10 w-8 h-8 flex items-center justify-center bg-surface z-20">
+<span class="material-symbols-outlined text-on-surface-variant">directions_walk</span>
+</div>
+<div class="flex items-center gap-2 group cursor-pointer">
+<span class="font-body-md text-body-md text-on-surface">Walk 1 min (50 m)</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">chevron_right</span>
+</div>
+</div>
+<!-- Destination -->
+<div class="relative flex justify-between items-start pb-10">
+<div class="absolute -left-10 top-0 w-8 h-8 flex items-center justify-center bg-surface z-20">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: &quot;FILL&quot; 1;">location_on</span>
+</div>
+<div>
+<h3 class="font-headline-md text-[18px] text-on-surface leading-tight">Thirumalai Kovil</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Tenkasi, Tamil Nadu</p>
+</div>
+<span class="font-label-lg text-on-surface">5:40 pm</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB and Action Bar -->
+<div class="fixed bottom-0 left-0 w-full z-50 bg-surface dark:bg-surface-container-low shadow-lg px-container-mobile pb-6 pt-4 rounded-t-xl flex flex-col gap-4">
+<div class="flex items-center justify-between mb-2">
+<div>
+<span class="font-headline-md text-[20px] text-on-surface">31 min</span>
+<p class="font-label-sm text-on-surface-variant">Arrive at 5:55 pm</p>
+</div>
+<button class="bg-secondary-container text-on-secondary px-8 py-3 rounded-full font-label-lg flex items-center gap-2 shadow-sm hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">navigation</span>
+                Start
+            </button>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 flex items-center justify-center gap-2 bg-surface-container-high py-3 rounded-full border border-outline-variant font-label-lg text-on-surface hover:bg-surface-container active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">bookmark</span>
+                Save
+            </button>
+<button class="flex-1 flex items-center justify-center gap-2 bg-surface-container-high py-3 rounded-full border border-outline-variant font-label-lg text-on-surface hover:bg-surface-container active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]">share</span>
+                Share
+            </button>
+</div>
+</div>
+<!-- BottomNavBar (Hidden on this transactional/focused screen as per mandate, but included for structure if needed) -->
+<nav class="fixed bottom-0 left-0 w-full z-[60] flex justify-around items-center px-4 pb-4 pt-2 bg-surface dark:bg-surface-container-low hidden md:flex">
+<!-- Not rendered on this specific sub-page to prioritize the route details canvas as per "Relevance Check" rule -->
+</nav>
+
+
+</body></html>

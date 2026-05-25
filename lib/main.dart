@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 
-import 'screens/home/home_screen.dart';
-import 'theme/app_theme.dart';
+import 'screens/routes/trip_planner_screen.dart';
 
 void main() {
-  runApp(const SmartNavApp());
+  runApp(const MyApp());
 }
 
-class SmartNavApp extends StatelessWidget {
-  const SmartNavApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tenkasi SmartNav',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      home: const HomeScreen(),
+
+      home: const TripPlannerScreen(
+        transportName: 'Lion Travels',
+        routeNumber: '147C',
+        departureTime: '5:25 pm',
+        arrivalTime: '5:55 pm',
+      ),
     );
   }
 }
