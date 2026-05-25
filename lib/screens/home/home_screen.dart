@@ -12,6 +12,9 @@ import '../../widgets/home/bottom_navbar.dart';
 import '../../widgets/home/quick_action_card.dart';
 import '../../widgets/home/route_card.dart';
 import '../../features/maps/screens/route_search_screen.dart';
+import '../../screens/history/recent_search_screen.dart';
+import '../../screens/navigation/live_navigation_screen.dart';
+import '../../screens/stops/nearby_stops_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -199,6 +202,7 @@ class _QuickActionsSection extends StatelessWidget {
       fg: AppColors.onTertiaryContainer,
       delay: 400,
       float: 400,
+      
     ),
     (
       icon: Icons.near_me,
@@ -256,17 +260,61 @@ class _QuickActionsSection extends StatelessWidget {
 
   onTap: () {
 
-    if (action.label == 'Find Bus/Train') {
+  /// FIND BUS/TRAIN
+  if (action.label == 'Find Bus/Train') {
 
-      Navigator.push(
-        context,
+    Navigator.push(
+      context,
 
-        MaterialPageRoute(
-          builder: (context) => const RouteSearchScreen(),
-        ),
-      );
-    }
-  },
+      MaterialPageRoute(
+        builder: (context) =>
+            const RouteSearchScreen(),
+      ),
+    );
+  }
+
+  /// RECENT SEARCH HISTORY
+  else if (action.label ==
+      'Recent Search History') {
+
+    Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) =>
+            const RecentSearchScreen(),
+      ),
+    );
+  }
+
+  /// LIVE NAVIGATION
+  else if (action.label ==
+      'Live Navigation') {
+
+    Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) =>
+            const LiveNavigationScreen(),
+      ),
+    );
+  }
+
+  /// NEARBY STOPS
+  else if (action.label ==
+      'Nearby Stops') {
+
+    Navigator.push(
+      context,
+
+      MaterialPageRoute(
+        builder: (context) =>
+            const NearbyStopsScreen(),
+      ),
+    );
+  }
+},
 ),
                   ),
               ],
