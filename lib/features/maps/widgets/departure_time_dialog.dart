@@ -143,7 +143,7 @@ class _DepartureTimeDialogState
               endIndent: 22,
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
             SizedBox(
               height: 220,
@@ -362,10 +362,12 @@ class _DepartureTimeDialogState
             const SizedBox(height: 18),
 
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 18,
-              ),
+  padding: const EdgeInsets.fromLTRB(
+    18,
+    0,
+    18,
+    10,
+  ),
               child: Row(
                 children: [
 
@@ -699,4 +701,31 @@ class _DepartureTimeDialogState
       ),
     );
   }
+}
+Future<DateTime?> showDepartureTimeDialog(
+  BuildContext context,
+  DateTime selectedTime,
+) async {
+
+  DateTime? result;
+
+  await showDialog(
+
+    context: context,
+
+    builder: (_) {
+
+      return DepartureTimeDialog(
+
+        initialTime: selectedTime,
+
+        onTimeSelected: (time) {
+
+          result = time;
+        },
+      );
+    },
+  );
+
+  return result;
 }

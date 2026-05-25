@@ -348,3 +348,25 @@ class _FilterOptionsDialogState
     );
   }
 }
+Future<void> showFilterOptionsDialog(
+  BuildContext context,
+) async {
+
+  await showDialog(
+
+    context: context,
+
+    barrierDismissible: true,
+
+    builder: (_) {
+
+      return FilterOptionsDialog(
+
+        onApply: (selectedFilter) {
+
+          debugPrint(selectedFilter);
+        },
+      );
+    },
+  );
+}
