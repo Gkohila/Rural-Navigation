@@ -3,12 +3,17 @@ import 'package:smartnav/features/maps/data/static_route_data.dart';
 import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
 import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
 import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
+import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
 import 'package:smartnav/features/maps/widgets/free_live_map.dart';
 import 'package:smartnav/features/maps/widgets/route_card.dart';
+import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
 import 'package:smartnav/features/maps/widgets/transport_button.dart';
 import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
-import '../widgets/floating_route_search_bar.dart';
+
+/// IMPORTANT
+/// CHANGE THIS IMPORT BASED ON YOUR FILE NAME
+import 'package:smartnav/features/maps/screens/route_details_screen.dart';
 
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -150,24 +155,29 @@ class _RouteSearchScreenState
   Widget build(BuildContext context) {
 
     return Theme(
+
       data: SmartNavTheme.light,
 
       child: Scaffold(
+
         backgroundColor:
             SmartNavColors.background,
 
+        
         body: Stack(
+
           fit: StackFit.expand,
 
           children: [
 
             /// MAP
-            const Positioned.fill(
+            Positioned.fill(
               child: FreeLiveMap(),
             ),
 
             /// SEARCH BAR
             Positioned(
+
               top:
                   MediaQuery.of(context)
                           .padding
@@ -185,20 +195,26 @@ class _RouteSearchScreenState
             DraggableScrollableSheet(
 
               initialChildSize: 0.55,
+
               minChildSize: 0.27,
 
-              maxChildSize: 0.96,
+              maxChildSize: 0.82,
 
               expand: true,
 
               snap: false,
-              shouldCloseOnMinExtent: false,
+
+              shouldCloseOnMinExtent:
+                  false,
 
               builder:
                   (context, scrollController) {
 
                 return Container(
-                  decoration: BoxDecoration(
+
+                  decoration:
+                      BoxDecoration(
+
                     color:
                         SmartNavColors.surface,
 
@@ -211,19 +227,22 @@ class _RouteSearchScreenState
                         SmartNavElevation.sheet,
                   ),
 
-                  child: CustomScrollView(
+                  child:
+                      CustomScrollView(
 
                     controller:
                         scrollController,
 
-                   physics:
-    const ClampingScrollPhysics(),
+                    physics:
+                        const ClampingScrollPhysics(),
 
                     slivers: [
 
                       /// HANDLE
                       SliverToBoxAdapter(
+
                         child: Column(
+
                           children: [
 
                             const SizedBox(
@@ -232,18 +251,19 @@ class _RouteSearchScreenState
 
                             Center(
                               child: Container(
+
                                 width: 48,
                                 height: 5,
 
                                 decoration:
                                     BoxDecoration(
+
                                   color:
                                       SmartNavColors
                                           .surfaceVariant,
 
                                   borderRadius:
-                                      BorderRadius
-                                          .circular(
+                                      BorderRadius.circular(
                                     999,
                                   ),
                                 ),
@@ -259,13 +279,16 @@ class _RouteSearchScreenState
 
                       /// HEADER
                       SliverToBoxAdapter(
+
                         child: Padding(
+
                           padding:
                               const EdgeInsets.symmetric(
                             horizontal: 20,
                           ),
 
                           child: Row(
+
                             mainAxisAlignment:
                                 MainAxisAlignment
                                     .spaceBetween,
@@ -273,6 +296,7 @@ class _RouteSearchScreenState
                             children: [
 
                               Text(
+
                                 'Public transport',
 
                                 style:
@@ -281,20 +305,49 @@ class _RouteSearchScreenState
                               ),
 
                               Row(
-                                children: const [
 
+                                children: [
+
+                                  /// SHARE
                                   _SheetIconButton(
+
                                     icon:
-                                        Icons.close,
+                                        Icons.share,
+
+                                    onTap: () {
+
+                                      ScaffoldMessenger.of(
+                                              context)
+                                          .showSnackBar(
+
+                                        const SnackBar(
+                                          content: Text(
+                                            'Share clicked',
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
 
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 8,
                                   ),
 
+                                  /// CLOSE
                                   _SheetIconButton(
+
                                     icon:
-                                        Icons.share,
+                                        Icons.close,
+
+                                    onTap: () {
+
+                                      if (Navigator.canPop(
+                                          context)) {
+
+                                        Navigator.pop(
+                                            context);
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
@@ -304,6 +357,7 @@ class _RouteSearchScreenState
                       ),
 
                       const SliverToBoxAdapter(
+
                         child: SizedBox(
                           height: 14,
                         ),
@@ -311,25 +365,30 @@ class _RouteSearchScreenState
 
                       /// STICKY HEADER
                       SliverPersistentHeader(
+
                         pinned: true,
 
                         delegate:
                             _StickyHeaderDelegate(
+
                           child: Container(
+
                             color:
                                 SmartNavColors
                                     .surface,
 
                             child: Column(
+
                               children: [
 
                                 /// TRANSPORT BUTTONS
                                 SizedBox(
-                                  height:
-                                      86,
+
+                                  height: 86,
 
                                   child:
                                       ListView.separated(
+
                                     padding:
                                         const EdgeInsets.symmetric(
                                       horizontal:
@@ -347,15 +406,14 @@ class _RouteSearchScreenState
                                     separatorBuilder:
                                         (_, __) =>
                                             const SizedBox(
-                                      width:
-                                          14,
+                                      width: 14,
                                     ),
 
                                     itemBuilder:
-                                        (context,
-                                            i) {
+                                        (context, i) {
 
                                       return TransportButton(
+
                                         icon:
                                             StaticRouteData
                                                 .transportModes[i]
@@ -375,8 +433,7 @@ class _RouteSearchScreenState
                                                 .transportModes[i]
                                                 .iconFilled,
 
-                                        onTap:
-                                            () {
+                                        onTap: () {
 
                                           setState(() {
 
@@ -395,6 +452,7 @@ class _RouteSearchScreenState
 
                                 /// FILTER CHIPS
                                 Padding(
+
                                   padding:
                                       const EdgeInsets.symmetric(
                                     horizontal:
@@ -403,15 +461,16 @@ class _RouteSearchScreenState
 
                                   child:
                                       SingleChildScrollView(
+
                                     scrollDirection:
                                         Axis.horizontal,
 
-                                    child:
-                                        Row(
+                                    child: Row(
+
                                       children: [
 
-                                        /// LEAVE TIME
                                         _InteractiveFilterChip(
+
                                           label:
                                               'Leave 4:50 PM',
 
@@ -426,12 +485,11 @@ class _RouteSearchScreenState
                                         ),
 
                                         const SizedBox(
-                                          width:
-                                              10,
+                                          width: 10,
                                         ),
 
-                                        /// PREFERRED MODES
                                         _InteractiveFilterChip(
+
                                           label:
                                               'Preferred modes',
 
@@ -446,12 +504,11 @@ class _RouteSearchScreenState
                                         ),
 
                                         const SizedBox(
-                                          width:
-                                              10,
+                                          width: 10,
                                         ),
 
-                                        /// FILTER BY
                                         _InteractiveFilterChip(
+
                                           label:
                                               'Filter by',
 
@@ -469,8 +526,7 @@ class _RouteSearchScreenState
                                 ),
 
                                 const SizedBox(
-                                  height:
-                                      14,
+                                  height: 14,
                                 ),
                               ],
                             ),
@@ -478,8 +534,9 @@ class _RouteSearchScreenState
                         ),
                       ),
 
-                      /// DYNAMIC ROUTE LIST
+                      /// ROUTE LIST
                       SliverPadding(
+
                         padding:
                             const EdgeInsets.fromLTRB(
                           20,
@@ -490,6 +547,7 @@ class _RouteSearchScreenState
 
                         sliver:
                             SliverList(
+
                           delegate:
                               SliverChildListDelegate(
                             _buildRouteCards(),
@@ -504,6 +562,7 @@ class _RouteSearchScreenState
 
             /// BOTTOM NAV
             Positioned(
+
               left: 0,
               right: 0,
 
@@ -514,6 +573,7 @@ class _RouteSearchScreenState
 
               child:
                   SmartNavBottomBar(
+
                 selectedIndex:
                     _bottomNavIndex,
 
@@ -553,8 +613,11 @@ class _StickyHeaderDelegate
 
   @override
   Widget build(
+
     BuildContext context,
+
     double shrinkOffset,
+
     bool overlapsContent,
   ) {
 
@@ -572,22 +635,28 @@ class _StickyHeaderDelegate
   }
 }
 
-/// INTERACTIVE FILTER CHIP
+/// FILTER CHIP
 class _InteractiveFilterChip
     extends StatelessWidget {
 
   const _InteractiveFilterChip({
+
     required this.label,
+
     required this.onTap,
+
+    super.key,
   });
 
   final String label;
+
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
 
     return Material(
+
       color: Colors.transparent,
 
       child: InkWell(
@@ -598,6 +667,7 @@ class _InteractiveFilterChip
         onTap: onTap,
 
         child: Container(
+
           padding:
               const EdgeInsets.symmetric(
             horizontal: 14,
@@ -606,6 +676,7 @@ class _InteractiveFilterChip
 
           decoration:
               BoxDecoration(
+
             color:
                 SmartNavColors.surfaceContainer,
 
@@ -621,19 +692,20 @@ class _InteractiveFilterChip
           ),
 
           child: Row(
+
             mainAxisSize:
                 MainAxisSize.min,
 
             children: [
 
               Text(
+
                 label,
 
                 style:
                     SmartNavTextStyles.labelLg
                         .copyWith(
-                  fontSize:
-                      12,
+                  fontSize: 12,
                 ),
               ),
 
@@ -657,16 +729,24 @@ class _InteractiveFilterChip
 class _SheetIconButton
     extends StatelessWidget {
 
-  const _SheetIconButton({
-    required this.icon,
-  });
-
   final IconData icon;
+
+  final VoidCallback onTap;
+
+  const _SheetIconButton({
+
+    required this.icon,
+
+    required this.onTap,
+
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
 
     return Material(
+
       color:
           SmartNavColors.surfaceContainer,
 
@@ -674,17 +754,21 @@ class _SheetIconButton
           const CircleBorder(),
 
       child: InkWell(
+
         customBorder:
             const CircleBorder(),
 
-        onTap: () {},
+        onTap: onTap,
 
         child: SizedBox(
+
           width: 38,
           height: 38,
 
           child: Icon(
+
             icon,
+
             size: 22,
 
             color:
