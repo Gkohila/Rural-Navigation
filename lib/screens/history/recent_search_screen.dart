@@ -9,16 +9,20 @@ class RecentSearchScreen extends StatelessWidget {
 
     return Scaffold(
 
-      backgroundColor: const Color(0xFFF6F7F9),
+      backgroundColor: Colors.white,
 
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF6F7F9),
+        backgroundColor: Colors.white,
+
         elevation: 0,
+
+        centerTitle: true,
 
         leading: IconButton(
           icon: const Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
+            size: 22,
           ),
 
           onPressed: () {
@@ -27,128 +31,216 @@ class RecentSearchScreen extends StatelessWidget {
         ),
 
         title: Text(
-          "Recent Searches",
+          "Recent Search History",
 
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: const Color(0xFF0B5D1E),
             fontWeight: FontWeight.w700,
             fontSize: 22,
           ),
         ),
+
+        actions: [
+
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+
+            child: IconButton(
+
+              onPressed: () {},
+
+              icon: const Icon(
+                Icons.delete_outline,
+
+                color: Color(0xFF0B5D1E),
+              ),
+            ),
+          ),
+        ],
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
 
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
 
-          children: [
-
-            /// SEARCH BAR
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-
-              decoration: BoxDecoration(
-                color: Colors.white,
-
-                borderRadius: BorderRadius.circular(18),
-              ),
-
-              child: TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-
-                  hintText: "Search history...",
-
-                  hintStyle: GoogleFonts.poppins(),
-
-                  icon: const Icon(Icons.search),
-                ),
-              ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 18,
             ),
 
-            const SizedBox(height: 24),
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
 
-            Text(
-              "Today",
+              children: [
 
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-              ),
-            ),
+                const SizedBox(height: 10),
 
-            const SizedBox(height: 16),
-
-            historyCard(
-              Icons.directions_bus,
-              "Tenkasi → Chennai",
-              "Luxury Bus • 8h journey",
-              "10 mins ago",
-            ),
-
-            historyCard(
-              Icons.train,
-              "Courtallam → Madurai",
-              "Express Train • 5h journey",
-              "30 mins ago",
-            ),
-
-            const SizedBox(height: 24),
-
-            Text(
-              "Yesterday",
-
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            historyCard(
-              Icons.location_on,
-              "Tirunelveli Bus Stand",
-              "Nearby stop search",
-              "Yesterday",
-            ),
-
-            const Spacer(),
-
-            SizedBox(
-              width: double.infinity,
-
-              child: ElevatedButton.icon(
-
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade50,
-
-                  foregroundColor: Colors.red,
+                /// SEARCH BAR
+                Container(
+                  height: 56,
 
                   padding:
-                      const EdgeInsets.symmetric(vertical: 16),
+                      const EdgeInsets.symmetric(
+                    horizontal: 18,
+                  ),
 
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+
+                    borderRadius:
+                        BorderRadius.circular(18),
+
+                    border: Border.all(
+                      color: Colors.grey.shade200,
+                    ),
+                  ),
+
+                  child: Row(
+                    children: [
+
+                      Icon(
+                        Icons.search,
+                        color: Colors.grey.shade500,
+                      ),
+
+                      const SizedBox(width: 10),
+
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+
+                            hintText:
+                                "Search your history...",
+
+                            hintStyle:
+                                GoogleFonts.poppins(
+                              color:
+                                  Colors.grey.shade500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
-                onPressed: () {},
+                const SizedBox(height: 28),
 
-                icon: const Icon(Icons.delete_outline),
-
-                label: Text(
-                  "Clear History",
+                /// TODAY
+                Text(
+                  "Today",
 
                   style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
+                    color:
+                        const Color(0xFF0B5D1E),
+                    fontSize: 18,
                   ),
                 ),
-              ),
+
+                const SizedBox(height: 16),
+
+                historyCard(
+                  Icons.directions_bus,
+                  "Tenkasi  →  Chennai",
+                  "Bus • 8:30 AM",
+                ),
+
+                historyCard(
+                  Icons.train,
+                  "Courtallam  →  Madurai",
+                  "Train • 7:15 AM",
+                ),
+
+                historyCard(
+                  Icons.location_on,
+                  "Tirunelveli Bus Stand",
+                  "Location • 6:45 AM",
+                ),
+
+                const SizedBox(height: 20),
+
+                /// YESTERDAY
+                Text(
+                  "Yesterday",
+
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w700,
+                    color:
+                        const Color(0xFF0B5D1E),
+                    fontSize: 18,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                historyCard(
+                  Icons.directions_bus,
+                  "Tenkasi  →  Coimbatore",
+                  "Bus • 9:10 PM",
+                ),
+
+                historyCard(
+                  Icons.location_on,
+                  "Madurai Railway Station",
+                  "Location • 8:05 PM",
+                ),
+
+                historyCard(
+                  Icons.train,
+                  "Sengottai  →  Chennai Egmore",
+                  "Train • 5:40 PM",
+                ),
+
+                const SizedBox(height: 30),
+
+                /// CLEAR BUTTON
+                Container(
+                  width: double.infinity,
+                  height: 58,
+
+                  decoration: BoxDecoration(
+                    color:
+                        const Color(0xFFEAF7EA),
+
+                    borderRadius:
+                        BorderRadius.circular(18),
+                  ),
+
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.center,
+
+                    children: [
+
+                      const Icon(
+                        Icons.delete_outline,
+                        color: Colors.red,
+                      ),
+
+                      const SizedBox(width: 8),
+
+                      Text(
+                        "Clear All History",
+
+                        style:
+                            GoogleFonts.poppins(
+                          color: Colors.red,
+                          fontWeight:
+                              FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -158,7 +250,6 @@ class RecentSearchScreen extends StatelessWidget {
     IconData icon,
     String title,
     String subtitle,
-    String trailing,
   ) {
 
     return Container(
@@ -169,32 +260,57 @@ class RecentSearchScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius: BorderRadius.circular(22),
+        borderRadius:
+            BorderRadius.circular(22),
+
+        border: Border.all(
+          color: Colors.grey.shade200,
+        ),
+
+        boxShadow: [
+
+          BoxShadow(
+            color:
+                Colors.black.withOpacity(0.03),
+
+            blurRadius: 8,
+
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
 
       child: Row(
         children: [
 
+          /// ICON
           Container(
-            padding: const EdgeInsets.all(14),
+            height: 54,
+            width: 54,
 
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
+              color:
+                  const Color(0xFFEAF7EA),
 
-              borderRadius: BorderRadius.circular(18),
+              borderRadius:
+                  BorderRadius.circular(18),
             ),
 
             child: Icon(
               icon,
-              color: Colors.green.shade700,
+              color:
+                  const Color(0xFF0B5D1E),
+              size: 28,
             ),
           ),
 
-          const SizedBox(width: 14),
+          const SizedBox(width: 16),
 
+          /// TEXT
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
 
               children: [
 
@@ -202,8 +318,9 @@ class RecentSearchScreen extends StatelessWidget {
                   title,
 
                   style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
+                    fontWeight:
+                        FontWeight.w600,
+                    fontSize: 17,
                   ),
                 ),
 
@@ -213,21 +330,20 @@ class RecentSearchScreen extends StatelessWidget {
                   subtitle,
 
                   style: GoogleFonts.poppins(
-                    color: Colors.black54,
-                    fontSize: 13,
+                    color:
+                        Colors.grey.shade600,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
           ),
 
-          Text(
-            trailing,
-
-            style: GoogleFonts.poppins(
-              color: Colors.black45,
-              fontSize: 12,
-            ),
+          /// ARROW
+          Icon(
+            Icons.arrow_forward_ios,
+            size: 18,
+            color: Colors.grey.shade500,
           ),
         ],
       ),

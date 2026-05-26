@@ -6,8 +6,8 @@ class LiveNavigationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      backgroundColor: Colors.white,
 
       body: Stack(
         children: [
@@ -15,168 +15,251 @@ class LiveNavigationScreen extends StatelessWidget {
           /// MAP BACKGROUND
           Positioned.fill(
             child: Image.network(
-              'https://images.unsplash.com/photo-1524661135-423995f22d0b',
-
+              "https://i.imgur.com/f0Vw6Yw.png",
               fit: BoxFit.cover,
             ),
           ),
 
           /// TOP BAR
-          Positioned(
-            top: 50,
-            left: 16,
-            right: 16,
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 10,
+              ),
+              child: Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
+                children: [
 
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-
-              children: [
-
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back),
-
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-
-                    borderRadius:
-                        BorderRadius.circular(18),
-                  ),
-
-                  child: Text(
-                    "Live Navigation",
-
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w600,
+                  /// BACK BUTTON
+                  Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 20,
                     ),
                   ),
-                ),
 
-                CircleAvatar(
-                  backgroundColor: Colors.white,
-
-                  child: IconButton(
-                    icon: const Icon(Icons.my_location),
-
-                    onPressed: () {},
+                  /// TITLE
+                  Text(
+                    "Live Navigation",
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF0B5D1E),
+                    ),
                   ),
-                ),
+
+                  /// SOUND BUTTON
+                  Container(
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.volume_up_outlined,
+                      size: 22,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          /// FLOATING BUTTONS
+          Positioned(
+            right: 18,
+            top: 300,
+            child: Column(
+              children: [
+
+                floatingButton(Icons.my_location),
+
+                const SizedBox(height: 16),
+
+                floatingButton(Icons.layers_outlined),
               ],
             ),
           ),
 
-          /// BOTTOM PANEL
+          /// BOTTOM SHEET
           Align(
             alignment: Alignment.bottomCenter,
-
             child: Container(
-              padding: const EdgeInsets.all(24),
+              width: double.infinity,
 
-              decoration: const BoxDecoration(
+              padding: const EdgeInsets.fromLTRB(
+                22,
+                18,
+                22,
+                26,
+              ),
+
+              decoration: BoxDecoration(
                 color: Colors.white,
 
-                borderRadius: BorderRadius.vertical(
+                borderRadius:
+                    const BorderRadius.vertical(
                   top: Radius.circular(34),
                 ),
+
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
               ),
 
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
                 children: [
 
-                  Center(
-                    child: Container(
-                      width: 70,
-                      height: 6,
+                  /// DRAG LINE
+                  Container(
+                    width: 70,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius:
+                          BorderRadius.circular(20),
+                    ),
+                  ),
 
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                  const SizedBox(height: 24),
 
-                        borderRadius:
-                            BorderRadius.circular(20),
+                  /// INFO SECTION
+                  Row(
+                    children: [
+
+                      infoCard(
+                        title: "ETA",
+                        value: "12 min",
                       ),
-                    ),
+
+                      divider(),
+
+                      infoCard(
+                        title: "Distance",
+                        value: "4.5 km",
+                      ),
+
+                      divider(),
+
+                      infoCard(
+                        title: "Next Stop",
+                        value: "Courtallam",
+                      ),
+                    ],
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 22),
 
-                  Text(
-                    "Current Trip",
-
-                    style: GoogleFonts.poppins(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  navigationTile(
-                    Icons.access_time,
-                    "ETA",
-                    "12 mins",
-                  ),
-
-                  navigationTile(
-                    Icons.route,
-                    "Distance",
-                    "4.5 km",
-                  ),
-
-                  navigationTile(
-                    Icons.location_on,
-                    "Next Stop",
-                    "Courtallam",
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  SizedBox(
+                  /// VOICE NAVIGATION BOX
+                  Container(
+                    height: 58,
                     width: double.infinity,
 
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEAF7EA),
+                      borderRadius:
+                          BorderRadius.circular(18),
+                    ),
+
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center,
+                      children: [
+
+                        const Icon(
+                          Icons.volume_up,
+                          color: Color(0xFF0B5D1E),
+                        ),
+
+                        const SizedBox(width: 10),
+
+                        Text(
+                          "Voice Navigation ON",
+                          style: GoogleFonts.poppins(
+                            color:
+                                const Color(0xFF0B5D1E),
+                            fontWeight:
+                                FontWeight.w600,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  /// END TRIP BUTTON
+                  SizedBox(
+                    width: double.infinity,
+                    height: 64,
+
                     child: ElevatedButton(
+                      onPressed: () {},
 
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor:
+                            const Color(0xFFFF4D5A),
 
-                        padding:
-                            const EdgeInsets.symmetric(
-                                vertical: 18),
+                        elevation: 0,
 
-                        shape: RoundedRectangleBorder(
+                        shape:
+                            RoundedRectangleBorder(
                           borderRadius:
                               BorderRadius.circular(18),
                         ),
                       ),
 
-                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.center,
+                        children: [
 
-                      child: Text(
-                        "End Trip",
+                          /// WHITE CIRCLE
+                          Container(
+                            height: 32,
+                            width: 32,
 
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                            decoration:
+                                const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+
+                            child: const Icon(
+                              Icons.stop,
+                              color:
+                                  Color(0xFFFF4D5A),
+                              size: 18,
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Text(
+                            "End Trip",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight:
+                                  FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -189,52 +272,67 @@ class LiveNavigationScreen extends StatelessWidget {
     );
   }
 
-  Widget navigationTile(
-    IconData icon,
-    String title,
-    String value,
-  ) {
+  /// FLOATING BUTTON
+  Widget floatingButton(IconData icon) {
+    return Container(
+      height: 58,
+      width: 58,
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
 
-      child: Row(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+
+      child: Icon(
+        icon,
+        color: Colors.black87,
+      ),
+    );
+  }
+
+  /// DIVIDER
+  Widget divider() {
+    return Container(
+      height: 50,
+      width: 1,
+      color: Colors.grey.shade300,
+    );
+  }
+
+  /// INFO CARD
+  Widget infoCard({
+    required String title,
+    required String value,
+  }) {
+    return Expanded(
+      child: Column(
         children: [
 
-          Container(
-            padding: const EdgeInsets.all(12),
-
-            decoration: BoxDecoration(
-              color: Colors.green.shade50,
-
-              borderRadius: BorderRadius.circular(16),
-            ),
-
-            child: Icon(
-              icon,
-              color: Colors.green.shade700,
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              color: Colors.black54,
+              fontSize: 13,
             ),
           ),
 
-          const SizedBox(width: 14),
-
-          Expanded(
-            child: Text(
-              title,
-
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                color: Colors.black54,
-              ),
-            ),
-          ),
+          const SizedBox(height: 8),
 
           Text(
             value,
-
+            textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
-              fontSize: 16,
+              color: const Color(0xFF0B5D1E),
               fontWeight: FontWeight.w700,
+              fontSize: 24,
             ),
           ),
         ],
