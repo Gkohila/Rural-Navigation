@@ -1,0 +1,312 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Tenkasi SmartNav - Route Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e2e2e2",
+                    "tertiary-fixed-dim": "#e9bdae",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1a1c1c",
+                    "outline-variant": "#c0c9bb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#004a75",
+                    "on-surface-variant": "#41493e",
+                    "on-primary-container": "#90d689",
+                    "surface-container-low": "#f3f3f3",
+                    "secondary": "#00639a",
+                    "error": "#ba1a1a",
+                    "primary-fixed-dim": "#91d78a",
+                    "on-primary": "#ffffff",
+                    "inverse-primary": "#91d78a",
+                    "background": "#f9f9f9",
+                    "primary-container": "#1b5e20",
+                    "tertiary": "#51342a",
+                    "on-secondary-container": "#00436a",
+                    "secondary-fixed-dim": "#96ccff",
+                    "primary-fixed": "#acf4a4",
+                    "surface-tint": "#2a6b2c",
+                    "surface-dim": "#dadada",
+                    "inverse-surface": "#2f3131",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f9f9f9",
+                    "on-primary-fixed": "#002203",
+                    "inverse-on-surface": "#f1f1f1",
+                    "primary": "#00450d",
+                    "secondary-container": "#51b2fe",
+                    "on-tertiary-container": "#e8bbad",
+                    "surface-bright": "#f9f9f9",
+                    "on-tertiary-fixed-variant": "#5e3f35",
+                    "tertiary-container": "#6b4a3f",
+                    "surface-container-high": "#e8e8e8",
+                    "outline": "#717a6d",
+                    "surface-container": "#eeeeee",
+                    "on-secondary-fixed": "#001d32",
+                    "secondary-fixed": "#cee5ff",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdbcf",
+                    "surface-container-highest": "#e2e2e2",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed": "#2d150d",
+                    "on-primary-fixed-variant": "#0c5216",
+                    "on-background": "#1a1c1c"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "gutter": "24px",
+                    "card-gap": "24px",
+                    "container-padding-mobile": "16px",
+                    "container-padding-desktop": "48px"
+            },
+            "fontFamily": {
+                    "body-md": ["Plus Jakarta Sans"],
+                    "label-lg": ["Plus Jakarta Sans"],
+                    "label-sm": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-lg": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "body-lg": ["20px", {"lineHeight": "30px", "fontWeight": "400"}],
+                    "headline-lg": ["40px", {"lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background font-body-md text-on-surface overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center px-container-mobile py-unit w-full sticky top-0 z-50 bg-surface dark:bg-background shadow-sm dark:shadow-none">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined">person</span>
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Tenkasi SmartNav</h1>
+</div>
+<button class="text-primary font-bold hover:bg-surface-container-high transition-colors px-4 py-2 rounded-lg active:scale-95 duration-200">
+            EN/தமிழ்
+        </button>
+</header><div class="px-4 py-3 bg-surface shadow-sm z-40">
+  <div class="bg-surface-container-low rounded-2xl p-3 shadow-sm flex items-center gap-3">
+    <div class="flex flex-col items-center gap-1 py-1">
+      <span class="material-symbols-outlined text-[18px] text-primary">radio_button_unchecked</span>
+      <div class="w-[1px] h-6 border-l border-dotted border-outline"></div>
+      <span class="material-symbols-outlined text-[18px] text-error">location_on</span>
+    </div>
+    <div class="flex-1 flex flex-col gap-2">
+      <div class="relative">
+        <input class="w-full bg-transparent border-none focus:ring-0 p-0 font-body-md text-on-surface placeholder-outline" placeholder="Your location" type="text" value="Tenkasi">
+        <div class="h-[1px] bg-outline-variant w-full mt-1"></div>
+      </div>
+      <div class="relative">
+        <input class="w-full bg-transparent border-none focus:ring-0 p-0 font-body-md text-on-surface placeholder-outline" placeholder="Choose destination" type="text" value="Courtralam">
+      </div>
+    </div>
+    <div class="flex items-center gap-1">
+      <button class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors active:scale-95">
+        <span class="material-symbols-outlined text-outline">swap_vert</span>
+      </button>
+      <button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-container transition-colors active:scale-95">
+        <span class="material-symbols-outlined text-primary">mic</span>
+      </button>
+    </div>
+  </div>
+</div>
+<main class="min-h-screen pb-24">
+<!-- Map Visualization (Background Logic) -->
+<div class="relative w-full h-[300px] overflow-hidden bg-background">
+<img alt="Static map showing the transit route in Tenkasi" class="w-full h-full object-cover grayscale-[0.2]" data-location="Tenkasi" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyCkvJ0Y7TQIa7-8yV5Mlc2mMvLg5ZuRu9Sm15f3YUpheJVQlPC3jL-MPGFY8e6bPTyTLdwfEtNMOq41_ReXOrx6eZMbdX3A2oHD-xAiG8folKuTaj8MqFX74wBCziEz3xCfg7u5EAAkCSw9noUj64ncxp36WZdDpv8GlB9Fl-FbMPS-4x-VZB0qOGz3Pbnrzf8LEdTMYkL5mGUm2ZMcbTNhYkQm3rWufP3cWLxxFZ_HwVfueZZ-1xP5QkDe7lO_6cmKVETPp4RtgZ">
+<!-- Route Overlay Simulated -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<svg class="absolute top-0 left-0" height="100%" width="100%">
+<path d="M 100 200 Q 200 150 300 180 T 500 120" fill="none" stroke="#00450d" stroke-linecap="round" stroke-width="6"></path>
+<circle cx="100" cy="200" fill="#ffffff" r="8" stroke="#00450d" stroke-width="3"></circle>
+<circle cx="500" cy="120" fill="#ffffff" r="8" stroke="#ba1a1a" stroke-width="3"></circle>
+</svg>
+</div>
+<!-- Route Summary Floating Card -->
+</div>
+<!-- Mode Select Sheet -->
+<div class="bg-surface rounded-t-[32px] -mt-8 relative z-10 p-6 shadow-[0_-8px_20px_rgba(0,0,0,0.05)]">
+<div class="w-12 h-1.5 bg-surface-variant rounded-full mx-auto mb-6"></div>
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md">Public transport</h2>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">tune</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">share</span>
+</button>
+</div>
+</div>
+<!-- Transport Mode Chips -->
+<div class="flex gap-4 overflow-x-auto pb-4 scrollbar-hide no-scrollbar">
+<button class="flex flex-col items-center min-w-[72px] gap-1 group">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-surface-container group-hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">directions_car</span>
+</div>
+<span class="text-label-sm">23 min</span>
+</button>
+<button class="flex flex-col items-center min-w-[72px] gap-1 group">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-surface-container group-hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">two_wheeler</span>
+</div>
+<span class="text-label-sm">19 min</span>
+</button>
+<button class="flex flex-col items-center min-w-[72px] gap-1 group">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-primary-container text-on-primary-container transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">directions_bus</span>
+</div>
+<span class="text-label-sm font-bold text-primary">32 min</span>
+<div class="h-1 w-8 bg-primary rounded-full mt-1"></div>
+</button>
+<button class="flex flex-col items-center min-w-[72px] gap-1 group">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-surface-container group-hover:bg-surface-container-high transition-all">
+<span class="material-symbols-outlined">directions_walk</span>
+</div>
+<span class="text-label-sm">1 hr 38</span>
+</button>
+</div>
+<!-- Filters -->
+<div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container border border-outline-variant whitespace-nowrap">
+<span class="text-label-lg">Leave 4:50 PM</span>
+<span class="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container border border-outline-variant whitespace-nowrap">
+<span class="material-symbols-outlined text-[18px]">check</span>
+<span class="text-label-lg">Train +1</span>
+<span class="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container border border-outline-variant whitespace-nowrap">
+<span class="text-label-lg">Filter by</span>
+<span class="material-symbols-outlined text-[18px]">arrow_drop_down</span>
+</button>
+</div>
+<!-- Results List -->
+<div class="space-y-4">
+<!-- Route Card 1 -->
+<div class="bg-surface-container-low p-5 rounded-[24px] border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">directions_bus</span>
+<div class="flex gap-2">
+<span class="bg-surface-container-highest px-3 py-0.5 rounded-lg font-bold text-label-lg">47D</span>
+<span class="bg-surface-container-highest px-3 py-0.5 rounded-lg font-bold text-label-lg">147C</span>
+</div>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-primary">32 min</div>
+<div class="text-label-sm text-on-surface-variant">10:34 am – 11:05 am</div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="text-label-sm text-outline">Scheduled at 10:35 am from Panagal Park</div>
+<div class="font-bold text-on-surface">₹9</div>
+</div>
+</div>
+<!-- Route Card 2 -->
+<div class="bg-surface-container-low p-5 rounded-[24px] border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">directions_walk</span>
+<span class="text-label-sm text-outline">8</span>
+<span class="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+<span class="material-symbols-outlined text-on-surface-variant">directions_bus</span>
+<span class="bg-surface-container-highest px-3 py-0.5 rounded-lg font-bold text-label-lg">47C</span>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-primary">32 min</div>
+<div class="text-label-sm text-on-surface-variant">10:40 am – 11:11 am</div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="text-label-sm text-outline">Scheduled at 10:48 am from Thiyagaraya Nagar</div>
+<div class="font-bold text-on-surface">₹8</div>
+</div>
+</div>
+<!-- Ad/Promo Card (Modern UI Pattern) -->
+<div class="relative overflow-hidden rounded-[24px] bg-primary text-on-primary p-6 h-[140px] flex flex-col justify-between">
+<img class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay" data-alt="A cinematic, sun-drenched landscape of Tenkasi featuring the majestic Western Ghats in the background under a soft golden hour light. The foreground shows a clean, modern electrical bus moving smoothly along a well-paved rural road. The overall mood is peaceful and progressive, utilizing a natural color palette of deep greens and earthy browns." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7QKSOHgN5yQQI_cXwNoObyqGVNer90ptqesZga41puNQUJ1ipkMpb1gUTP3vSbZ989GSOVEz7N7V1nVRuevHcQB4lTZ6TkdLz8on0SkFYeXB4y7J2uBMAo3UAH1ag0otOsD8aH4qMwXZGM0YFjzBlGDOrqKMIqADLnISzVVeoA6sUKLh1PtogN9NnuSzzEtpz-3Q-6zAk5MfKKTVGyleY-RMu1RH9wMDyR-_nMxKmekcMF_QyJ8Bv_JvAbk5y1gXJHk-DAAXEDJvc">
+<div class="relative z-10">
+<h3 class="font-headline-md text-headline-md mb-1 leading-tight">Travel Greener</h3>
+<p class="text-label-sm opacity-90">Switch to EV transit for your daily commute.</p>
+</div>
+<div class="relative z-10 flex justify-end">
+<button class="bg-primary-fixed text-on-primary-fixed px-6 py-2 rounded-full font-bold text-label-lg active:scale-95 transition-transform">Learn More</button>
+</div>
+</div>
+<!-- Route Card 3 -->
+<div class="bg-surface-container-low p-5 rounded-[24px] border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">train</span>
+<span class="bg-surface-container-highest px-3 py-0.5 rounded-lg font-bold text-label-lg">TEN-MS</span>
+</div>
+<div class="text-right">
+<div class="font-headline-md text-primary">28 min</div>
+<div class="text-label-sm text-on-surface-variant">10:55 am – 11:23 am</div>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<div class="text-label-sm text-outline">Platform 2 • On time</div>
+<div class="font-bold text-on-surface">₹30</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-4 pt-2 bg-surface dark:bg-surface-container-low shadow-lg dark:shadow-none rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 hover:bg-surface-container dark:hover:bg-surface-container-high rounded-xl transition-all">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary-container text-on-primary-container rounded-full px-5 py-1 active:scale-90 transition-all duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">directions_bus</span>
+<span class="font-label-sm text-label-sm font-bold">Routes</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 hover:bg-surface-container dark:hover:bg-surface-container-high rounded-xl transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-sm text-label-sm">Alerts</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline p-2 hover:bg-surface-container dark:hover:bg-surface-container-high rounded-xl transition-all">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-sm text-label-sm">Profile</span>
+</button>
+</nav>
+
+
+</body></html>
