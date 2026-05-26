@@ -7,6 +7,7 @@ import '../../widgets/animations/interactive_scale.dart';
 import '../../widgets/home/bottom_navbar.dart';
 
 import 'trip_planner_data.dart';
+import 'active_trip_screen.dart';
 
 import 'widgets/planner_action_buttons.dart';
 import 'widgets/transport_chip.dart';
@@ -141,7 +142,15 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
                         duration: TripPlannerData.durationSummary,
                         arrival: TripPlannerData.arrivalSummary,
 
-                        onStart: () {},
+                        onStart: () {
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ActiveTripScreen(),
+                            ),
+                          );
+                        },
 
                         onSave: () {},
 
