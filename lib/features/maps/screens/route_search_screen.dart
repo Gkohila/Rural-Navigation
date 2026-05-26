@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smartnav/features/maps/data/static_route_data.dart';
 import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
+import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
+import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
 import 'package:smartnav/features/maps/widgets/free_live_map.dart';
 import 'package:smartnav/features/maps/widgets/route_card.dart';
 import 'package:smartnav/features/maps/widgets/transport_button.dart';
+import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
 import '../widgets/floating_route_search_bar.dart';
 
@@ -18,8 +21,130 @@ class RouteSearchScreen extends StatefulWidget {
 class _RouteSearchScreenState
     extends State<RouteSearchScreen> {
 
-  int _bottomNavIndex = 1;
+  int _bottomNavIndex = 0;
+
+  /// 0 = Car
+  /// 1 = Bike
+  /// 2 = Bus
+  /// 3 = Walk
   int _selectedTransportIndex = 2;
+
+  /// DYNAMIC ROUTE CARDS
+  List<Widget> _buildRouteCards() {
+
+    /// CAR
+    if (_selectedTransportIndex == 0) {
+
+      return [
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[0],
+
+          animationDelay:
+              Duration.zero,
+        ),
+
+        const SizedBox(
+          height: 18,
+        ),
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[1],
+
+          animationDelay:
+              const Duration(
+            milliseconds: 60,
+          ),
+        ),
+      ];
+    }
+
+    /// BIKE
+    if (_selectedTransportIndex == 1) {
+
+      return [
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[2],
+
+          animationDelay:
+              Duration.zero,
+        ),
+
+        const SizedBox(
+          height: 18,
+        ),
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[0],
+
+          animationDelay:
+              const Duration(
+            milliseconds: 60,
+          ),
+        ),
+      ];
+    }
+
+    /// BUS
+    if (_selectedTransportIndex == 2) {
+
+      return [
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[1],
+
+          animationDelay:
+              Duration.zero,
+        ),
+
+        const SizedBox(
+          height: 18,
+        ),
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[2],
+
+          animationDelay:
+              const Duration(
+            milliseconds: 60,
+          ),
+        ),
+
+        const SizedBox(
+          height: 18,
+        ),
+
+        RouteCard(
+          data:
+              StaticRouteData.routeCards[0],
+
+          animationDelay:
+              const Duration(
+            milliseconds: 120,
+          ),
+        ),
+      ];
+    }
+
+    /// WALK
+    return [
+
+      RouteCard(
+        data:
+            StaticRouteData.routeCards[2],
+
+        animationDelay:
+            Duration.zero,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,120 +156,244 @@ class _RouteSearchScreenState
         backgroundColor:
             SmartNavColors.background,
 
-        body: SafeArea(
-          top: true,
-          bottom: false,
+        body: Stack(
+          fit: StackFit.expand,
 
-          child: Stack(
-            fit: StackFit.expand,
+          children: [
 
-            children: [
+            /// MAP
+            const Positioned.fill(
+              child: FreeLiveMap(),
+            ),
 
-              /// MAP
-              const Positioned.fill(
-                child: FreeLiveMap(),
-              ),
+            /// SEARCH BAR
+            Positioned(
+              top:
+                  MediaQuery.of(context)
+                          .padding
+                          .top +
+                      12,
 
-              /// SEARCH BAR
-              Positioned(
-                top: 14,
-                left: 14,
-                right: 14,
+              left: 14,
+              right: 14,
 
-                child:
-                    const FloatingRouteSearchBar(),
-              ),
+              child:
+                  const FloatingRouteSearchBar(),
+            ),
 
-              /// GOOGLE MAPS STYLE SHEET
-              DraggableScrollableSheet(
-                initialChildSize: 0.58,
-                minChildSize: 0.18,
-                maxChildSize: 0.94,
+            /// DRAGGABLE SHEET
+            DraggableScrollableSheet(
 
-                expand: false,
+              initialChildSize: 0.55,
+              minChildSize: 0.27,
 
-                snap: true,
+              maxChildSize: 0.96,
 
-                snapSizes: const [
-                  0.18,
-                  0.58,
-                  0.94,
-                ],
+              expand: true,
 
-                builder:
-                    (context, scrollController) {
+              snap: false,
+              shouldCloseOnMinExtent: false,
 
-                  return Container(
-                    decoration: BoxDecoration(
-                      color:
-                          SmartNavColors.surface,
+              builder:
+                  (context, scrollController) {
 
-                      borderRadius:
-                          const BorderRadius.vertical(
-                        top: Radius.circular(28),
-                      ),
+                return Container(
+                  decoration: BoxDecoration(
+                    color:
+                        SmartNavColors.surface,
 
-                      boxShadow:
-                          SmartNavElevation.sheet,
+                    borderRadius:
+                        const BorderRadius.vertical(
+                      top: Radius.circular(28),
                     ),
 
-                    child:
-                        NestedScrollView(
+                    boxShadow:
+                        SmartNavElevation.sheet,
+                  ),
 
-                      controller:
-                          scrollController,
+                  child: CustomScrollView(
 
-                      physics:
-                          const BouncingScrollPhysics(
-                        parent:
-                            AlwaysScrollableScrollPhysics(),
+                    controller:
+                        scrollController,
+
+                   physics:
+    const ClampingScrollPhysics(),
+
+                    slivers: [
+
+                      /// HANDLE
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+
+                            const SizedBox(
+                              height: 8,
+                            ),
+
+                            Center(
+                              child: Container(
+                                width: 48,
+                                height: 5,
+
+                                decoration:
+                                    BoxDecoration(
+                                  color:
+                                      SmartNavColors
+                                          .surfaceVariant,
+
+                                  borderRadius:
+                                      BorderRadius
+                                          .circular(
+                                    999,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(
+                              height: 12,
+                            ),
+                          ],
+                        ),
                       ),
 
-                      headerSliverBuilder:
-                          (context,
-                              innerBoxIsScrolled) {
+                      /// HEADER
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.symmetric(
+                            horizontal: 20,
+                          ),
 
-                        return [
+                          child: Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment
+                                    .spaceBetween,
 
-                          /// HANDLE + TITLE
-                          SliverToBoxAdapter(
-                            child:
-                                Column(
+                            children: [
+
+                              Text(
+                                'Public transport',
+
+                                style:
+                                    SmartNavTextStyles
+                                        .headlineMd,
+                              ),
+
+                              Row(
+                                children: const [
+
+                                  _SheetIconButton(
+                                    icon:
+                                        Icons.close,
+                                  ),
+
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+
+                                  _SheetIconButton(
+                                    icon:
+                                        Icons.share,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 14,
+                        ),
+                      ),
+
+                      /// STICKY HEADER
+                      SliverPersistentHeader(
+                        pinned: true,
+
+                        delegate:
+                            _StickyHeaderDelegate(
+                          child: Container(
+                            color:
+                                SmartNavColors
+                                    .surface,
+
+                            child: Column(
                               children: [
 
-                                /// HANDLE
-                                const SizedBox(
+                                /// TRANSPORT BUTTONS
+                                SizedBox(
                                   height:
-                                      8,
-                                ),
+                                      86,
 
-                                Center(
                                   child:
-                                      Container(
-                                    width:
-                                        48,
-                                    height:
-                                        5,
-
-                                    decoration:
-                                        BoxDecoration(
-                                      color:
-                                          SmartNavColors.surfaceVariant,
-
-                                      borderRadius:
-                                          BorderRadius.circular(
-                                        999,
-                                      ),
+                                      ListView.separated(
+                                    padding:
+                                        const EdgeInsets.symmetric(
+                                      horizontal:
+                                          20,
                                     ),
+
+                                    scrollDirection:
+                                        Axis.horizontal,
+
+                                    itemCount:
+                                        StaticRouteData
+                                            .transportModes
+                                            .length,
+
+                                    separatorBuilder:
+                                        (_, __) =>
+                                            const SizedBox(
+                                      width:
+                                          14,
+                                    ),
+
+                                    itemBuilder:
+                                        (context,
+                                            i) {
+
+                                      return TransportButton(
+                                        icon:
+                                            StaticRouteData
+                                                .transportModes[i]
+                                                .icon,
+
+                                        label:
+                                            StaticRouteData
+                                                .transportModes[i]
+                                                .label,
+
+                                        isSelected:
+                                            i ==
+                                                _selectedTransportIndex,
+
+                                        iconFilled:
+                                            StaticRouteData
+                                                .transportModes[i]
+                                                .iconFilled,
+
+                                        onTap:
+                                            () {
+
+                                          setState(() {
+
+                                            _selectedTransportIndex =
+                                                i;
+                                          });
+                                        },
+                                      );
+                                    },
                                   ),
                                 ),
 
                                 const SizedBox(
-                                  height:
-                                      12,
+                                  height: 8,
                                 ),
 
-                                /// TITLE
+                                /// FILTER CHIPS
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(
@@ -153,254 +402,133 @@ class _RouteSearchScreenState
                                   ),
 
                                   child:
-                                      Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                      SingleChildScrollView(
+                                    scrollDirection:
+                                        Axis.horizontal,
 
-                                    children: [
+                                    child:
+                                        Row(
+                                      children: [
 
-                                      Text(
-                                        'Public transport',
+                                        /// LEAVE TIME
+                                        _InteractiveFilterChip(
+                                          label:
+                                              'Leave 4:50 PM',
 
-                                        style:
-                                            SmartNavTextStyles.headlineMd,
-                                      ),
+                                          onTap:
+                                              () async {
 
-                                      Row(
-                                        children: const [
+                                            await showDepartureTimeDialog(
+                                              context,
+                                              DateTime.now(),
+                                            );
+                                          },
+                                        ),
 
-                                          _SheetIconButton(
-                                            icon:
-                                                Icons.close,
-                                          ),
+                                        const SizedBox(
+                                          width:
+                                              10,
+                                        ),
 
-                                          SizedBox(
-                                            width:
-                                                8,
-                                          ),
+                                        /// PREFERRED MODES
+                                        _InteractiveFilterChip(
+                                          label:
+                                              'Preferred modes',
 
-                                          _SheetIconButton(
-                                            icon:
-                                                Icons.share,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          onTap:
+                                              () async {
+
+                                            await showTransportPreferencesDialog(
+                                              context,
+                                              [],
+                                            );
+                                          },
+                                        ),
+
+                                        const SizedBox(
+                                          width:
+                                              10,
+                                        ),
+
+                                        /// FILTER BY
+                                        _InteractiveFilterChip(
+                                          label:
+                                              'Filter by',
+
+                                          onTap:
+                                              () async {
+
+                                            await showFilterOptionsDialog(
+                                              context,
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
 
                                 const SizedBox(
                                   height:
-                                      10,
+                                      14,
                                 ),
                               ],
                             ),
                           ),
+                        ),
+                      ),
 
-                          /// STICKY TRANSPORT SECTION
-                          SliverPersistentHeader(
-                            pinned:
-                                true,
-
-                            delegate:
-                                _TransportStickyHeader(
-                              child:
-                                  Container(
-                                color:
-                                    SmartNavColors.surface,
-
-                                child:
-                                    Column(
-                                  children: [
-
-                                    /// TRANSPORT BUTTONS
-                                    SizedBox(
-                                      height:
-                                          82,
-
-                                      child:
-                                          ListView.separated(
-                                        padding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal:
-                                              20,
-                                        ),
-
-                                        scrollDirection:
-                                            Axis.horizontal,
-
-                                        itemCount:
-                                            StaticRouteData.transportModes.length,
-
-                                        separatorBuilder:
-                                            (_, __) =>
-                                                const SizedBox(
-                                          width:
-                                              14,
-                                        ),
-
-                                        itemBuilder:
-                                            (context,
-                                                i) {
-
-                                          return TransportButton(
-                                            icon:
-                                                StaticRouteData.transportModes[i].icon,
-
-                                            label:
-                                                StaticRouteData.transportModes[i].label,
-
-                                            isSelected:
-                                                i ==
-                                                    _selectedTransportIndex,
-
-                                            iconFilled:
-                                                StaticRouteData.transportModes[i].iconFilled,
-
-                                            onTap:
-                                                () {
-
-                                              setState(
-                                                () {
-
-                                                  _selectedTransportIndex =
-                                                      i;
-                                                },
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ),
-
-                                    const SizedBox(
-                                      height:
-                                          6,
-                                    ),
-
-                                    /// FILTER CHIPS
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.fromLTRB(
-                                        20,
-                                        0,
-                                        20,
-                                        0,
-                                      ),
-
-                                      child:
-                                          SingleChildScrollView(
-                                        scrollDirection:
-                                            Axis.horizontal,
-
-                                        child:
-                                            Row(
-                                          children: [
-
-                                            _FilterChip(
-                                              label:
-                                                  'Leave 4:50 PM',
-                                            ),
-
-                                            const SizedBox(
-                                              width:
-                                                  10,
-                                            ),
-
-                                            _FilterChip(
-                                              label:
-                                                  'Preferred modes',
-                                            ),
-
-                                            const SizedBox(
-                                              width:
-                                                  10,
-                                            ),
-
-                                            _FilterChip(
-                                              label:
-                                                  'Filter by',
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    const SizedBox(
-                                      height:
-                                          6,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ];
-                      },
-
-                      /// ROUTE BODY
-                      body:
-                          ListView(
+                      /// DYNAMIC ROUTE LIST
+                      SliverPadding(
                         padding:
                             const EdgeInsets.fromLTRB(
                           20,
-                          0,
+                          16,
                           20,
-                          0,
+                          140,
                         ),
 
-                        children: [
-
-                          const SizedBox(
-                            height:
-                                4,
+                        sliver:
+                            SliverList(
+                          delegate:
+                              SliverChildListDelegate(
+                            _buildRouteCards(),
                           ),
-
-                          const _RouteResultsList(),
-
-                          SizedBox(
-                            height:
-                                MediaQuery.of(
-                                                context)
-                                            .padding
-                                            .bottom +
-                                        140,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  );
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            /// BOTTOM NAV
+            Positioned(
+              left: 0,
+              right: 0,
+
+              bottom:
+                  MediaQuery.of(context)
+                      .padding
+                      .bottom,
+
+              child:
+                  SmartNavBottomBar(
+                selectedIndex:
+                    _bottomNavIndex,
+
+                onItemSelected:
+                    (index) {
+
+                  setState(() {
+
+                    _bottomNavIndex =
+                        index;
+                  });
                 },
               ),
-
-              /// BOTTOM NAV BAR
-              Positioned(
-                left: 0,
-                right: 0,
-
-                bottom:
-                    MediaQuery.of(context)
-                        .padding
-                        .bottom,
-
-                child:
-                    SmartNavBottomBar(
-                  selectedIndex:
-                      _bottomNavIndex,
-
-                  onItemSelected:
-                      (index) {
-
-                    setState(() {
-
-                      _bottomNavIndex =
-                          index;
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -408,20 +536,20 @@ class _RouteSearchScreenState
 }
 
 /// STICKY HEADER
-class _TransportStickyHeader
+class _StickyHeaderDelegate
     extends SliverPersistentHeaderDelegate {
 
   final Widget child;
 
-  _TransportStickyHeader({
+  _StickyHeaderDelegate({
     required this.child,
   });
 
   @override
-  double get minExtent => 128;
+  double get minExtent => 145;
 
   @override
-  double get maxExtent => 128;
+  double get maxExtent => 145;
 
   @override
   Widget build(
@@ -441,6 +569,87 @@ class _TransportStickyHeader
   ) {
 
     return true;
+  }
+}
+
+/// INTERACTIVE FILTER CHIP
+class _InteractiveFilterChip
+    extends StatelessWidget {
+
+  const _InteractiveFilterChip({
+    required this.label,
+    required this.onTap,
+  });
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Material(
+      color: Colors.transparent,
+
+      child: InkWell(
+
+        borderRadius:
+            BorderRadius.circular(12),
+
+        onTap: onTap,
+
+        child: Container(
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 7,
+          ),
+
+          decoration:
+              BoxDecoration(
+            color:
+                SmartNavColors.surfaceContainer,
+
+            borderRadius:
+                BorderRadius.circular(
+              12,
+            ),
+
+            border: Border.all(
+              color:
+                  SmartNavColors.outlineVariant,
+            ),
+          ),
+
+          child: Row(
+            mainAxisSize:
+                MainAxisSize.min,
+
+            children: [
+
+              Text(
+                label,
+
+                style:
+                    SmartNavTextStyles.labelLg
+                        .copyWith(
+                  fontSize:
+                      12,
+                ),
+              ),
+
+              const SizedBox(
+                width: 2,
+              ),
+
+              const Icon(
+                Icons.arrow_drop_down,
+                size: 17,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -484,169 +693,6 @@ class _SheetIconButton
           ),
         ),
       ),
-    );
-  }
-}
-
-/// FILTER CHIP
-class _FilterChip
-    extends StatelessWidget {
-
-  const _FilterChip({
-    required this.label,
-  });
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 7,
-      ),
-
-      decoration:
-          BoxDecoration(
-        color:
-            SmartNavColors.surfaceContainer,
-
-        borderRadius:
-            BorderRadius.circular(
-          12,
-        ),
-
-        border: Border.all(
-          color:
-              SmartNavColors.outlineVariant,
-        ),
-      ),
-
-      child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
-
-        children: [
-
-          Text(
-            label,
-
-            style:
-                SmartNavTextStyles.labelLg
-                    .copyWith(
-              fontSize:
-                  12,
-            ),
-          ),
-
-          const SizedBox(
-            width: 2,
-          ),
-
-          const Icon(
-            Icons.arrow_drop_down,
-            size: 17,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// ROUTE RESULTS
-class _RouteResultsList
-    extends StatelessWidget {
-
-  const _RouteResultsList();
-
-  @override
-  Widget build(BuildContext context) {
-
-    final cards =
-        StaticRouteData.routeCards;
-
-    return Column(
-      children: [
-
-        RouteCard(
-          data:
-              cards[0],
-          animationDelay:
-              Duration.zero,
-        ),
-
-        const SizedBox(
-          height: 14,
-        ),
-
-        RouteCard(
-          data:
-              cards[1],
-          animationDelay:
-              const Duration(
-            milliseconds:
-                60,
-          ),
-        ),
-
-        const SizedBox(
-          height: 14,
-        ),
-
-        RouteCard(
-          data:
-              cards[2],
-          animationDelay:
-              const Duration(
-            milliseconds:
-                120,
-          ),
-        ),
-
-        const SizedBox(
-          height: 14,
-        ),
-
-        RouteCard(
-          data:
-              cards[0],
-          animationDelay:
-              const Duration(
-            milliseconds:
-                180,
-          ),
-        ),
-
-        const SizedBox(
-          height: 14,
-        ),
-
-        RouteCard(
-          data:
-              cards[1],
-          animationDelay:
-              const Duration(
-            milliseconds:
-                240,
-          ),
-        ),
-
-        const SizedBox(
-          height: 14,
-        ),
-
-        RouteCard(
-          data:
-              cards[2],
-          animationDelay:
-              const Duration(
-            milliseconds:
-                300,
-          ),
-        ),
-      ],
     );
   }
 }
