@@ -46,7 +46,7 @@ class LiveNavigationScreen extends StatelessWidget {
                     "Live Navigation",
 
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF0B5D1E),
                     ),
@@ -68,48 +68,48 @@ class LiveNavigationScreen extends StatelessWidget {
 
                 children: [
 
-                  /// MAP IMAGE
+                  /// GOOGLE MAP
                   Positioned.fill(
 
-  child: GoogleMap(
+                    child: GoogleMap(
 
-    initialCameraPosition:
-        const CameraPosition(
+                      initialCameraPosition:
+                          const CameraPosition(
 
-      target: LatLng(
-        8.9342,
-        77.2778,
-      ),
+                        target: LatLng(
+                          8.9342,
+                          77.2778,
+                        ),
 
-      zoom: 13,
-    ),
+                        zoom: 13,
+                      ),
 
-    markers: {
+                      markers: {
 
-      const Marker(
-        markerId: MarkerId("start"),
+                        const Marker(
+                          markerId: MarkerId("start"),
 
-        position: LatLng(
-          8.9290,
-          77.2730,
-        ),
-      ),
+                          position: LatLng(
+                            8.9290,
+                            77.2730,
+                          ),
+                        ),
 
-      const Marker(
-        markerId: MarkerId("end"),
+                        const Marker(
+                          markerId: MarkerId("end"),
 
-        position: LatLng(
-          8.9342,
-          77.2778,
-        ),
-      ),
-    },
+                          position: LatLng(
+                            8.9342,
+                            77.2778,
+                          ),
+                        ),
+                      },
 
-    myLocationEnabled: true,
-    myLocationButtonEnabled: false,
-    zoomControlsEnabled: false,
-  ),
-),
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: false,
+                      zoomControlsEnabled: false,
+                    ),
+                  ),
 
                   /// RIGHT BUTTONS
                   Positioned(
@@ -241,53 +241,23 @@ class LiveNavigationScreen extends StatelessWidget {
                               borderRadius:
                                   BorderRadius.circular(20),
 
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFFF5F6D),
-                                  Color(0xFFFF3148),
-                                ],
-                              ),
+                              color: const Color(0xFFCC2B3E),
                             ),
 
-                            child: Row(
+                            child: Center(
 
-                              mainAxisAlignment:
-                                  MainAxisAlignment.center,
+                              child: Text(
+                                "End Trip",
 
-                              children: [
+                                style:
+                                    GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight:
+                                      FontWeight.w700,
 
-                                Container(
-                                  height: 34,
-                                  width: 34,
-
-                                  decoration:
-                                      const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-
-                                  child: const Icon(
-                                    Icons.stop,
-                                    size: 18,
-                                    color: Color(0xFFFF3148),
-                                  ),
+                                  fontSize: 18,
                                 ),
-
-                                const SizedBox(width: 14),
-
-                                Text(
-                                  "End Trip",
-
-                                  style:
-                                      GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontWeight:
-                                        FontWeight.w700,
-
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ],
@@ -366,7 +336,7 @@ class LiveNavigationScreen extends StatelessWidget {
 
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
-            fontSize: 24,
+            fontSize: 18,
             color: const Color(0xFF0B5D1E),
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class NearbyStopsScreen extends StatelessWidget {
   const NearbyStopsScreen({super.key});
@@ -19,7 +20,7 @@ class NearbyStopsScreen extends StatelessWidget {
             /// HEADER
             Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 18,
+                horizontal: 16,
                 vertical: 14,
               ),
 
@@ -34,30 +35,28 @@ class NearbyStopsScreen extends StatelessWidget {
 
                     icon: const Icon(
                       Icons.arrow_back_ios_new,
+                      color: Colors.black,
+                      size: 22,
                     ),
                   ),
 
                   Expanded(
+
                     child: Center(
 
                       child: Text(
                         "Nearby Stops",
 
-                        style:
-                            GoogleFonts.poppins(
-                          fontSize: 24,
-                          fontWeight:
-                              FontWeight.w700,
-
-                          color:
-                              const Color(
-                                  0xFF0B5D1E),
+                        style: GoogleFonts.poppins(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF0B5D1E),
                         ),
                       ),
                     ),
                   ),
 
-                  const SizedBox(width: 40),
+                  const SizedBox(width: 42),
                 ],
               ),
             ),
@@ -71,7 +70,7 @@ class NearbyStopsScreen extends StatelessWidget {
 
               child: Container(
 
-                height: 58,
+                height: 54,
 
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -89,9 +88,9 @@ class NearbyStopsScreen extends StatelessWidget {
 
                     const SizedBox(width: 16),
 
-                    const Icon(
+                    Icon(
                       Icons.search,
-                      color: Colors.grey,
+                      color: Colors.grey.shade500,
                     ),
 
                     const SizedBox(width: 10),
@@ -101,7 +100,8 @@ class NearbyStopsScreen extends StatelessWidget {
 
                       style:
                           GoogleFonts.poppins(
-                        color: Colors.grey,
+                        color: Colors.grey.shade500,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -109,51 +109,158 @@ class NearbyStopsScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 18),
 
-            /// MAP
-            Stack(
+            /// MAP SECTION
+            SizedBox(
 
-              children: [
+              height: 180,
 
-                Image.network(
-                  "https://i.imgur.com/aq2fM6p.png",
+              child: Stack(
 
-                  height: 220,
-                  width: double.infinity,
+                children: [
 
-                  fit: BoxFit.cover,
-                ),
+                  GoogleMap(
 
-                Positioned(
-                  right: 18,
-                  bottom: 18,
+                    initialCameraPosition:
+                        const CameraPosition(
 
-                  child: Container(
+                      target: LatLng(
+                        8.9342,
+                        77.2778,
+                      ),
 
-                    height: 58,
-                    width: 58,
-
-                    decoration:
-                        const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
+                      zoom: 14,
                     ),
 
-                    child: const Icon(
-                      Icons.my_location,
+                    zoomControlsEnabled: false,
+                    myLocationButtonEnabled: false,
+
+                    markers: {
+
+                      const Marker(
+                        markerId: MarkerId("1"),
+
+                        position: LatLng(
+                          8.9342,
+                          77.2778,
+                        ),
+                      ),
+
+                      const Marker(
+                        markerId: MarkerId("2"),
+
+                        position: LatLng(
+                          8.9380,
+                          77.2810,
+                        ),
+                      ),
+
+                      const Marker(
+                        markerId: MarkerId("3"),
+
+                        position: LatLng(
+                          8.9300,
+                          77.2700,
+                        ),
+                      ),
+
+                      const Marker(
+                        markerId: MarkerId("4"),
+
+                        position: LatLng(
+                          8.9270,
+                          77.2790,
+                        ),
+                      ),
+
+                      const Marker(
+                        markerId: MarkerId("5"),
+
+                        position: LatLng(
+                          8.9360,
+                          77.2720,
+                        ),
+                      ),
+                    },
+                  ),
+
+                  /// BLUE RADIUS
+                  Center(
+
+                    child: Container(
+
+                      height: 80,
+                      width: 80,
+
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
                     ),
                   ),
-                ),
-              ],
+
+                  /// BLUE DOT
+                  Center(
+
+                    child: Container(
+
+                      height: 16,
+                      width: 16,
+
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+
+                        shape: BoxShape.circle,
+
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 3,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  /// LOCATION BUTTON
+                  Positioned(
+                    right: 18,
+                    bottom: 18,
+
+                    child: Container(
+
+                      height: 56,
+                      width: 56,
+
+                      decoration:
+                          BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+
+                        boxShadow: [
+
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.12),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+
+                      child: const Icon(
+                        Icons.my_location,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             /// TITLE
             Padding(
               padding:
                   const EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 18,
+                horizontal: 20,
+                vertical: 16,
               ),
 
               child: Align(
@@ -167,7 +274,7 @@ class NearbyStopsScreen extends StatelessWidget {
                     fontWeight:
                         FontWeight.w700,
 
-                    fontSize: 22,
+                    fontSize: 18,
 
                     color:
                         const Color(
@@ -177,7 +284,7 @@ class NearbyStopsScreen extends StatelessWidget {
               ),
             ),
 
-            /// LIST
+            /// STOP LIST
             Expanded(
 
               child: ListView(
@@ -213,11 +320,12 @@ class NearbyStopsScreen extends StatelessWidget {
                     "650 m away",
                   ),
 
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 14),
 
+                  /// VIEW MORE
                   Container(
 
-                    height: 64,
+                    height: 62,
 
                     decoration: BoxDecoration(
                       color: const Color(0xFFEAF7EA),
@@ -244,6 +352,8 @@ class NearbyStopsScreen extends StatelessWidget {
                             color:
                                 const Color(
                                     0xFF0B5D1E),
+
+                            fontSize: 15,
                           ),
                         ),
 
@@ -257,7 +367,7 @@ class NearbyStopsScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -275,32 +385,40 @@ class NearbyStopsScreen extends StatelessWidget {
 
     return Container(
 
-      margin: const EdgeInsets.only(bottom: 18),
+      margin: const EdgeInsets.only(bottom: 16),
 
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 16,
+      ),
 
       decoration: BoxDecoration(
         color: Colors.white,
 
         borderRadius:
-            BorderRadius.circular(24),
+            BorderRadius.circular(22),
 
         boxShadow: [
 
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
 
       child: Row(
+        crossAxisAlignment:
+            CrossAxisAlignment.center,
+
         children: [
 
+          /// ICON
           Container(
 
-            height: 62,
-            width: 62,
+            height: 56,
+            width: 56,
 
             decoration: BoxDecoration(
               color: const Color(0xFFEAF7EA),
@@ -312,13 +430,15 @@ class NearbyStopsScreen extends StatelessWidget {
             child: const Icon(
               Icons.directions_bus,
               color: Color(0xFF0B5D1E),
-              size: 30,
+              size: 28,
             ),
           ),
 
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
 
+          /// TEXT
           Expanded(
+
             child: Column(
               crossAxisAlignment:
                   CrossAxisAlignment.start,
@@ -328,51 +448,66 @@ class NearbyStopsScreen extends StatelessWidget {
                 Text(
                   title,
 
+                  maxLines: 2,
+
+                  overflow:
+                      TextOverflow.ellipsis,
+
                   style:
                       GoogleFonts.poppins(
+
                     fontWeight:
                         FontWeight.w700,
 
-                    fontSize: 18,
+                    fontSize: 16,
+
+                    color: Colors.black,
                   ),
                 ),
 
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
 
                 Text(
                   type,
 
                   style:
                       GoogleFonts.poppins(
-                    color: Colors.grey,
+                    color: Colors.grey.shade500,
+                    fontSize: 13,
                   ),
                 ),
 
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
 
                 Text(
                   distance,
 
                   style:
                       GoogleFonts.poppins(
+
                     color:
                         const Color(
                             0xFF0B5D1E),
 
                     fontWeight:
                         FontWeight.w700,
+
+                    fontSize: 15,
                   ),
                 ),
               ],
             ),
           ),
 
+          const SizedBox(width: 10),
+
+          /// BUTTON
           Container(
 
             padding:
                 const EdgeInsets.symmetric(
-              horizontal: 18,
-              vertical: 12,
+              horizontal: 14,
+              vertical: 10,
             ),
 
             decoration: BoxDecoration(
@@ -383,24 +518,31 @@ class NearbyStopsScreen extends StatelessWidget {
             ),
 
             child: Row(
+              mainAxisSize:
+                  MainAxisSize.min,
+
               children: [
 
                 const Icon(
                   Icons.navigation,
                   color: Colors.white,
-                  size: 18,
+                  size: 14,
                 ),
 
-                const SizedBox(width: 6),
+                const SizedBox(width: 5),
 
                 Text(
                   "Directions",
 
                   style:
                       GoogleFonts.poppins(
+
                     color: Colors.white,
+
                     fontWeight:
                         FontWeight.w600,
+
+                    fontSize: 12,
                   ),
                 ),
               ],
