@@ -126,7 +126,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-<<<<<<< HEAD
   flutter_map:
     dependency: "direct main"
     description:
@@ -135,8 +134,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.2.1"
-=======
->>>>>>> 78290876e1767d843157e72302e0be8f9cd22ffe
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -163,7 +160,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-<<<<<<< HEAD
   geolocator:
     dependency: "direct main"
     description:
@@ -212,8 +208,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.5"
-=======
->>>>>>> 78290876e1767d843157e72302e0be8f9cd22ffe
   google_fonts:
     dependency: "direct main"
     description:

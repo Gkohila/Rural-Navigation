@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'screens/auth/login_screen.dart';
 import 'screens/home/home_screen.dart';
 import 'theme/app_theme.dart';
 
@@ -31,7 +32,7 @@ class SmartNavApp extends StatelessWidget {
 
       theme: AppTheme.light,
 
-      home: HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }
