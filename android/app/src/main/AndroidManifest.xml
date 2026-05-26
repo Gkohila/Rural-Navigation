@@ -28,7 +28,15 @@
 
         <meta-data
             android:name="flutterEmbedding"
+<<<<<<< HEAD
             android:value="2" />
+=======
+            android:value="AIzaSyCfhDygEEJHiTagRgmrt_QPM1FJUjVZ9Us" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+>>>>>>> 78290876e1767d843157e72302e0be8f9cd22ffe
 
     </application>
 
