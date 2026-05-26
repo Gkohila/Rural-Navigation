@@ -142,7 +142,7 @@ class LastMileScreen extends StatelessWidget {
 
                       const SizedBox(height: 26),
 
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: 24,
                         ),
@@ -155,7 +155,7 @@ class LastMileScreen extends StatelessWidget {
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 32,
                             fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                            color: AppColors.surfaceContainerLowest,
                             height: 1.2,
                           ),
                         ),
@@ -166,7 +166,7 @@ class LastMileScreen extends StatelessWidget {
               ),
 
               /// TITLE
-              const Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: 18,
                 ),
@@ -246,7 +246,7 @@ class LastMileScreen extends StatelessWidget {
                 height: 64,
 
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade400,
+                  color: AppColors.primaryContainer,
 
                   borderRadius:
                       BorderRadius.circular(18),
@@ -254,14 +254,14 @@ class LastMileScreen extends StatelessWidget {
 
                 child: const Icon(
                   Icons.directions_bus,
-                  color: Colors.white,
+                  color: AppColors.surfaceContainerLowest,
                   size: 34,
                 ),
               ),
 
               const SizedBox(width: 18),
 
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
@@ -303,11 +303,11 @@ class LastMileScreen extends StatelessWidget {
 
             children: [
 
-              const Expanded(
+              Expanded(
                 child: Text(
                   "Next Bus to Tenkasi Junction",
 
-                  style: TextStyle(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     color: Colors.black54,
                   ),
@@ -327,10 +327,10 @@ class LastMileScreen extends StatelessWidget {
                       BorderRadius.circular(20),
                 ),
 
-                child: const Text(
+                child: Text(
                   "Courtallam 7 Mins",
 
-                  style: TextStyle(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -354,7 +354,7 @@ class LastMileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surfaceContainerLowest,
 
         borderRadius:
             BorderRadius.circular(28),
@@ -372,18 +372,19 @@ class LastMileScreen extends StatelessWidget {
 
             children: [
 
-              const Text(
+              Text(
                 "Auto Rickshaws",
 
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.onSurface,
                 ),
               ),
 
               Icon(
                 Icons.electric_rickshaw,
-                color: Colors.green.shade800,
+                color: AppColors.primary,
                 size: 34,
               ),
             ],
@@ -431,7 +432,7 @@ class LastMileScreen extends StatelessWidget {
 
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    Colors.green.shade800,
+                    AppColors.primary,
 
                 foregroundColor: Colors.white,
 
@@ -457,12 +458,12 @@ class LastMileScreen extends StatelessWidget {
                 );
               },
 
-              child: const Text(
+              child: Text(
                 "Way to the Nearest Auto",
 
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -483,7 +484,7 @@ class LastMileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surfaceContainerLowest,
 
         borderRadius:
             BorderRadius.circular(28),
@@ -501,18 +502,18 @@ class LastMileScreen extends StatelessWidget {
 
             children: [
 
-              const Text(
+              Text(
                 "Private Taxis",
 
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 26,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
 
               Icon(
                 Icons.local_taxi,
-                color: Colors.blue.shade700,
+                color: AppColors.primary,
                 size: 34,
               ),
             ],
@@ -520,10 +521,10 @@ class LastMileScreen extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          const Text(
+          Text(
             "Available for long distance and site seeing tours around Tenkasi.",
 
-            style: TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               color: Colors.black54,
               height: 1.6,
@@ -565,12 +566,12 @@ class LastMileScreen extends StatelessWidget {
                 );
               },
 
-              child: const Text(
+              child: Text(
                 "View Rates",
 
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
               ),
@@ -597,7 +598,7 @@ class LastMileScreen extends StatelessWidget {
 
         image: const DecorationImage(
           image: AssetImage(
-            'assets/images/walk_bg.jpg',
+            'assets/images/forest_top_view.jpg',   
           ),
           fit: BoxFit.cover,
         ),
@@ -627,7 +628,7 @@ class LastMileScreen extends StatelessWidget {
 
             const Icon(
               Icons.directions_walk,
-              color: Colors.white,
+              color: AppColors.surfaceContainerLowest,
               size: 62,
             ),
 
@@ -637,7 +638,7 @@ class LastMileScreen extends StatelessWidget {
 
               style: ElevatedButton.styleFrom(
                 backgroundColor:
-                    const Color(0xFFB8F397),
+                  AppColors.primaryContainer,
 
                 foregroundColor: Colors.black,
 
@@ -668,12 +669,12 @@ class LastMileScreen extends StatelessWidget {
                 Icons.arrow_forward,
               ),
 
-              label: const Text(
+              label: Text(
                 "Start Walking Directions",
 
-                style: TextStyle(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
