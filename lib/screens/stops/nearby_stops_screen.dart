@@ -9,76 +9,257 @@ class NearbyStopsScreen extends StatelessWidget {
 
     return Scaffold(
 
-      backgroundColor: const Color(0xFFF6F7F9),
+      backgroundColor: Colors.white,
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF6F7F9),
-        elevation: 0,
-
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-          ),
-
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-
-        title: Text(
-          "Nearby Stops",
-
-          style: GoogleFonts.poppins(
-            color: Colors.black,
-            fontWeight: FontWeight.w700,
-            fontSize: 22,
-          ),
-        ),
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
 
         child: Column(
           children: [
 
-            /// MAP
-            Container(
-              height: 180,
-              width: double.infinity,
+            /// HEADER
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 14,
+              ),
 
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
+              child: Row(
 
-                image: const DecorationImage(
-                  image: NetworkImage(
-                    'https://images.unsplash.com/photo-1524661135-423995f22d0b',
+                children: [
+
+                  IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                    ),
                   ),
 
-                  fit: BoxFit.cover,
+                  Expanded(
+                    child: Center(
+
+                      child: Text(
+                        "Nearby Stops",
+
+                        style:
+                            GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight:
+                              FontWeight.w700,
+
+                          color:
+                              const Color(
+                                  0xFF0B5D1E),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 40),
+                ],
+              ),
+            ),
+
+            /// SEARCH BAR
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+
+              child: Container(
+
+                height: 58,
+
+                decoration: BoxDecoration(
+                  color: Colors.white,
+
+                  borderRadius:
+                      BorderRadius.circular(18),
+
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+
+                child: Row(
+                  children: [
+
+                    const SizedBox(width: 16),
+
+                    const Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                    ),
+
+                    const SizedBox(width: 10),
+
+                    Text(
+                      "Search nearby stops...",
+
+                      style:
+                          GoogleFonts.poppins(
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-            stopCard(
-              "Courtallam Bus Stop",
-              "200m away",
-              Icons.directions_bus,
+            /// MAP
+            Stack(
+
+              children: [
+
+                Image.network(
+                  "https://i.imgur.com/aq2fM6p.png",
+
+                  height: 220,
+                  width: double.infinity,
+
+                  fit: BoxFit.cover,
+                ),
+
+                Positioned(
+                  right: 18,
+                  bottom: 18,
+
+                  child: Container(
+
+                    height: 58,
+                    width: 58,
+
+                    decoration:
+                        const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+
+                    child: const Icon(
+                      Icons.my_location,
+                    ),
+                  ),
+                ),
+              ],
             ),
 
-            stopCard(
-              "Tenkasi Railway Station",
-              "1.2 km away",
-              Icons.train,
+            /// TITLE
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 22,
+                vertical: 18,
+              ),
+
+              child: Align(
+                alignment: Alignment.centerLeft,
+
+                child: Text(
+                  "Stops Near You",
+
+                  style:
+                      GoogleFonts.poppins(
+                    fontWeight:
+                        FontWeight.w700,
+
+                    fontSize: 22,
+
+                    color:
+                        const Color(
+                            0xFF0B5D1E),
+                  ),
+                ),
+              ),
             ),
 
-            stopCard(
-              "Main Auto Stand",
-              "350m away",
-              Icons.local_taxi,
+            /// LIST
+            Expanded(
+
+              child: ListView(
+
+                padding:
+                    const EdgeInsets.symmetric(
+                  horizontal: 18,
+                ),
+
+                children: [
+
+                  stopCard(
+                    "Courtallam Bus Stop",
+                    "Bus Stop",
+                    "200 m away",
+                  ),
+
+                  stopCard(
+                    "Tenkasi Railway Station",
+                    "Railway Station",
+                    "1.2 km away",
+                  ),
+
+                  stopCard(
+                    "Main Auto Stand",
+                    "Auto Stand",
+                    "350 m away",
+                  ),
+
+                  stopCard(
+                    "Old Bus Stand",
+                    "Bus Stop",
+                    "650 m away",
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  Container(
+
+                    height: 64,
+
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEAF7EA),
+
+                      borderRadius:
+                          BorderRadius.circular(20),
+                    ),
+
+                    child: Row(
+
+                      mainAxisAlignment:
+                          MainAxisAlignment.center,
+
+                      children: [
+
+                        Text(
+                          "View More",
+
+                          style:
+                              GoogleFonts.poppins(
+                            fontWeight:
+                                FontWeight.w600,
+
+                            color:
+                                const Color(
+                                    0xFF0B5D1E),
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Color(0xFF0B5D1E),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           ],
         ),
@@ -88,53 +269,82 @@ class NearbyStopsScreen extends StatelessWidget {
 
   Widget stopCard(
     String title,
+    String type,
     String distance,
-    IconData icon,
   ) {
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+
+      margin: const EdgeInsets.only(bottom: 18),
 
       padding: const EdgeInsets.all(18),
 
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius: BorderRadius.circular(22),
+        borderRadius:
+            BorderRadius.circular(24),
+
+        boxShadow: [
+
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+          ),
+        ],
       ),
 
       child: Row(
         children: [
 
           Container(
-            padding: const EdgeInsets.all(14),
+
+            height: 62,
+            width: 62,
 
             decoration: BoxDecoration(
-              color: Colors.green.shade50,
+              color: const Color(0xFFEAF7EA),
 
-              borderRadius: BorderRadius.circular(18),
+              borderRadius:
+                  BorderRadius.circular(18),
             ),
 
-            child: Icon(
-              icon,
-              color: Colors.green.shade700,
+            child: const Icon(
+              Icons.directions_bus,
+              color: Color(0xFF0B5D1E),
+              size: 30,
             ),
           ),
 
-          const SizedBox(width: 14),
+          const SizedBox(width: 16),
 
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
 
               children: [
 
                 Text(
                   title,
 
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
+                  style:
+                      GoogleFonts.poppins(
+                    fontWeight:
+                        FontWeight.w700,
+
+                    fontSize: 18,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                Text(
+                  type,
+
+                  style:
+                      GoogleFonts.poppins(
+                    color: Colors.grey,
                   ),
                 ),
 
@@ -143,30 +353,57 @@ class NearbyStopsScreen extends StatelessWidget {
                 Text(
                   distance,
 
-                  style: GoogleFonts.poppins(
-                    color: Colors.black54,
+                  style:
+                      GoogleFonts.poppins(
+                    color:
+                        const Color(
+                            0xFF0B5D1E),
+
+                    fontWeight:
+                        FontWeight.w700,
                   ),
                 ),
               ],
             ),
           ),
 
-          ElevatedButton(
+          Container(
 
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green.shade700,
-
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
+            padding:
+                const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 12,
             ),
 
-            onPressed: () {},
+            decoration: BoxDecoration(
+              color: const Color(0xFF0B5D1E),
 
-            child: Text(
-              "Directions",
+              borderRadius:
+                  BorderRadius.circular(30),
+            ),
 
-              style: GoogleFonts.poppins(),
+            child: Row(
+              children: [
+
+                const Icon(
+                  Icons.navigation,
+                  color: Colors.white,
+                  size: 18,
+                ),
+
+                const SizedBox(width: 6),
+
+                Text(
+                  "Directions",
+
+                  style:
+                      GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontWeight:
+                        FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
