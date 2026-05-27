@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
+import '../../../screens/navigation/last_mile_screen.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
 
@@ -594,11 +595,26 @@ class _RouteDetailsScreenState
 
             onTap: () {
 
-              setState(() {
+              if (isNavigationStarted) {
 
-                isNavigationStarted =
-                !isNavigationStarted;
-              });
+                Navigator.push(
+
+                  context,
+
+                  MaterialPageRoute(
+
+                    builder: (_) =>
+                      const LastMileScreen(),
+                  ),
+                );
+
+              } else {
+
+                setState(() {
+
+                  isNavigationStarted = true;
+                });
+              }
             },
 
             child: Container(

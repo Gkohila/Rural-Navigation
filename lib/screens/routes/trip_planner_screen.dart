@@ -14,6 +14,9 @@ import 'widgets/trip_map_preview.dart';
 import 'widgets/trip_timeline.dart';
 import 'widgets/warning_card.dart';
 
+import '../../features/maps/screens/route_details_screen.dart';
+import '../../features/maps/widgets/start_trip_dialog.dart';
+
 /// Trip Planner — static route timeline UI (bus_route_detailed_timeline design).
 class TripPlannerScreen extends StatefulWidget {
   final String transportName;
@@ -56,9 +59,12 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
 
                 // FULL GOOGLE MAP
                 Positioned.fill(
-                  child: TripMapPreview(),
+                  child: IgnorePointer(
+                    ignoring: true,
+                    child: TripMapPreview(),
+                  ),
                 ),
-
+                
                 // TOP APP BAR
                 const Positioned(
                   top: 0,
@@ -141,7 +147,25 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
                         duration: TripPlannerData.durationSummary,
                         arrival: TripPlannerData.arrivalSummary,
 
-                        onStart: () {},
+                        onStart: () async {
+
+                          final shouldStart =
+                            await showStartTripDialog(context);
+
+                          if (shouldStart == true) {
+
+                            Navigator.push(
+
+                              context,
+
+                                MaterialPageRoute(
+
+                                  builder: (_) =>
+                                    RouteDetailsScreen(),
+                                ),
+                              );
+                          }
+                        },
 
                         onSave: () {},
 

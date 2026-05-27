@@ -9,9 +9,13 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
+
     const SystemUiOverlayStyle(
+
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
+
+      statusBarIconBrightness:
+          Brightness.dark,
     ),
   );
 

@@ -192,7 +192,8 @@ class _WalkRow extends StatelessWidget {
               child: Text(
                 stop.title,
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                   color: AppColors.onSurface,
                 ),
               ),
@@ -218,9 +219,10 @@ class _StopContent extends StatelessWidget {
         Text(
           stop.title,
           style: GoogleFonts.plusJakartaSans(
-            fontSize: 18,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
-            height: 1.2,
+            height: 1.1,
+            letterSpacing: -0.2,
             color: AppColors.onSurface,
           ),
         ),
@@ -285,7 +287,7 @@ class _TimeLabel extends StatelessWidget {
           Text(
             timeMain,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 22,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.onSurface,
             ),
