@@ -11,7 +11,9 @@ import 'package:smartnav/features/maps/widgets/transport_button.dart';
 import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
 import '../widgets/floating_route_search_bar.dart';
-import 'trip_planner_screen.dart';
+import 'package:smartnav/screens/routes/trip_planner_screen.dart';
+
+
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
 
