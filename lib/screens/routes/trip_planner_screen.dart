@@ -14,6 +14,7 @@ import 'widgets/trip_map_preview.dart';
 import 'widgets/trip_timeline.dart';
 import 'widgets/warning_card.dart';
 
+import '../../features/maps/screens/route_details_screen.dart';
 import '../../features/maps/widgets/start_trip_dialog.dart';
 
 /// Trip Planner — static route timeline UI (bus_route_detailed_timeline design).
@@ -157,18 +158,12 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
 
                               context,
 
-                              MaterialPageRoute(
+                                MaterialPageRoute(
 
-                                builder: (_) =>
-                                  const Scaffold(
-                                    body: Center(
-                                      child: Text(
-                                        'Navigation Started',
-                                      ),
-                                    ),
-                                  ),
-                              ),
-                            );
+                                  builder: (_) =>
+                                    RouteDetailsScreen(),
+                                ),
+                              );
                           }
                         },
 
