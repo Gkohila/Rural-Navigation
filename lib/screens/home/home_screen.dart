@@ -13,12 +13,13 @@ import '../../widgets/home/quick_action_card.dart';
 import '../../widgets/home/route_card.dart';
 
 import '../navigation/active_trip_screen.dart';
-
+  
 import '../history/recent_search_screen.dart';
 import '../stops/nearby_stops_screen.dart';
 
 import '../../features/maps/screens/route_search_screen.dart';
 import '../navigation/live_navigation_screen.dart';
+import '../alert/alerts_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -83,10 +84,29 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: HomeBottomNavbar(
-        selectedItem: _selectedNavItem,
-        onItemSelected: (item) => setState(() => _selectedNavItem = item),
-      ),
+     bottomNavigationBar: HomeBottomNavbar(
+
+  selectedItem: _selectedNavItem,
+
+  onItemSelected: (item) {
+
+    setState(() {
+      _selectedNavItem = item;
+    });
+
+    if (item == HomeNavItem.alerts) {
+
+      Navigator.push(
+
+        context,
+
+        MaterialPageRoute(
+          builder: (_) => const AlertsScreen(),
+        ),
+      );
+    }
+  },
+),
     );
   }
 }
