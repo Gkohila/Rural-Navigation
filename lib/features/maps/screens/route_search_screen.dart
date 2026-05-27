@@ -241,6 +241,7 @@ return [
       data: SmartNavTheme.light,
 
       child: Scaffold(
+        
 
         backgroundColor:
             SmartNavColors.background,

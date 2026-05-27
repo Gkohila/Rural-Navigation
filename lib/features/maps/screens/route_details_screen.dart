@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartnav/features/maps/services/notification_service.dart';
 import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
+import '../widgets/arrival_alert_dialog.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
 
@@ -575,13 +576,32 @@ const Positioned.fill(
   setState(() {
 
     isNavigationStarted =
-    !isNavigationStarted;
+        !isNavigationStarted;
   });
 
   await NotificationService
       .showTestNotification();
-},
 
+  /// SHOW ALERT ONLY AFTER START
+  if (isNavigationStarted) {
+
+    Future.delayed(
+
+      const Duration(
+        seconds: 10,
+      ),
+
+      () {
+
+        if (!mounted) return;
+
+        showArrivalAlertDialog(
+          context,
+        );
+      },
+    );
+  }
+},
             child: Container(
 
               height: 46,
