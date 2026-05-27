@@ -5,9 +5,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smartnav/features/maps/services/notification_service.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
-import '../widgets/arrival_alert_dialog.dart';
+import 'package:smartnav/features/maps/widgets/arrival_alert_dialog.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
 
@@ -576,32 +576,27 @@ const Positioned.fill(
   setState(() {
 
     isNavigationStarted =
-        !isNavigationStarted;
+    !isNavigationStarted;
   });
 
-  await NotificationService
-      .showTestNotification();
-
-  /// SHOW ALERT ONLY AFTER START
+  /// ONLY WHEN START PRESSED
   if (isNavigationStarted) {
 
+    /// TESTING → 5 sec
     Future.delayed(
 
-      const Duration(
-        seconds: 10,
-      ),
+      const Duration(seconds: 5),
 
       () {
 
         if (!mounted) return;
 
-        showArrivalAlertDialog(
-          context,
-        );
+        showArrivalAlertDialog(context);
       },
     );
   }
 },
+
             child: Container(
 
               height: 46,

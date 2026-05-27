@@ -10,9 +10,16 @@ import '../animations/interactive_scale.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 
+/// ADD THIS IMPORT
+import '../../features/maps/screens/route_search_screen.dart';
+
+/// ADD THIS IMPORT
+import '../../screens/alert/alerts_screen.dart';
+
 enum HomeNavItem { home, routes, alerts, profile }
 
 class HomeBottomNavbar extends StatelessWidget {
+
   const HomeBottomNavbar({
     super.key,
     required this.selectedItem,
@@ -24,16 +31,30 @@ class HomeBottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return ClipRect(
+
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+
+        filter: ImageFilter.blur(
+          sigmaX: 14,
+          sigmaY: 14,
+        ),
 
         child: DecoratedBox(
+
           decoration: BoxDecoration(
-            color: AppColors.surfaceContainerLowest.withValues(alpha: 0.92),
+
+            color:
+                AppColors.surfaceContainerLowest
+                    .withValues(alpha: 0.92),
 
             border: const Border(
-              top: BorderSide(color: AppColors.surfaceContainerHigh),
+
+              top: BorderSide(
+                color:
+                    AppColors.surfaceContainerHigh,
+              ),
             ),
 
             boxShadow: const [
@@ -47,32 +68,50 @@ class HomeBottomNavbar extends StatelessWidget {
           ),
 
           child: SafeArea(
+
             top: false,
 
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+
+              padding:
+                  const EdgeInsets.fromLTRB(
+                16,
+                12,
+                16,
+                16,
+              ),
 
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceAround,
 
                 children: [
 
                   /// HOME
                   _NavItem(
+
                     icon: Icons.home,
                     label: 'Home',
 
-                    isSelected: selectedItem == HomeNavItem.home,
+                    isSelected:
+                        selectedItem ==
+                            HomeNavItem.home,
 
                     onTap: () {
 
-                      onItemSelected(HomeNavItem.home);
+                      onItemSelected(
+                        HomeNavItem.home,
+                      );
 
                       Navigator.push(
+
                         context,
 
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+
+                          builder: (context) =>
+                              const HomeScreen(),
                         ),
                       );
                     },
@@ -80,87 +119,94 @@ class HomeBottomNavbar extends StatelessWidget {
 
                   /// ROUTES
                   _NavItem(
-                    icon: Icons.directions_bus,
+
+                    icon:
+                        Icons.directions_bus,
+
                     label: 'Routes',
 
-                    isSelected: selectedItem == HomeNavItem.routes,
+                    isSelected:
+                        selectedItem ==
+                            HomeNavItem.routes,
 
                     onTap: () {
 
-                      onItemSelected(HomeNavItem.routes);
+                      onItemSelected(
+                        HomeNavItem.routes,
+                      );
+
+                      /// OPEN ROUTE SCREEN
+                      Navigator.push(
+
+                        context,
+
+                        MaterialPageRoute(
+
+                          builder: (context) =>
+                              const RouteSearchScreen(),
+                        ),
+                      );
                     },
                   ),
 
                   /// ALERTS
-                  /// ALERTS
-_NavItem(
-  icon: Icons.notifications_outlined,
-  label: 'Alerts',
-
-  isSelected: selectedItem == HomeNavItem.alerts,
-
-  onTap: () {
-
-    onItemSelected(HomeNavItem.alerts);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-
-      SnackBar(
-        backgroundColor: Colors.green.shade700,
-
-        behavior: SnackBarBehavior.floating,
-
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-
-        margin: const EdgeInsets.all(16),
-
-        content: const Row(
-          children: [
-
-            Icon(
-              Icons.notifications_active,
-              color: Colors.white,
-            ),
-
-            SizedBox(width: 10),
-
-            Expanded(
-              child: Text(
-                "No new alerts available",
-
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  },
-),
-
-                  /// PROFILE
                   _NavItem(
-                    icon: Icons.person_outline,
-                    label: 'Profile',
 
-                    isSelected: selectedItem == HomeNavItem.profile,
+                    icon:
+                        Icons.notifications_outlined,
+
+                    label: 'Alerts',
+
+                    isSelected:
+                        selectedItem ==
+                            HomeNavItem.alerts,
 
                     onTap: () {
 
-                      onItemSelected(HomeNavItem.profile);
+                      onItemSelected(
+                        HomeNavItem.alerts,
+                      );
 
+                      /// OPEN ALERTS SCREEN
                       Navigator.push(
+
                         context,
 
                         MaterialPageRoute(
-                          builder: (context) => const ProfileScreen(),
+
+                          builder: (context) =>
+                              const AlertsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  /// PROFILE
+                  _NavItem(
+
+                    icon:
+                        Icons.person_outline,
+
+                    label: 'Profile',
+
+                    isSelected:
+                        selectedItem ==
+                            HomeNavItem.profile,
+
+                    onTap: () {
+
+                      onItemSelected(
+                        HomeNavItem.profile,
+                      );
+
+                      Navigator.push(
+
+                        context,
+
+                        MaterialPageRoute(
+
+                          builder: (context) =>
+                              const ProfileScreen(),
                         ),
                       );
                     },
@@ -174,11 +220,16 @@ _NavItem(
     )
         .animate()
         .fadeIn(duration: 500.ms)
-        .slideY(begin: 0.12, end: 0, duration: 500.ms);
+        .slideY(
+          begin: 0.12,
+          end: 0,
+          duration: 500.ms,
+        );
   }
 }
 
 class _NavItem extends StatelessWidget {
+
   const _NavItem({
     required this.icon,
     required this.label,
@@ -194,50 +245,79 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final inactiveColor = AppColors.onSurfaceVariant;
+    final inactiveColor =
+        AppColors.onSurfaceVariant;
 
     return InteractiveScale(
+
       onTap: onTap,
 
       hoverScale: 1.08,
       pressScale: 0.92,
 
       child: Padding(
-        padding: const EdgeInsets.symmetric(
+
+        padding:
+            const EdgeInsets.symmetric(
           horizontal: 8,
           vertical: 4,
         ),
 
         child: Column(
+
           mainAxisSize: MainAxisSize.min,
 
           children: [
 
             AnimatedContainer(
-              duration: const Duration(milliseconds: 280),
 
-              curve: Curves.easeOutCubic,
+              duration:
+                  const Duration(
+                milliseconds: 280,
+              ),
 
-              padding: EdgeInsets.symmetric(
-                horizontal: isSelected ? 20 : 0,
-                vertical: isSelected ? 8 : 0,
+              curve:
+                  Curves.easeOutCubic,
+
+              padding:
+                  EdgeInsets.symmetric(
+
+                horizontal:
+                    isSelected ? 20 : 0,
+
+                vertical:
+                    isSelected ? 8 : 0,
               ),
 
               decoration: isSelected
 
                   ? BoxDecoration(
-                      color: AppColors.primary,
 
-                      borderRadius: BorderRadius.circular(999),
+                      color:
+                          AppColors.primary,
+
+                      borderRadius:
+                          BorderRadius.circular(
+                        999,
+                      ),
 
                       boxShadow: [
 
                         BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.3),
+
+                          color:
+                              AppColors.primary
+                                  .withValues(
+                            alpha: 0.3,
+                          ),
 
                           blurRadius: 10,
 
-                          offset: const Offset(0, 3),
+                          offset:
+                              const Offset(
+                            0,
+                            3,
+                          ),
                         ),
                       ],
                     )
@@ -245,11 +325,15 @@ class _NavItem extends StatelessWidget {
                   : null,
 
               child: Icon(
+
                 icon,
+
                 size: 24,
 
                 color: isSelected
+
                     ? AppColors.onPrimary
+
                     : inactiveColor,
               ),
             ),
@@ -257,19 +341,29 @@ class _NavItem extends StatelessWidget {
             const SizedBox(height: 4),
 
             AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 220),
+
+              duration:
+                  const Duration(
+                milliseconds: 220,
+              ),
 
               curve: Curves.easeOut,
 
-              style: GoogleFonts.plusJakartaSans(
+              style:
+                  GoogleFonts.plusJakartaSans(
+
                 fontSize: 10,
 
                 fontWeight: isSelected
+
                     ? FontWeight.w700
+
                     : FontWeight.w500,
 
                 color: isSelected
+
                     ? AppColors.primary
+
                     : inactiveColor,
               ),
 

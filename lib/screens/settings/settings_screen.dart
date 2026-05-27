@@ -226,38 +226,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     ],
                                   ),
 
-                                  actions: [
+                                 actions: [
 
-                                    TextButton(
+  /// CANCEL BUTTON
+  TextButton(
 
-                                      onPressed: () {
-                                        Navigator.pop(
-                                            context);
-                                      },
+    style: TextButton.styleFrom(
 
-                                      child:
-                                          const Text("Cancel"),
-                                    ),
+      foregroundColor:
+          const Color(0xFF0B5D1E),
 
-                                    ElevatedButton(
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 12,
+      ),
+    ),
 
-                                      style:
-                                          ElevatedButton
-                                              .styleFrom(
-                                        backgroundColor:
-                                            const Color(
-                                                0xFF0B5D1E),
-                                      ),
+    onPressed: () {
 
-                                      onPressed: () {
-                                        Navigator.pop(
-                                            context);
-                                      },
+      Navigator.pop(context);
+    },
 
-                                      child:
-                                          const Text("Save"),
-                                    ),
-                                  ],
+    child: Text(
+
+      "Cancel",
+
+      style: GoogleFonts.poppins(
+
+        fontWeight: FontWeight.w500,
+
+        fontSize: 15,
+      ),
+    ),
+  ),
+
+  /// SAVE BUTTON
+  ElevatedButton(
+
+    style: ElevatedButton.styleFrom(
+
+      backgroundColor:
+          const Color(0xFF0B5D1E),
+
+      foregroundColor: Colors.white,
+
+      elevation: 0,
+
+      padding:
+          const EdgeInsets.symmetric(
+        horizontal: 28,
+        vertical: 12,
+      ),
+
+      shape: RoundedRectangleBorder(
+
+        borderRadius:
+            BorderRadius.circular(14),
+      ),
+    ),
+
+    onPressed: () {
+
+      Navigator.pop(context);
+    },
+
+    child: Text(
+
+      "Save",
+
+      style: GoogleFonts.poppins(
+
+        color: Colors.white,
+
+        fontWeight: FontWeight.w600,
+
+        fontSize: 15,
+      ),
+    ),
+  ),
+],
                                 );
                               },
                             );

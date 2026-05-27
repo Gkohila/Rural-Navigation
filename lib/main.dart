@@ -14,9 +14,13 @@ Future<void> main() async {
   await NotificationService.init();
 
   SystemChrome.setSystemUIOverlayStyle(
+
     const SystemUiOverlayStyle(
+
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
+
+      statusBarIconBrightness:
+          Brightness.dark,
     ),
   );
 

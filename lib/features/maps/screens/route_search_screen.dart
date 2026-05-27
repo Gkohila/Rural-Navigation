@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:smartnav/features/maps/data/static_route_data.dart';
-import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
-import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
-import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
-import 'package:smartnav/features/maps/widgets/route_card.dart';
-import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
-import 'package:smartnav/features/maps/widgets/transport_button.dart';
-import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
-import 'package:smartnav/theme/smart_nav_theme.dart';
-import '../widgets/floating_route_search_bar.dart';
-import 'package:smartnav/screens/routes/trip_planner_screen.dart';
-import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'package:smartnav/features/maps/data/static_route_data.dart';
+
+import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
+
+import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
+
+import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
+
+import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
+
+import 'package:smartnav/features/maps/widgets/route_card.dart';
+
+import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
+
+import 'package:smartnav/features/maps/widgets/transport_button.dart';
+
+import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
+
+import 'package:smartnav/screens/routes/trip_planner_screen.dart';
+
+import 'package:smartnav/theme/smart_nav_theme.dart';
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
 
@@ -254,17 +262,16 @@ return [
           children: [
 
             /// MAP
-            /// MAP
+
 Positioned.fill(
 
-  child: AbsorbPointer(
-
-    absorbing: false,
-
-    child: const TripMapPreview(),
-  ),
+  child: Container(
+  color: Colors.grey.shade300,
+),
 ),
 
+/// SEARCH BAR
+            
             /// SEARCH BAR
             Positioned(
 
