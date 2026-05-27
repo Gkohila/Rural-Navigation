@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
-
+import 'package:smartnav/features/maps/services/notification_service.dart';
 class RouteDetailsScreen extends StatefulWidget {
 
   const RouteDetailsScreen({super.key});
@@ -592,14 +592,17 @@ class _RouteDetailsScreenState
           /// =====================================================
           GestureDetector(
 
-            onTap: () {
+            onTap: () async {
 
-              setState(() {
+  setState(() {
 
-                isNavigationStarted =
-                !isNavigationStarted;
-              });
-            },
+    isNavigationStarted =
+    !isNavigationStarted;
+  });
+
+  await NotificationService
+      .showTestNotification();
+},
 
             child: Container(
 
