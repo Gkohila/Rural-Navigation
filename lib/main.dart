@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'screens/auth/login_screen.dart';
-
-import 'screens/home/home_screen.dart';
-import 'screens/navigation/last_mile_screen.dart';
-
 import 'theme/app_theme.dart';
 
 void main() {
@@ -13,9 +9,13 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
+
     const SystemUiOverlayStyle(
+
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
+
+      statusBarIconBrightness:
+          Brightness.dark,
     ),
   );
 
@@ -35,7 +35,7 @@ class SmartNavApp extends StatelessWidget {
 
       theme: AppTheme.light,
 
-      home: LoginScreen(),
+      home: const LoginScreen(),
     );
   }
 }
