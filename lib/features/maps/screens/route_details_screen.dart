@@ -4,10 +4,10 @@
 /// ===============================================================
 
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:smartnav/features/maps/services/notification_service.dart';
+import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
+
 class RouteDetailsScreen extends StatefulWidget {
 
   const RouteDetailsScreen({super.key});
@@ -48,31 +48,9 @@ class _RouteDetailsScreenState
           /// =====================================================
           /// MAP BACKGROUND
           /// =====================================================
-          Positioned.fill(
-            child: FlutterMap(
-
-              options: const MapOptions(
-
-                initialCenter: LatLng(
-                  8.9595,
-                  77.3152,
-                ),
-
-                initialZoom: 13,
-              ),
-
-              children: [
-
-                TileLayer(
-                  urlTemplate:
-                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-
-                  userAgentPackageName:
-                  'com.smartnav.app',
-                ),
-              ],
-            ),
-          ),
+const Positioned.fill(
+  child: TripMapPreview(),
+),
 
           /// =====================================================
           /// TOP BAR

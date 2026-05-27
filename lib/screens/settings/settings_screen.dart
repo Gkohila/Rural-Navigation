@@ -90,7 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 14),
 
             Container(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.all(20),
 
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -134,7 +134,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
 
                       children: [
 
@@ -142,33 +143,174 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           "Kohila",
 
                           style: GoogleFonts.poppins(
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
 
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 4),
 
                         Text(
                           "kohila@tenkasi.gov.in",
 
                           style: GoogleFonts.poppins(
                             color: Colors.black54,
-                            fontSize: 13,
+                            fontSize: 14,
                           ),
                         ),
 
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
 
-                        Text(
-                          "Edit Profile ✎",
+                        GestureDetector(
 
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF0B5D1E),
+                          onTap: () {
 
-                            fontWeight: FontWeight.w600,
+                            showDialog(
 
-                            fontSize: 14,
+                              context: context,
+
+                              builder: (context) {
+
+                                return AlertDialog(
+
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(20),
+                                  ),
+
+                                  title: Text(
+                                    "Edit Profile",
+
+                                    style: GoogleFonts.poppins(
+                                      fontWeight:
+                                          FontWeight.w700,
+                                    ),
+                                  ),
+
+                                  content: Column(
+                                    mainAxisSize:
+                                        MainAxisSize.min,
+
+                                    children: [
+
+                                      TextField(
+                                        decoration:
+                                            InputDecoration(
+                                          labelText: "Name",
+
+                                          border:
+                                              OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    12),
+                                          ),
+                                        ),
+                                      ),
+
+                                      const SizedBox(
+                                          height: 16),
+
+                                      TextField(
+                                        decoration:
+                                            InputDecoration(
+                                          labelText: "Email",
+
+                                          border:
+                                              OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(
+                                                    12),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  actions: [
+
+                                    TextButton(
+
+                                      onPressed: () {
+                                        Navigator.pop(
+                                            context);
+                                      },
+
+                                      child:
+                                          const Text("Cancel"),
+                                    ),
+
+                                    ElevatedButton(
+
+                                      style:
+                                          ElevatedButton
+                                              .styleFrom(
+                                        backgroundColor:
+                                            const Color(
+                                                0xFF0B5D1E),
+                                      ),
+
+                                      onPressed: () {
+                                        Navigator.pop(
+                                            context);
+                                      },
+
+                                      child:
+                                          const Text("Save"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+
+                          child: Container(
+                            padding:
+                                const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+
+                            decoration: BoxDecoration(
+                              color:
+                                  const Color(0xFFE8F5E9),
+
+                              borderRadius:
+                                  BorderRadius.circular(
+                                      12),
+                            ),
+
+                            child: Row(
+                              mainAxisSize:
+                                  MainAxisSize.min,
+
+                              children: [
+
+                                Text(
+                                  "Edit Profile",
+
+                                  style:
+                                      GoogleFonts.poppins(
+                                    color:
+                                        const Color(
+                                            0xFF0B5D1E),
+
+                                    fontWeight:
+                                        FontWeight.w600,
+
+                                    fontSize: 13,
+                                  ),
+                                ),
+
+                                const SizedBox(width: 4),
+
+                                const Icon(
+                                  Icons.edit,
+                                  size: 14,
+                                  color:
+                                      Color(0xFF0B5D1E),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -292,123 +434,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   trailing: "Enabled",
                 ),
               ],
-            ),
-
-            const SizedBox(height: 26),
-
-            /// ABOUT
-            sectionTitle("ABOUT"),
-
-            const SizedBox(height: 14),
-
-            Container(
-              width: double.infinity,
-
-              padding: const EdgeInsets.all(20),
-
-              decoration: BoxDecoration(
-                color: const Color(0xFFEFF6FF),
-
-                borderRadius: BorderRadius.circular(24),
-              ),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-
-                  Row(
-                    children: [
-
-                      const Icon(
-                        Icons.info_outline,
-                        color: Color(0xFF1565C0),
-                      ),
-
-                      const SizedBox(width: 10),
-
-                      Text(
-                        "About",
-
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  aboutRow("App Version", "2.0.5"),
-
-                  const SizedBox(height: 14),
-
-                  Text(
-                    "Terms of Service",
-
-                    style: GoogleFonts.poppins(
-                      color: const Color(0xFF1565C0),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  Text(
-                    "Privacy Policy",
-
-                    style: GoogleFonts.poppins(
-                      color: const Color(0xFF1565C0),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-
-                  const SizedBox(height: 26),
-
-                  Container(
-                    width: double.infinity,
-
-                    padding: const EdgeInsets.only(top: 18),
-
-                    decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                    ),
-
-                    child: Column(
-                      children: [
-
-                        Text(
-                          "Tenkasi SmartNav",
-
-                          style: GoogleFonts.poppins(
-                            color: const Color(0xFF0B5D1E),
-
-                            fontSize: 26,
-
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-
-                        const SizedBox(height: 2),
-
-                        Text(
-                          "Made with pride in Tamil Nadu",
-
-                          style: GoogleFonts.poppins(
-                            color: Colors.black54,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),
@@ -549,36 +574,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icons.arrow_forward_ios,
               size: 16,
             ),
-    );
-  }
-
-  Widget aboutRow(
-    String title,
-    String value,
-  ) {
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-      children: [
-
-        Text(
-          title,
-
-          style: GoogleFonts.poppins(
-            fontSize: 15,
-          ),
-        ),
-
-        Text(
-          value,
-
-          style: GoogleFonts.poppins(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
     );
   }
 

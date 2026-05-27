@@ -11,7 +11,15 @@ import '../../widgets/home/hero/weather_hero_scenario.dart';
 import '../../widgets/home/bottom_navbar.dart';
 import '../../widgets/home/quick_action_card.dart';
 import '../../widgets/home/route_card.dart';
+
+import '../navigation/active_trip_screen.dart';
+
+import '../history/recent_search_screen.dart';
+import '../stops/nearby_stops_screen.dart';
+
 import '../../features/maps/screens/route_search_screen.dart';
+import '../navigation/live_navigation_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -256,17 +264,50 @@ class _QuickActionsSection extends StatelessWidget {
 
   onTap: () {
 
-    if (action.label == 'Find Bus/Train') {
+  if (action.label == 'Find Bus/Train') {
 
-      Navigator.push(
-        context,
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const RouteSearchScreen(),
+      ),
+    );
 
-        MaterialPageRoute(
-          builder: (context) => const RouteSearchScreen(),
-        ),
-      );
-    }
-  },
+  }
+
+  else if (action.label == 'Recent Search History') {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const RecentSearchScreen(),
+      ),
+    );
+
+  }
+
+  else if (action.label == 'Nearby Stops') {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const NearbyStopsScreen(),
+      ),
+    );
+
+  }
+
+  else if (action.label == 'Live Navigation') {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const LiveNavigationScreen(),      ),
+    );
+
+  }
+
+},
 ),
                   ),
               ],
@@ -335,6 +376,18 @@ class _SavedRoutesSection extends StatelessWidget {
                 imageUrl: routeImageCourtallam,
                 fromCity: 'Tenkasi',
                 toCity: 'Courtallam',
+
+                onTap: () {
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RouteSearchScreen(),
+                    ),
+                  );
+
+                },
+
                 duration: '15 mins',
                 frequencyLabel: 'Every 10m',
                 frequencyIcon: Icons.directions_bus,
@@ -344,6 +397,18 @@ class _SavedRoutesSection extends StatelessWidget {
               const SizedBox(width: AppColors.cardGap),
               RouteCard(
                 imageUrl: routeImageTirunelveli,
+
+                onTap: () {
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RouteSearchScreen(),
+                    ),
+                  );
+
+                },
+
                 imageBackgroundColor: AppColors.secondaryFixed,
                 fromCity: 'Sengottai',
                 toCity: 'Tirunelveli',

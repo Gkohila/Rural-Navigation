@@ -1,161 +1,386 @@
 import 'package:flutter/material.dart';
 
 class FloatingRouteSearchBar extends StatelessWidget {
+
   const FloatingRouteSearchBar({super.key});
 
   @override
   Widget build(BuildContext context) {
 
-    return Material(
-      elevation: 10,
-      borderRadius: BorderRadius.circular(18),
-      color: Colors.transparent,
+    return Stack(
 
-      child: Container(
+      clipBehavior: Clip.none,
 
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 10,
-        ),
+      children: [
 
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+        /// ================= MAIN SEARCH BOX =================
+        Container(
 
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
+          /// 🔥 MORE GAP FOR FLOATING BACK BUTTON
+          margin: const EdgeInsets.only(
+            left: 58,
+          ),
 
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 12,
+            top: 10,
+            bottom: 10,
+          ),
 
-            // SOURCE
-            SizedBox(
-              height: 42,
+          decoration: BoxDecoration(
 
-              child: Row(
+            color: Colors.white,
+
+            borderRadius:
+                BorderRadius.circular(22),
+
+            boxShadow: [
+
+              BoxShadow(
+
+                color:
+                    Colors.black.withOpacity(
+                  0.06,
+                ),
+
+                blurRadius: 18,
+
+                offset:
+                    const Offset(0, 6),
+              ),
+            ],
+          ),
+
+          child: Row(
+
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
+            children: [
+
+              /// ================= LEFT SIDE ICONS =================
+              Column(
+
                 children: [
 
-                  const Icon(
-                    Icons.radio_button_unchecked,
-                    color: Color(0xFF2E7D32),
-                    size: 18,
+                  const SizedBox(height: 8),
+
+                  Icon(
+
+                    Icons.radio_button_checked,
+
+                    color:
+                        const Color(0xFF0B5D1E),
+
+                    size: 15,
                   ),
 
-                  const SizedBox(width: 10),
+                  Column(
 
-                  const Expanded(
-                    child: TextField(
+                    children: List.generate(
+                      5,
 
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      (_) => Container(
 
-                      decoration: InputDecoration(
-                        hintText: 'Tenkasi',
-
-                        hintStyle: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
+                        margin:
+                            const EdgeInsets.symmetric(
+                          vertical: 1.5,
                         ),
 
-                        border: InputBorder.none,
+                        width: 2,
+                        height: 4,
 
-                        isCollapsed: true,
+                        decoration:
+                            BoxDecoration(
 
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 10,
+                          color:
+                              Colors.grey.shade400,
+
+                          borderRadius:
+                              BorderRadius.circular(
+                            10,
+                          ),
                         ),
                       ),
                     ),
                   ),
 
-                  IconButton(
-                    onPressed: () {},
+                  Icon(
 
-                    icon: const Icon(
-                      Icons.more_vert,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 28,
-              ),
-
-              child: Divider(
-                height: 1,
-                color: Colors.grey.shade300,
-              ),
-            ),
-
-            // DESTINATION
-            SizedBox(
-              height: 42,
-
-              child: Row(
-                children: [
-
-                  const Icon(
                     Icons.location_on,
-                    color: Colors.red,
-                    size: 18,
+
+                    color:
+                        Colors.red.shade500,
+
+                    size: 21,
                   ),
+                ],
+              ),
 
-                  const SizedBox(width: 10),
+              const SizedBox(width: 10),
 
-                  const Expanded(
-                    child: TextField(
+              /// ================= TEXT FIELDS =================
+              Expanded(
 
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                child: Column(
+
+                  children: [
+
+                    /// SOURCE
+                    Container(
+
+                      height: 44,
+
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 14,
                       ),
 
-                      decoration: InputDecoration(
-                        hintText: 'Courtallam',
+                      decoration: BoxDecoration(
 
-                        hintStyle: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
+                        color: Colors.white,
+
+                        border:
+                            Border.all(
+                          color:
+                              Colors.grey.shade300,
                         ),
 
-                        border: InputBorder.none,
+                        borderRadius:
+                            BorderRadius.circular(
+                          14,
+                        ),
+                      ),
 
-                        isCollapsed: true,
+                      child: const Align(
 
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 10,
+                        alignment:
+                            Alignment.centerLeft,
+
+                        child: TextField(
+
+                          decoration:
+                              InputDecoration(
+
+                            hintText:
+                                'Your location',
+
+                            hintStyle:
+                                TextStyle(
+
+                              fontSize: 16,
+
+                              fontWeight:
+                                  FontWeight.w500,
+
+                              color:
+                                  Color(0xFF0B5D1E),
+                            ),
+
+                            border:
+                                InputBorder.none,
+
+                            isCollapsed:
+                                true,
+                          ),
                         ),
                       ),
                     ),
+
+                    const SizedBox(height: 8),
+
+                    /// DESTINATION
+                    Container(
+
+                      height: 44,
+
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 14,
+                      ),
+
+                      decoration: BoxDecoration(
+
+                        color: Colors.white,
+
+                        border:
+                            Border.all(
+                          color:
+                              Colors.grey.shade300,
+                        ),
+
+                        borderRadius:
+                            BorderRadius.circular(
+                          14,
+                        ),
+                      ),
+
+                      child: const Align(
+
+                        alignment:
+                            Alignment.centerLeft,
+
+                        child: TextField(
+
+                          decoration:
+                              InputDecoration(
+
+                            hintText:
+                                'Choose destination',
+
+                            hintStyle:
+                                TextStyle(
+
+                              fontSize: 16,
+
+                              fontWeight:
+                                  FontWeight.w500,
+
+                              color:
+                                  Colors.black54,
+                            ),
+
+                            border:
+                                InputBorder.none,
+
+                            isCollapsed:
+                                true,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 10),
+
+              /// ================= RIGHT SIDE ICONS =================
+              Column(
+
+                children: [
+
+                  const SizedBox(height: 4),
+
+                  /// SWAP ICON
+                  Container(
+
+                    width: 40,
+                    height: 40,
+
+                    decoration:
+                        BoxDecoration(
+
+                      color:
+                          Colors.grey.shade100,
+
+                      shape:
+                          BoxShape.circle,
+                    ),
+
+                    child: const Icon(
+
+                      Icons.swap_vert_rounded,
+
+                      size: 22,
+
+                      color:
+                          Colors.black87,
+                    ),
                   ),
 
-                  IconButton(
-                    onPressed: () {},
+                  const SizedBox(height: 12),
 
-                    icon: const Icon(
-                      Icons.swap_vert,
-                      size: 20,
+                  /// MIC ICON
+                  Container(
+
+                    width: 40,
+                    height: 40,
+
+                    decoration:
+                        BoxDecoration(
+
+                      color:
+                          Colors.grey.shade100,
+
+                      shape:
+                          BoxShape.circle,
+                    ),
+
+                    child: const Icon(
+
+                      Icons.mic_none_rounded,
+
+                      size: 22,
+
+                      color:
+                          Colors.black87,
                     ),
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+
+        /// ================= FLOATING BACK BUTTON =================
+        Positioned(
+
+          left: 0,
+          top: 34,
+
+          child: GestureDetector(
+
+            onTap: () {
+
+              Navigator.of(context)
+                  .maybePop();
+            },
+
+            child: Container(
+
+              width: 42,
+              height: 42,
+
+              decoration: BoxDecoration(
+
+                color: Colors.white,
+
+                borderRadius:
+                    BorderRadius.circular(
+                  14,
+                ),
+
+                boxShadow: [
+
+                  BoxShadow(
+
+                    color:
+                        Colors.black.withOpacity(
+                      0.06,
+                    ),
+
+                    blurRadius: 10,
+
+                    offset:
+                        const Offset(0, 4),
+                  ),
+                ],
+              ),
+
+              child: const Icon(
+
+                Icons.arrow_back,
+
+                size: 24,
+
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

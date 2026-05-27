@@ -3,17 +3,15 @@ import 'package:smartnav/features/maps/data/static_route_data.dart';
 import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
 import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
 import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
-import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
-import 'package:smartnav/features/maps/widgets/free_live_map.dart';
 import 'package:smartnav/features/maps/widgets/route_card.dart';
 import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
 import 'package:smartnav/features/maps/widgets/transport_button.dart';
 import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
-
-/// IMPORTANT
-/// CHANGE THIS IMPORT BASED ON YOUR FILE NAME
-import 'package:smartnav/features/maps/screens/route_details_screen.dart';
+import '../widgets/floating_route_search_bar.dart';
+import 'package:smartnav/screens/routes/trip_planner_screen.dart';
+import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -26,7 +24,7 @@ class RouteSearchScreen extends StatefulWidget {
 class _RouteSearchScreenState
     extends State<RouteSearchScreen> {
 
-  int _bottomNavIndex = 0;
+  int _bottomNavIndex = 1;
 
   /// 0 = Car
   /// 1 = Bike
@@ -43,11 +41,25 @@ class _RouteSearchScreenState
       return [
 
         RouteCard(
-          data:
-              StaticRouteData.routeCards[0],
+          data: StaticRouteData.routeCards[0],
 
-          animationDelay:
-              Duration.zero,
+          animationDelay: Duration.zero,
+
+          onTap: () {
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const TripPlannerScreen(
+                  transportName: 'Car Route',
+                  routeNumber: 'CAR-01',
+                  departureTime: '5:25 pm',
+                  arrivalTime: '5:55 pm',
+                ),
+              ),
+            );
+
+          },
         ),
 
         const SizedBox(
@@ -55,45 +67,87 @@ class _RouteSearchScreenState
         ),
 
         RouteCard(
-          data:
-              StaticRouteData.routeCards[1],
+          data: StaticRouteData.routeCards[1],
 
-          animationDelay:
-              const Duration(
+          animationDelay: const Duration(
             milliseconds: 60,
           ),
+
+          onTap: () {
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const TripPlannerScreen(
+                  transportName: 'Fast Car',
+                  routeNumber: 'CAR-02',
+                  departureTime: '6:10 pm',
+                  arrivalTime: '6:40 pm',
+                ),
+              ),
+            );
+
+          },
         ),
       ];
     }
 
     /// BIKE
-    if (_selectedTransportIndex == 1) {
+if (_selectedTransportIndex == 1) {
 
-      return [
+  return [
 
-        RouteCard(
-          data:
-              StaticRouteData.routeCards[2],
+    RouteCard(
+      data: StaticRouteData.routeCards[2],
 
-          animationDelay:
-              Duration.zero,
-        ),
+      animationDelay: Duration.zero,
 
-        const SizedBox(
-          height: 18,
-        ),
+      onTap: () {
 
-        RouteCard(
-          data:
-              StaticRouteData.routeCards[0],
-
-          animationDelay:
-              const Duration(
-            milliseconds: 60,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const TripPlannerScreen(
+              transportName: 'Bike Route',
+              routeNumber: 'BIKE-01',
+              departureTime: '5:40 pm',
+              arrivalTime: '6:00 pm',
+            ),
           ),
-        ),
-      ];
-    }
+        );
+
+      },
+    ),
+
+    const SizedBox(
+      height: 18,
+    ),
+
+    RouteCard(
+      data: StaticRouteData.routeCards[0],
+
+      animationDelay: const Duration(
+        milliseconds: 60,
+      ),
+
+      onTap: () {
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const TripPlannerScreen(
+              transportName: 'Fast Bike',
+              routeNumber: 'BIKE-02',
+              departureTime: '6:05 pm',
+              arrivalTime: '6:35 pm',
+            ),
+          ),
+        );
+
+      },
+    ),
+  ];
+}
 
     /// BUS
     if (_selectedTransportIndex == 2) {
@@ -101,12 +155,26 @@ class _RouteSearchScreenState
       return [
 
         RouteCard(
-          data:
-              StaticRouteData.routeCards[1],
+  data: StaticRouteData.routeCards[1],
 
-          animationDelay:
-              Duration.zero,
+  animationDelay: Duration.zero,
+
+  onTap: () {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const TripPlannerScreen(
+          transportName: 'Lion Travels',
+          routeNumber: '147C',
+          departureTime: '5:25 pm',
+          arrivalTime: '5:55 pm',
         ),
+      ),
+    );
+
+  },
+),
 
         const SizedBox(
           height: 18,
@@ -139,16 +207,30 @@ class _RouteSearchScreenState
     }
 
     /// WALK
-    return [
+return [
 
-      RouteCard(
-        data:
-            StaticRouteData.routeCards[2],
+  RouteCard(
+    data: StaticRouteData.routeCards[2],
 
-        animationDelay:
-            Duration.zero,
-      ),
-    ];
+    animationDelay: Duration.zero,
+
+    onTap: () {
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const TripPlannerScreen(
+            transportName: 'Walking Route',
+            routeNumber: 'WALK',
+            departureTime: '5:00 pm',
+            arrivalTime: '5:45 pm',
+          ),
+        ),
+      );
+
+    },
+  ),
+];
   }
 
   @override
@@ -171,9 +253,16 @@ class _RouteSearchScreenState
           children: [
 
             /// MAP
-            Positioned.fill(
-              child: FreeLiveMap(),
-            ),
+            /// MAP
+Positioned.fill(
+
+  child: AbsorbPointer(
+
+    absorbing: false,
+
+    child: const TripMapPreview(),
+  ),
+),
 
             /// SEARCH BAR
             Positioned(
@@ -194,7 +283,7 @@ class _RouteSearchScreenState
             /// DRAGGABLE SHEET
             DraggableScrollableSheet(
 
-              initialChildSize: 0.55,
+              initialChildSize: 0.45,
 
               minChildSize: 0.27,
 
@@ -232,11 +321,9 @@ class _RouteSearchScreenState
 
                     controller:
                         scrollController,
-
-                    physics:
-                        const ClampingScrollPhysics(),
-
-                    slivers: [
+physics:
+    const ClampingScrollPhysics(),                 
+     slivers: [
 
                       /// HANDLE
                       SliverToBoxAdapter(
@@ -437,9 +524,10 @@ class _RouteSearchScreenState
 
                                           setState(() {
 
-                                            _selectedTransportIndex =
-                                                i;
+                                            _selectedTransportIndex = i;
+
                                           });
+
                                         },
                                       );
                                     },
@@ -591,6 +679,7 @@ class _RouteSearchScreenState
           ],
         ),
       ),
+      
     );
   }
 }
