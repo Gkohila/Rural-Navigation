@@ -12,15 +12,14 @@ import '../../widgets/home/bottom_navbar.dart';
 import '../../widgets/home/quick_action_card.dart';
 import '../../widgets/home/route_card.dart';
 
-import '../routes/trip_planner_screen.dart';
 import '../navigation/active_trip_screen.dart';
 
 import '../history/recent_search_screen.dart';
 import '../stops/nearby_stops_screen.dart';
 
 import '../../features/maps/screens/route_search_screen.dart';
+import '../navigation/live_navigation_screen.dart';
 
-import '../navigation/active_trip_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -303,8 +302,7 @@ class _QuickActionsSection extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const ActiveTripScreen(),
-      ),
+        builder: (_) => const LiveNavigationScreen(),      ),
     );
 
   }
