@@ -21,6 +21,9 @@ import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart
 import 'package:smartnav/screens/routes/trip_planner_screen.dart';
 
 import 'package:smartnav/theme/smart_nav_theme.dart';
+
+import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
+
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
 
@@ -265,9 +268,7 @@ return [
 
 Positioned.fill(
 
-  child: Container(
-  color: Colors.grey.shade300,
-),
+  child: const TripMapPreview(),
 ),
 
 /// SEARCH BAR
@@ -291,15 +292,17 @@ Positioned.fill(
             /// DRAGGABLE SHEET
             DraggableScrollableSheet(
 
-              initialChildSize: 0.45,
+              initialChildSize: 0.42,
 
               minChildSize: 0.27,
 
               maxChildSize: 0.82,
 
               expand: true,
+              snap: true,
+              snapSizes: const [0.45, 0.82],
 
-              snap: false,
+          
 
               shouldCloseOnMinExtent:
                   false,
@@ -320,12 +323,26 @@ Positioned.fill(
                       top: Radius.circular(28),
                     ),
 
-                    boxShadow:
-                        SmartNavElevation.sheet,
-                  ),
+                    boxShadow: [
 
+  BoxShadow(
+
+    color:
+        Colors.black.withOpacity(
+      0.05,
+    ),
+
+    blurRadius: 10,
+
+    offset:
+        const Offset(0, 4),
+  ),
+],
+                      ),
                   child:
                       CustomScrollView(
+                        keyboardDismissBehavior:
+    ScrollViewKeyboardDismissBehavior.onDrag,
 
                     controller:
                         scrollController,
@@ -347,15 +364,12 @@ physics:
                             Center(
                               child: Container(
 
-                                width: 48,
+                                width: 42,
                                 height: 5,
 
                                 decoration:
                                     BoxDecoration(
-
-                                  color:
-                                      SmartNavColors
-                                          .surfaceVariant,
+                                  color: Colors.grey.shade300,
 
                                   borderRadius:
                                       BorderRadius.circular(

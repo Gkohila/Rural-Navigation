@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
 import 'package:smartnav/features/maps/widgets/arrival_alert_dialog.dart';
+import 'package:smartnav/screens/navigation/last_mile_screen.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
 
@@ -571,21 +572,21 @@ const Positioned.fill(
           /// =====================================================
           GestureDetector(
 
-            onTap: () async {
+           onTap: () async {
 
-  setState(() {
+  /// =========================================
+  /// IF START BUTTON
+  /// =========================================
+  if (!isNavigationStarted) {
 
-    isNavigationStarted =
-    !isNavigationStarted;
-  });
+    setState(() {
+      isNavigationStarted = true;
+    });
 
-  /// ONLY WHEN START PRESSED
-  if (isNavigationStarted) {
-
-    /// TESTING → 5 sec
+    /// TESTING → 10 sec
     Future.delayed(
 
-      const Duration(seconds: 5),
+      const Duration(seconds: 10),
 
       () {
 
@@ -593,6 +594,27 @@ const Positioned.fill(
 
         showArrivalAlertDialog(context);
       },
+    );
+  }
+
+  /// =========================================
+  /// IF END BUTTON
+  /// =========================================
+  else {
+
+    setState(() {
+      isNavigationStarted = false;
+    });
+
+    /// OPEN LAST MILE SCREEN
+    Navigator.push(
+
+      context,
+
+      MaterialPageRoute(
+        builder: (_) =>
+        const LastMileScreen(),
+      ),
     );
   }
 },

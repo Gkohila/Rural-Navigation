@@ -30,7 +30,8 @@ class FloatingRouteSearchBar extends StatelessWidget {
 
           decoration: BoxDecoration(
 
-            color: Colors.white,
+            color:
+      Colors.white.withOpacity(0.88),
 
             borderRadius:
                 BorderRadius.circular(22),
