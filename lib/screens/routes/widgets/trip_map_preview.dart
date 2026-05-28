@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 
 class TripMapPreview extends StatefulWidget {
   const TripMapPreview({super.key});
@@ -20,21 +22,20 @@ class _TripMapPreviewState
   @override
   Widget build(BuildContext context) {
 
-    return AbsorbPointer(
-
-      absorbing: true,
-
-      child: SizedBox(
-        height: 230,
+    return SizedBox(
+        ///height: 230,
         width: double.infinity,
 
         child: GoogleMap(
 
           initialCameraPosition:
-              CameraPosition(
-            target: tenkasi,
-            zoom: 14,
-          ),
+            CameraPosition(
+              target: tenkasi,
+              zoom: 14,
+            ),
+
+          webGestureHandling:
+            WebGestureHandling.greedy,
 
           myLocationEnabled: true,
           myLocationButtonEnabled: true,
@@ -42,39 +43,42 @@ class _TripMapPreviewState
           zoomControlsEnabled: false,
           mapToolbarEnabled: false,
 
+          rotateGesturesEnabled: false,
+          tiltGesturesEnabled: false,
+
           markers: {
             Marker(
               markerId:
-                  const MarkerId('tenkasi'),
+                const MarkerId('tenkasi'),
 
-              position: tenkasi,
+                position: tenkasi,
 
-              infoWindow: const InfoWindow(
-                title: 'Tenkasi Route',
+                infoWindow: const InfoWindow(
+                  title: 'Tenkasi Route',
+                ),
               ),
-            ),
-          },
+            },
 
-          polylines: {
-            Polyline(
-              polylineId:
+            polylines: {
+              Polyline(
+                polylineId:
                   const PolylineId('route'),
 
-              color: Colors.blue,
-              width: 5,
+                  color: Colors.blue,
+                  width: 5,
 
-              points: const [
-                LatLng(8.9598, 77.3152),
-                LatLng(8.9700, 77.3300),
-              ],
-            ),
-          },
+                  points: const [
+                    LatLng(8.9598, 77.3152),
+                    LatLng(8.9700, 77.3300),
+                  ],
+                ),
+              },
 
-          onMapCreated: (controller) {
-            mapController = controller;
-          },
-        ),
-      ),
-    );
+              onMapCreated: (controller) {
+                mapController = controller;
+              },
+            )
+      
+          );
   }
 }
