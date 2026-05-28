@@ -6,8 +6,262 @@ import '../navigation/live_navigation_screen.dart';
 import '../home/home_screen.dart';
 import '../../widgets/home/bottom_navbar.dart';
 
-class LastMileScreen extends StatelessWidget {
+class LastMileScreen extends StatefulWidget {
+
   const LastMileScreen({super.key});
+
+  @override
+  State<LastMileScreen> createState() =>
+      _LastMileScreenState();
+}
+
+class _LastMileScreenState
+    extends State<LastMileScreen> {
+
+      @override
+void initState() {
+
+  super.initState();
+
+  Future.delayed(
+
+    const Duration(minutes: 1),
+
+    () {
+
+      if (mounted) {
+
+        showArrivalPopup();
+      }
+    },
+  );
+}
+
+void showArrivalPopup() {
+
+  showDialog(
+
+    context: context,
+
+    barrierDismissible: false,
+
+    builder: (_) {
+
+      return Dialog(
+
+        backgroundColor: Colors.transparent,
+
+        child: Container(
+
+          padding: const EdgeInsets.all(28),
+
+          decoration: BoxDecoration(
+
+            color: Colors.white,
+
+            borderRadius:
+                BorderRadius.circular(36),
+          ),
+
+          child: Column(
+
+            mainAxisSize: MainAxisSize.min,
+
+            children: [
+
+              Container(
+
+                width: 100,
+                height: 100,
+
+                decoration: BoxDecoration(
+
+                  shape: BoxShape.circle,
+
+                  color:
+                      const Color(0xFFE8ECE8),
+                ),
+
+                child: Center(
+
+                  child: Container(
+
+                    width: 64,
+                    height: 64,
+
+                    decoration: const BoxDecoration(
+
+                      color: Color(0xFF005F0F),
+
+                      shape: BoxShape.circle,
+                    ),
+
+                    child: const Icon(
+
+                      Icons.check,
+
+                      color: Colors.white,
+                      size: 34,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              Text(
+
+                "You have arrived!",
+
+                textAlign: TextAlign.center,
+
+                style:
+                    GoogleFonts.plusJakartaSans(
+
+                  fontSize: 28,
+                  fontWeight:
+                      FontWeight.w700,
+                ),
+              ),
+
+              const SizedBox(height: 14),
+
+              RichText(
+
+                textAlign: TextAlign.center,
+
+                text: TextSpan(
+
+                  children: [
+
+                    TextSpan(
+
+                      text:
+                          "You've reached ",
+
+                      style:
+                          GoogleFonts.plusJakartaSans(
+
+                        fontSize: 18,
+                        color: Colors.grey,
+                      ),
+                    ),
+
+                    TextSpan(
+
+                      text:
+                          "Courtallam Main Falls",
+
+                      style:
+                          GoogleFonts.plusJakartaSans(
+
+                        fontSize: 18,
+                        fontWeight:
+                            FontWeight.w700,
+
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              SizedBox(
+
+                width: double.infinity,
+
+                height: 56,
+
+                child: ElevatedButton(
+
+                  onPressed: () {
+
+                    Navigator.pushAndRemoveUntil(
+
+                      context,
+
+                      MaterialPageRoute(
+
+                        builder: (_) => 
+                          const HomeScreen(),
+                      ),
+
+                      (route) => false,
+                    );
+                  },
+
+                  style:
+                      ElevatedButton.styleFrom(
+
+                    backgroundColor:
+                        AppColors.primary,
+
+                    shape:
+                        RoundedRectangleBorder(
+
+                      borderRadius:
+                          BorderRadius.circular(
+                              40),
+                    ),
+                  ),
+
+                  child: Text(
+
+                    "Done",
+
+                    style:
+                        GoogleFonts.plusJakartaSans(
+
+                      fontSize: 18,
+                      fontWeight:
+                          FontWeight.w600,
+
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              SizedBox(
+
+                width: double.infinity,
+
+                height: 56,
+
+                child:
+                    OutlinedButton.icon(
+
+                  onPressed: () {},
+
+                  icon: const Icon(
+                    Icons.share,
+                  ),
+
+                  label: Text(
+
+                    "Share Trip",
+
+                    style:
+                        GoogleFonts.plusJakartaSans(
+
+                      fontSize: 17,
+                      fontWeight:
+                          FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +350,7 @@ class LastMileScreen extends StatelessWidget {
 
                   image: const DecorationImage(
                     image: AssetImage(
-                      'assets/images/courtallam.jpg',
+                      'assets/images/forest_top_view.jpg',
                     ),
                     fit: BoxFit.cover,
                   ),
