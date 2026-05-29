@@ -17,11 +17,7 @@ class _TripMapPreviewState extends State<TripMapPreview> {
   @override
   Widget build(BuildContext context) {
 
-    return SizedBox(
-      height: 230,
-      width: double.infinity,
-
-      child: GoogleMap(
+    return GoogleMap(
         initialCameraPosition: CameraPosition(
           target: tenkasi,
           zoom: 14,
@@ -29,8 +25,8 @@ class _TripMapPreviewState extends State<TripMapPreview> {
 
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
-        zoomControlsEnabled: false,
-        mapToolbarEnabled: false,
+        zoomControlsEnabled: true,
+        mapToolbarEnabled: true,
 
         markers: {
           Marker(
@@ -57,7 +53,7 @@ class _TripMapPreviewState extends State<TripMapPreview> {
         onMapCreated: (controller) {
           mapController = controller;
         },
-      ),
+      //),
     );
   }
 }
