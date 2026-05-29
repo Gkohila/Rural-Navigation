@@ -144,10 +144,10 @@ const Positioned.fill(
 
             initialChildSize: .78,
             minChildSize: .11,
-            maxChildSize: .92,
+            maxChildSize: .87,
 
             snap: true,
-            snapSizes: const [.78, .92],
+            snapSizes: const [.78, .87],
 
             builder: (context, controller) {
 

@@ -16,6 +16,7 @@ import 'widgets/warning_card.dart';
 import '../../features/maps/screens/route_details_screen.dart';
 import '../../features/maps/widgets/start_trip_dialog.dart';
 
+
 /// Trip Planner — static route timeline UI (bus_route_detailed_timeline design).
 class TripPlannerScreen extends StatefulWidget {
   final String transportName;
@@ -92,7 +93,7 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
 
     child: ListView(
       controller: scrollController,
-      physics: const BouncingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
 
       children: [
 
@@ -118,7 +119,7 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
           departureTime: widget.departureTime,
         ),
 
-        const SizedBox(height: 160),
+        const SizedBox(height: 80),
       ],
     ),
   );
@@ -138,17 +139,29 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
                         duration: TripPlannerData.durationSummary,
                         arrival: TripPlannerData.arrivalSummary,
 
-                        onStart: () {},
+                        onStart: () async {
+
+  final shouldStart =
+      await showStartTripDialog(context);
+
+  if (shouldStart == true) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const RouteDetailsScreen(),
+      ),
+    );
+  }
+},
 
                         onSave: () {},
 
                         animateDelayMs: 200,
                       ),
 
-                      HomeBottomNavbar(
-                        selectedItem: _navItem,
-                        onItemSelected: _onNavSelected,
-                      ),
+                      
                     ],
                   ),
                 ),
@@ -362,15 +375,7 @@ class _RouteSheet extends StatelessWidget {
 
 const SizedBox(height: 24),
 
-PlannerActionButtons(
-  duration: TripPlannerData.durationSummary,
-  arrival: TripPlannerData.arrivalSummary,
-  onStart: () {},
-  onSave: () {},
-  animateDelayMs: 200,
-),
 
-const SizedBox(height: 100),
             ],
           ),
         ),
