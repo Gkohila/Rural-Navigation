@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_colors.dart';
 import '../../widgets/animations/interactive_scale.dart';
-import '../../widgets/home/bottom_navbar.dart';
 
 import 'trip_planner_data.dart';
 
@@ -38,7 +37,6 @@ class TripPlannerScreen extends StatefulWidget {
 
 class _TripPlannerScreenState extends State<TripPlannerScreen> {
   int _selectedTransport = 0;
-  HomeNavItem _navItem = HomeNavItem.routes;
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +55,10 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
             child: Stack(
               children: [
 
-                // FULL GOOGLE MAP
-                Positioned.fill(
-                  child: IgnorePointer(
-                    ignoring: true,
-                    child: TripMapPreview(),
-                  ),
-                ),
+              // FULL GOOGLE MAP
+              Positioned.fill(
+                child: TripMapPreview(),
+              ),
                 
                 // TOP APP BAR
                 const Positioned(
@@ -75,63 +70,59 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
 
                 // DRAGGABLE WHITE SHEET
                 DraggableScrollableSheet(
-                  initialChildSize: 0.55,
-                  minChildSize: 0.30,
-                  maxChildSize: 0.95,
+                  initialChildSize: 0.50,
+                  minChildSize: 0.25,
+                  maxChildSize: 0.90,
 
                   builder: (context, scrollController) {
 
-                    return Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(32),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                          ),
-                        ],
-                      ),
+  return Container(
+    decoration: const BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.vertical(
+        top: Radius.circular(32),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 10,
+        ),
+      ],
+    ),
 
-                      child: SingleChildScrollView(
-                        controller: scrollController,
+    child: ListView(
+      controller: scrollController,
+      physics: const BouncingScrollPhysics(),
 
-                        child: Column(
-                          children: [
+      children: [
 
-                            const SizedBox(height: 12),
+        const SizedBox(height: 12),
 
-                            // DRAG HANDLE
-                            Center(
-                              child: Container(
-                                width: 50,
-                                height: 5,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                            ),
+        Center(
+          child: Container(
+            width: 50,
+            height: 5,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
 
-                            _RouteSheet(
-                              selectedTransport: _selectedTransport,
+        _RouteSheet(
+          selectedTransport: _selectedTransport,
+          onTransportSelected: (i) =>
+              setState(() => _selectedTransport = i),
+          transportName: widget.transportName,
+          routeNumber: widget.routeNumber,
+          departureTime: widget.departureTime,
+        ),
 
-                              onTransportSelected: (i) =>
-                                  setState(() => _selectedTransport = i),
-
-                              transportName: widget.transportName,
-                              routeNumber: widget.routeNumber,
-                              departureTime: widget.departureTime,
-                            ),
-
-                            const SizedBox(height: 160),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+        const SizedBox(height: 160),
+      ],
+    ),
+  );
+},
                 ),
 
                 // FIXED BOTTOM SECTION
@@ -147,25 +138,7 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
                         duration: TripPlannerData.durationSummary,
                         arrival: TripPlannerData.arrivalSummary,
 
-                        onStart: () async {
-
-                          final shouldStart =
-                            await showStartTripDialog(context);
-
-                          if (shouldStart == true) {
-
-                            Navigator.push(
-
-                              context,
-
-                                MaterialPageRoute(
-
-                                  builder: (_) =>
-                                    RouteDetailsScreen(),
-                                ),
-                              );
-                          }
-                        },
+                        onStart: () {},
 
                         onSave: () {},
 
@@ -190,17 +163,6 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
         );
   }
 
-  void _onNavSelected(HomeNavItem item) {
-
-    if (item == HomeNavItem.home) {
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      return;
-    }
-
-    if (item == HomeNavItem.routes) return;
-
-    setState(() => _navItem = item);
-  }
 }
 
 /// Top bar: back, title, overflow menu.
@@ -210,6 +172,7 @@ class _TripPlannerAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      ///color: Colors.white,
       padding: const EdgeInsets.symmetric(
         horizontal: AppColors.mobilePadding,
         vertical: 8,
@@ -351,7 +314,7 @@ class _RouteSheet extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              TripTimeline(
+            TripTimeline(
   stops: [
     TimelineStopData(
       type: TimelineStopType.origin,
@@ -366,14 +329,14 @@ class _RouteSheet extends StatelessWidget {
       time: '',
     ),
 
-   TimelineStopData(
-  type: TimelineStopType.busStand,
-  title: 'New Bus Stand',
-  subtitle: '$routeNumber · To Shencottah',
-  badge: 'Scheduled',
-  time: departureTime,
-  timeEmphasis: true,
-),
+    TimelineStopData(
+      type: TimelineStopType.busStand,
+      title: 'New Bus Stand',
+      subtitle: '$routeNumber · To Shencottah',
+      badge: 'Scheduled',
+      time: departureTime,
+      timeEmphasis: true,
+    ),
 
     TimelineStopData(
       type: TimelineStopType.intermediate,
@@ -396,6 +359,18 @@ class _RouteSheet extends StatelessWidget {
     ),
   ],
 ),
+
+const SizedBox(height: 24),
+
+PlannerActionButtons(
+  duration: TripPlannerData.durationSummary,
+  arrival: TripPlannerData.arrivalSummary,
+  onStart: () {},
+  onSave: () {},
+  animateDelayMs: 200,
+),
+
+const SizedBox(height: 100),
             ],
           ),
         ),
