@@ -13,6 +13,9 @@ import 'widgets/trip_map_preview.dart';
 import 'widgets/trip_timeline.dart';
 import 'widgets/warning_card.dart';
 
+import '../../features/maps/screens/route_details_screen.dart';
+import '../../features/maps/widgets/start_trip_dialog.dart';
+
 /// Trip Planner — static route timeline UI (bus_route_detailed_timeline design).
 class TripPlannerScreen extends StatefulWidget {
   final String transportName;
@@ -52,11 +55,11 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
             child: Stack(
               children: [
 
-                // FULL GOOGLE MAP
-                Positioned.fill(
-                  child: TripMapPreview(),
-                ),
-
+              // FULL GOOGLE MAP
+              Positioned.fill(
+                child: TripMapPreview(),
+              ),
+                
                 // TOP APP BAR
                 const Positioned(
                   top: 0,
@@ -123,7 +126,32 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
                 ),
 
                 // FIXED BOTTOM SECTION
-               
+                Align(
+                  alignment: Alignment.bottomCenter,
+
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+
+                    children: [
+
+                      PlannerActionButtons(
+                        duration: TripPlannerData.durationSummary,
+                        arrival: TripPlannerData.arrivalSummary,
+
+                        onStart: () {},
+
+                        onSave: () {},
+
+                        animateDelayMs: 200,
+                      ),
+
+                      HomeBottomNavbar(
+                        selectedItem: _navItem,
+                        onItemSelected: _onNavSelected,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -144,6 +172,7 @@ class _TripPlannerAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      ///color: Colors.white,
       padding: const EdgeInsets.symmetric(
         horizontal: AppColors.mobilePadding,
         vertical: 8,

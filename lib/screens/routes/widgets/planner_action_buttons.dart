@@ -46,98 +46,117 @@ class PlannerActionButtons extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      duration,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.onSurface,
-                      ),
-                    ),
-                    Text(
-                      arrival,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        color: AppColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              InteractiveScale(
-                onTap: onStart,
-                hoverScale: 1.04,
-                pressScale: 0.95,
-                child: Material(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(999),
-                  elevation: 0,
-                  child: InkWell(
-                    onTap: onStart,
-                    borderRadius: BorderRadius.circular(999),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 28,
-                        vertical: 14,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.navigation_rounded,
-                            color: AppColors.onPrimary,
-                            size: 22,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Start',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.onPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          InteractiveScale(
-            onTap: onSave,
-            hoverScale: 1.02,
-            pressScale: 0.97,
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: onSave,
-                icon: const Icon(Icons.bookmark_border, size: 20),
-                label: Text(
-                  'Save',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.outline),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
+  children: [
+
+    /// LEFT SIDE
+    Expanded(
+      child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+
+        children: [
+
+          Text(
+            duration,
+
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: AppColors.onSurface,
             ),
           ),
+
+          const SizedBox(height: 2),
+
+          Text(
+            arrival,
+
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    ),
+
+    /// SAVE BUTTON
+    OutlinedButton.icon(
+
+      onPressed: onSave,
+
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+
+        side: BorderSide(
+          color: AppColors.outline,
+        ),
+
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(24),
+        ),
+      ),
+
+      icon: const Icon(
+        Icons.bookmark_border,
+        size: 18,
+      ),
+
+      label: Text(
+        'Save',
+
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+
+    const SizedBox(width: 10),
+
+    /// START BUTTON
+    ElevatedButton.icon(
+
+      onPressed: onStart,
+
+      style: ElevatedButton.styleFrom(
+        backgroundColor:
+            AppColors.primary,
+
+        foregroundColor: Colors.white,
+
+        elevation: 0,
+
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 15,
+        ),
+
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(28),
+        ),
+      ),
+
+      icon: const Icon(
+        Icons.navigation,
+        size: 18,
+      ),
+
+      label: Text(
+        'Start',
+
+        style: GoogleFonts.plusJakartaSans(
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    ),
+  ],
+),
         ],
       ),
     )

@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-import 'screens/routes/trip_planner_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(
+
+    const SystemUiOverlayStyle(
+
+      statusBarColor: Colors.transparent,
+
+      statusBarIconBrightness:
+          Brightness.dark,
+    ),
+  );
+
+  runApp(const SmartNavApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SmartNavApp extends StatelessWidget {
+
+  const SmartNavApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
 
-      home: const TripPlannerScreen(
-        transportName: 'Lion Travels',
-        routeNumber: '147C',
-        departureTime: '5:25 pm',
-        arrivalTime: '5:55 pm',
-      ),
+      theme: AppTheme.light,
+
+      home: const LoginScreen(),
     );
   }
 }
