@@ -57,13 +57,10 @@ class _TripPlannerScreenState extends State<TripPlannerScreen> {
             child: Stack(
               children: [
 
-                // FULL GOOGLE MAP
-                Positioned.fill(
-                  child: IgnorePointer(
-                    ignoring: true,
-                    child: TripMapPreview(),
-                  ),
-                ),
+              // FULL GOOGLE MAP
+              Positioned.fill(
+                child: TripMapPreview(),
+              ),
                 
                 // TOP APP BAR
                 const Positioned(
@@ -210,6 +207,7 @@ class _TripPlannerAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      ///color: Colors.white,
       padding: const EdgeInsets.symmetric(
         horizontal: AppColors.mobilePadding,
         vertical: 8,
