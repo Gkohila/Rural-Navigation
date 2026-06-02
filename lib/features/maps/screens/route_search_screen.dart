@@ -292,15 +292,15 @@ Positioned.fill(
             /// DRAGGABLE SHEET
             DraggableScrollableSheet(
 
-              initialChildSize: 0.42,
+              initialChildSize: 0.36,
 
               minChildSize: 0.27,
 
-              maxChildSize: 0.82,
+              maxChildSize: 0.78,
 
               expand: true,
               snap: true,
-              snapSizes: const [0.45, 0.82],
+              snapSizes: const [0.45, 0.78],
 
           
 

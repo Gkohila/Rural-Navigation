@@ -143,11 +143,11 @@ const Positioned.fill(
           DraggableScrollableSheet(
 
             initialChildSize: .78,
-            minChildSize: .14,
-            maxChildSize: .92,
+            minChildSize: .11,
+            maxChildSize: .87,
 
             snap: true,
-            snapSizes: const [.78, .92],
+            snapSizes: const [.78, .87],
 
             builder: (context, controller) {
 

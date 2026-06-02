@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'widgets/planner_action_buttons.dart';
-import 'widgets/transport_chip.dart';
-import 'widgets/trip_map_preview.dart';
-import 'widgets/trip_timeline.dart';
-import 'widgets/warning_card.dart';
+
 
 /// Static dummy content for Trip Planner UI (no API).
 abstract final class TripPlannerData {
@@ -61,6 +57,19 @@ abstract final class TripPlannerData {
       subtitle: 'Tenkasi, Tamil Nadu',
       time: '5:40 pm',
     ),
+    TimelineStopData(
+  type: TimelineStopType.intermediate,
+  title: 'vallam',
+  subtitle: 'tenkasi',
+  time: '5:41 pm',
+),
+
+TimelineStopData(
+  type: TimelineStopType.intermediate,
+  title: 'kerala',
+  subtitle: 'vallam',
+  time: '5:42 pm',
+),
   ];
 }
 

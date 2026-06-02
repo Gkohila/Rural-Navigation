@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
 import '../../../screens/home/home_screen.dart';
 import '../../../screens/profile/profile_screen.dart';
+import '../../../screens/alert/alerts_screen.dart';
+import '../../../screens/routes/trip_planner_screen.dart';
 
 /// Fixed bottom navigation matching the HTML nav bar.
 class SmartNavBottomBar extends StatelessWidget {
@@ -54,20 +56,26 @@ class SmartNavBottomBar extends StatelessWidget {
 
   if (index == 0) {
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
-
       MaterialPageRoute(
         builder: (context) => HomeScreen(),
       ),
     );
-  }
 
-  else if (index == 3) {
+  } else if (index == 2) {
 
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
+      MaterialPageRoute(
+        builder: (context) => const AlertsScreen(),
+      ),
+    );
 
+  } else if (index == 3) {
+
+    Navigator.pushReplacement(
+      context,
       MaterialPageRoute(
         builder: (context) => const ProfileScreen(),
       ),

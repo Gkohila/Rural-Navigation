@@ -6,6 +6,7 @@ import 'package:smartnav/features/maps/services/notification_service.dart';
 import 'screens/auth/login_screen.dart';
 import 'theme/app_theme.dart';
 import 'screens/profile/profile_screen.dart';
+import 'screens/auth/welcome_screen.dart';
 
 Future<void> main() async {
 
@@ -40,7 +41,7 @@ class SmartNavApp extends StatelessWidget {
 
       theme: AppTheme.light,
 
-      home: const LoginScreen(),
+      home: const  WelcomeScreen(),
     );
   }
 }

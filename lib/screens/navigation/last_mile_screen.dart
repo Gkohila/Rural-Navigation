@@ -101,7 +101,7 @@ void showArrivalPopup() {
                       Icons.check,
 
                       color: Colors.white,
-                      size: 34,
+                      size: 28,
                     ),
                   ),
                 ),
@@ -313,14 +313,31 @@ void showArrivalPopup() {
 
                     Row(
                       children: [
+                            IconButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      icon: const Icon(
+        Icons.arrow_back_ios_new,
+        size: 20,
+      ),
+    ),
 
-                        const CircleAvatar(
-                          radius: 22,
-                          backgroundImage: AssetImage(
-                            'assets/images/profile.jpg',
-                          ),
-                        ),
+                        Container(
+  width: 44,
+  height: 44,
 
+  decoration: BoxDecoration(
+    color: const Color(0xFF0B5D1E),
+    borderRadius: BorderRadius.circular(12),
+  ),
+
+  child: const Icon(
+    Icons.route,
+    color: Colors.white,
+    size: 24,
+  ),
+),
                         const SizedBox(width: 12),
 
                         Text(
@@ -407,7 +424,7 @@ void showArrivalPopup() {
                           textAlign: TextAlign.center,
 
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 32,
+                            fontSize: 24,
                             fontWeight: FontWeight.w700,
                             color: AppColors.surfaceContainerLowest,
                             height: 1.2,
@@ -429,7 +446,7 @@ void showArrivalPopup() {
                   "Nearby Help",
 
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 30,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: AppColors.onSurface,
                   ),
@@ -526,7 +543,7 @@ void showArrivalPopup() {
                       "Main Bus Stand",
 
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: AppColors.onSurface,
                       ),
@@ -538,7 +555,7 @@ void showArrivalPopup() {
                       "450m Away",
 
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 36,
+                        fontSize: 20,
                         fontWeight: FontWeight.w700,
                         color: AppColors.onSurface,
                       ),
@@ -562,7 +579,7 @@ void showArrivalPopup() {
                   "Next Bus to Tenkasi Junction",
 
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
+                    fontSize: 15,
                     color: Colors.black54,
                   ),
                 ),
@@ -570,8 +587,8 @@ void showArrivalPopup() {
 
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
+                  horizontal: 14,
+                  vertical: 8,
                 ),
 
                 decoration: BoxDecoration(
@@ -585,7 +602,7 @@ void showArrivalPopup() {
                   "Courtallam 7 Mins",
 
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -630,7 +647,7 @@ void showArrivalPopup() {
                 "Auto Rickshaws",
 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: AppColors.onSurface,
                 ),
@@ -646,36 +663,33 @@ void showArrivalPopup() {
 
           const SizedBox(height: 28),
 
-          Row(
-            children: List.generate(
-              4,
-              (index) {
-
-                return Container(
-                  margin: const EdgeInsets.only(
-                    right: 10,
-                  ),
-
-                  width: 52,
-                  height: 52,
-
-                  decoration: BoxDecoration(
-                    color: index == 3
-                        ? Colors.lightGreen.shade200
-                        : Colors.grey.shade300,
-
-                    shape: BoxShape.circle,
-                  ),
-
-                  child: Center(
-                    child: Text(
-                      index == 3 ? '+8' : '',
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          Container(
+  padding: const EdgeInsets.symmetric(
+    horizontal: 14,
+    vertical: 12,
+  ),
+  decoration: BoxDecoration(
+    color: Colors.green.shade50,
+    borderRadius: BorderRadius.circular(18),
+  ),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(
+        Icons.electric_rickshaw,
+        color: AppColors.primary,
+      ),
+      const SizedBox(width: 10),
+      Text(
+        "8 autos available nearby",
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ],
+  ),
+),
 
           const SizedBox(height: 30),
 
@@ -716,7 +730,7 @@ void showArrivalPopup() {
                 "Way to the Nearest Auto",
 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -779,7 +793,7 @@ void showArrivalPopup() {
             "Available for long distance and site seeing tours around Tenkasi.",
 
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
+              fontSize: 16,
               color: Colors.black54,
               height: 1.6,
             ),
@@ -787,8 +801,9 @@ void showArrivalPopup() {
 
           const SizedBox(height: 36),
 
-          SizedBox(
-            width: double.infinity,
+          Center(
+  child: SizedBox(
+    width: 260,
 
             child: OutlinedButton(
 
@@ -824,117 +839,120 @@ void showArrivalPopup() {
                 "View Rates",
 
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
               ),
             ),
           ),
+          ),
         ],
+      
       ),
     );
   }
 
-  /// WALK
-  Widget _buildWalkCard(BuildContext context) {
+/// WALK
+Widget _buildWalkCard(BuildContext context) {
 
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
+  return Container(
+    margin: const EdgeInsets.symmetric(
+      horizontal: 16,
+    ),
+
+    height: 190,
+
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(30),
+
+      image: const DecorationImage(
+        image: AssetImage(
+          'assets/images/forest_top_view.jpg',
+        ),
+        fit: BoxFit.cover,
       ),
+    ),
 
-      height: 220,
-
+    child: Container(
       decoration: BoxDecoration(
-        borderRadius:
-            BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(30),
 
-        image: const DecorationImage(
-          image: AssetImage(
-            'assets/images/forest_top_view.jpg',   
-          ),
-          fit: BoxFit.cover,
-        ),
-      ),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
 
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius:
-              BorderRadius.circular(30),
-
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-
-            colors: [
-              Colors.green.withOpacity(0.2),
-              Colors.green.withOpacity(0.75),
-            ],
-          ),
-        ),
-
-        child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-
-          children: [
-
-            const Icon(
-              Icons.directions_walk,
-              color: AppColors.surfaceContainerLowest,
-              size: 62,
-            ),
-
-            const SizedBox(height: 26),
-
-            ElevatedButton.icon(
-
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                  AppColors.primaryContainer,
-
-                foregroundColor: Colors.black,
-
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 18,
-                ),
-
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(40),
-                ),
-              ),
-
-              onPressed: () {
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const LiveNavigationScreen(),
-                  ),
-                );
-              },
-
-              icon: const Icon(
-                Icons.arrow_forward,
-              ),
-
-              label: Text(
-                "Start Walking Directions",
-
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
+          colors: [
+            Colors.green.withOpacity(0.2),
+            Colors.green.withOpacity(0.75),
           ],
         ),
       ),
-    );
-  }
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+
+        children: [
+
+          const Icon(
+            Icons.directions_walk,
+            color: AppColors.surfaceContainerLowest,
+            size: 48,
+          ),
+
+          const SizedBox(height: 18),
+
+          Center(
+            child: SizedBox(
+              width: 220,
+              height: 52,
+
+              child: ElevatedButton.icon(
+
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: AppColors.primary,
+                  padding: EdgeInsets.zero,
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(30),
+                  ),
+                ),
+
+                onPressed: () {
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          const LiveNavigationScreen(),
+                    ),
+                  );
+                },
+
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  size: 18,
+                ),
+
+                label: Text(
+                  "Start Walking",
+
+                  style:
+                      GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight:
+                        FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
+    }
