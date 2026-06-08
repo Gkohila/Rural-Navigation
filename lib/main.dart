@@ -8,6 +8,10 @@ import 'theme/app_theme.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/auth/welcome_screen.dart';
 
+import 'package:provider/provider.dart';
+import 'localization/language_provider.dart';
+
+
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,23 +29,36 @@ Future<void> main() async {
     ),
   );
 
-  runApp(const SmartNavApp());
+  final languageProvider = LanguageProvider();
+
+await languageProvider.loadLanguage();
+
+runApp(
+  ChangeNotifierProvider.value(
+    value: languageProvider,
+    child: const SmartNavApp(),
+  ),
+);
 }
 
 class SmartNavApp extends StatelessWidget {
-
   const SmartNavApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return MaterialApp(
+  debugShowCheckedModeBanner: false,
+  theme: AppTheme.light,
 
-    return MaterialApp(
+  locale: Locale(
+    languageProvider.languageCode,
+  ),
 
-      debugShowCheckedModeBanner: false,
-
-      theme: AppTheme.light,
-
-      home: const  WelcomeScreen(),
+  home: const WelcomeScreen(),
+);
+      },
     );
   }
 }

@@ -9,6 +9,10 @@ import 'hero/morning_environment_scene.dart';
 import 'hero/night_environment_scene.dart';
 import 'hero/weather_hero_scenario.dart';
 
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
+import 'package:provider/provider.dart';
+
 /// Contextual weather hero driven by [WeatherHeroScenario].
 class AnimatedHeroSection extends StatefulWidget {
   const AnimatedHeroSection({
@@ -29,6 +33,11 @@ class _AnimatedHeroSectionState extends State<AnimatedHeroSection> {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
     final isNight = _s.isNight;
     final textOnHero = isNight ? Colors.white : const Color(0xFF1A1C1C);
     final chipText = isNight
@@ -66,7 +75,7 @@ class _AnimatedHeroSectionState extends State<AnimatedHeroSection> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28),
             child: SizedBox(
-              height: 300,
+              height: 330,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -83,7 +92,7 @@ class _AnimatedHeroSectionState extends State<AnimatedHeroSection> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Welcome back,',
+  lang.text('welcomeBack'),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -95,10 +104,10 @@ class _AnimatedHeroSectionState extends State<AnimatedHeroSection> {
                             .fadeIn(duration: 500.ms, curve: Curves.easeOut)
                             .slideY(begin: 0.12, end: 0, duration: 500.ms),
                         const SizedBox(height: 4),
-                        Text(
-                          _s.greeting,
+       Text(
+  _s.greeting,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 30,
+                            fontSize: 26,
                             fontWeight: FontWeight.w700,
                             height: 1.25,
                             color: textOnHero,
@@ -111,15 +120,15 @@ class _AnimatedHeroSectionState extends State<AnimatedHeroSection> {
                         Row(
                           children: [
                             _GlassChip(
-                              icon: Icons.location_on,
-                              label: _s.location,
+  icon: Icons.location_on,
+  label: _s.location,
                               isNight: isNight,
                               textColor: chipText,
                             ),
                             const SizedBox(width: 8),
                             _GlassChip(
-                              icon: _s.timeIcon,
-                              label: _s.timeLabel,
+  icon: _s.timeIcon,
+  label: _s.timeLabel,
                               accent: _s.timeAccent,
                               isNight: isNight,
                               textColor: chipText,
@@ -313,6 +322,8 @@ class _WeatherGlassCardState extends State<_WeatherGlassCard> {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
     final s = widget.scenario;
     final isNight = s.isNight;
     final from = s.tempAnimateFrom ?? (s.temperatureC - 4);
@@ -362,7 +373,7 @@ class _WeatherGlassCardState extends State<_WeatherGlassCard> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        s.weather,
+  s.weather,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: isNight
@@ -372,7 +383,7 @@ class _WeatherGlassCardState extends State<_WeatherGlassCard> {
                       ).animate(delay: 350.ms).fadeIn(duration: 400.ms),
                       if (s.subtitle != null)
                         Text(
-                          s.subtitle!,
+  s.subtitle ?? '',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 10,
                             color: widget.textColor.withValues(alpha: 0.65),

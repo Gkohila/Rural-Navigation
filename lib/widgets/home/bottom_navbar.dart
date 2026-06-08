@@ -16,6 +16,11 @@ import '../../features/maps/screens/route_search_screen.dart';
 /// ADD THIS IMPORT
 import '../../screens/alert/alerts_screen.dart';
 
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
+
 enum HomeNavItem { home, routes, alerts, profile }
 
 class HomeBottomNavbar extends StatelessWidget {
@@ -31,6 +36,11 @@ class HomeBottomNavbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
 
     return ClipRect(
 
@@ -92,7 +102,7 @@ class HomeBottomNavbar extends StatelessWidget {
                   _NavItem(
 
                     icon: Icons.home,
-                    label: 'Home',
+                    label: lang.text('home'),
 
                     isSelected:
                         selectedItem ==
@@ -123,7 +133,7 @@ class HomeBottomNavbar extends StatelessWidget {
                     icon:
                         Icons.directions_bus,
 
-                    label: 'Routes',
+                    label: lang.text('routes'),
 
                     isSelected:
                         selectedItem ==
@@ -155,7 +165,7 @@ class HomeBottomNavbar extends StatelessWidget {
                     icon:
                         Icons.notifications_outlined,
 
-                    label: 'Alerts',
+                    label: lang.text('alerts'),
 
                     isSelected:
                         selectedItem ==
@@ -187,7 +197,7 @@ class HomeBottomNavbar extends StatelessWidget {
                     icon:
                         Icons.person_outline,
 
-                    label: 'Profile',
+                    label: lang.text('profile'),
 
                     isSelected:
                         selectedItem ==

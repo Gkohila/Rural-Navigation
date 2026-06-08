@@ -21,6 +21,16 @@ import '../../features/maps/screens/route_search_screen.dart';
 import '../navigation/live_navigation_screen.dart';
 import '../alert/alerts_screen.dart';
 
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
+import '../../features/maps/services/location_service.dart';
+
+import '../../features/maps/models/weather_model.dart';
+import '../../features/maps/services/weather_api_service.dart';
+
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,8 +40,82 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  HomeNavItem _selectedNavItem = HomeNavItem.home;
+  WeatherModel? weather;
+bool isLoadingWeather = true;
 
+  HomeNavItem _selectedNavItem = HomeNavItem.home;
+@override
+void initState() {
+  super.initState();
+  _loadWeather();
+}
+Future<void> _loadWeather() async {
+  try {
+    final position =
+    await LocationService.getCurrentLocation();
+
+if (position == null) {
+  setState(() {
+    isLoadingWeather = false;
+  });
+  return;
+}
+
+debugPrint("LAT = ${position.latitude}");
+debugPrint("LON = ${position.longitude}");
+
+
+
+
+
+final languageCode =
+    context.read<LanguageProvider>().languageCode;
+
+final result =
+    await WeatherApiService.getWeather(
+      position.latitude,
+      position.longitude,
+      languageCode,
+    );
+
+setState(() {
+  weather = result;
+  
+  isLoadingWeather = false;
+});
+
+    debugPrint("LOCATION = ${weather?.location}");
+debugPrint("WEATHER = ${weather?.weather}");
+debugPrint("TEMP = ${weather?.temperature}");
+debugPrint("TIME = ${weather?.time}");
+  } catch (e) {
+    debugPrint("WEATHER ERROR = $e");
+
+    setState(() {
+      isLoadingWeather = false;
+    });
+  }
+}
+Future<void> _testLocation() async {
+
+  debugPrint("TEST STARTED");
+
+  final position =
+      await LocationService.getCurrentLocation();
+
+  debugPrint("POSITION = $position");
+
+  if (position != null) {
+
+    debugPrint("LAT = ${position.latitude}");
+    debugPrint("LON = ${position.longitude}");
+
+  } else {
+
+    debugPrint("LOCATION NULL");
+
+  }
+}
   static const String _routeImageCourtallam =
       'https://lh3.googleusercontent.com/aida-public/AB6AXuCMhdy8PODqwy-UeLbKLgh3lxC8MYIZqeSzOD5wNjv8lBlcP-WztDX9R2MDZDmv8LfBBvpdydSTEx4pSGnB9yq_1m_J9SDvdLxeCi7SQUj1lT7HV_0BLwJs-FoYCoNUMqc1zoRE4ZkajCv5KfbOik73_rOv72OHCqSNg5ZFKBohfkqooTXzy7X7in9PIQXQBdqNSDFA6GAq9u_v7IGOcJUa6rp6khocrsAYNZd3_sWFtVfUSZuru6_PSBaBygp0dXEQpMFPsAe9Hdeo';
 
@@ -40,6 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -63,11 +149,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const AnimatedHeroSection(
-                          // Test: Courtallam sunny morning dummy data
-                          scenario: WeatherHeroScenario.courtallamSunnyMorning,
-                          // Production: WeatherHeroScenario.tenkasiNightRain,
-                        ),
+                        isLoadingWeather || weather == null
+    ? const SizedBox(
+        height: 330,
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      )
+    : AnimatedHeroSection(
+        scenario: WeatherHeroScenario(
+         location: weather!.location,
+          weather: weather!.weather,
+          timeLabel: weather!.time,
+          temperatureC: weather!.temperature,
+
+         greeting: languageCode == 'ta'
+    ? 'வணக்கம், ${weather!.location}!'
+    : 'Vanakkam, ${weather!.location}!',
+
+          sceneType:
+              weather!.weather.toLowerCase().contains('rain')
+                  ? HeroSceneType.nightRain
+                  : HeroSceneType.sunnyMorning,
+
+          weatherIcon:
+              weather!.weather.toLowerCase().contains('cloud')
+                  ? Icons.cloud
+                  : Icons.wb_sunny,
+
+          subtitle: weather!.weather,
+        ),
+      ),
                         const SizedBox(height: AppColors.gutter),
                         const _QuickActionsSection(),
                         const SizedBox(height: AppColors.gutter),
@@ -117,9 +229,14 @@ class _HomeHeader extends StatelessWidget {
   static const String _logoUrl =
       'https://lh3.googleusercontent.com/aida-public/AB6AXuBKNhCvFGaHsmWmeoK4r50kcWeKxwmBBqH65gHcWQpVTvrGtm8f5lOPD4jUMZn5rQqjNd6I7BFzBt-KSodaT84URzdWF2-sDRmu0uEidsxkx0Ysj46cKrx2MpHHwDfezfTDFaUWrHu01la2xR93YrZm00_XtzVNTyGMvGQP_0FrHZjA-gn41UMVnDvuuu3LbUu3FwMY00AjU8wChelIxS7S_FS4GP1HrjBefhXUXMt1hA3cq7l1s9IDjeScfSkx8kexynwqIh3akGYzPGM';
 
-  @override
-  Widget build(BuildContext context) {
-    return ClipRect(
+
+    @override
+    Widget build(BuildContext context) {
+
+    final languageCode =
+      context.watch<LanguageProvider>().languageCode;
+
+  return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
         child: DecoratedBox(
@@ -167,10 +284,13 @@ class _HomeHeader extends StatelessWidget {
                       const SizedBox(width: 12),
                       Flexible(
                         child: Text(
-                          'Tenkasi SmartNav',
+  languageCode == 'ta'
+      ? 'தென்காசி ஸ்மார்ட் நாவ்'
+      : 'Tenkasi SmartNav',
+
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 20,
+                            fontSize: languageCode == 'ta' ? 15 : 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primary,
                           ),
@@ -182,23 +302,74 @@ class _HomeHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-                InteractiveScale(
-                  hoverScale: 1.06,
-                  pressScale: 0.94,
-                  onTap: () {},
+              Consumer<LanguageProvider>(
+  builder: (context, provider, child) {
+    return Container(
+      width: 130,
+      height: 36,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.grey.shade200,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                provider.changeLanguage('en');
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: provider.languageCode == 'en'
+                      ? AppColors.primary
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
                   child: Text(
-                    'EN/தமிழ்',
-                    textAlign: TextAlign.right,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      height: 1.2,
-                      color: AppColors.onSurfaceVariant,
+                    'English',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: provider.languageCode == 'en'
+                          ? Colors.white
+                          : Colors.black,
                     ),
                   ),
-                )
-                    .animate(delay: 120.ms)
-                    .fadeIn(duration: 350.ms),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () async {
+                provider.changeLanguage('ta');
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: provider.languageCode == 'ta'
+                      ? AppColors.primary
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: Text(
+                    'தமிழ்',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: provider.languageCode == 'ta'
+                          ? Colors.white
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate(delay: 120.ms).fadeIn(duration: 350.ms);
+  },
+)
               ],
             ),
           ),
@@ -211,48 +382,61 @@ class _HomeHeader extends StatelessWidget {
 class _QuickActionsSection extends StatelessWidget {
   const _QuickActionsSection();
 
-  static const _actions = [
-    (
-      icon: Icons.directions_bus,
-      label: 'Find Bus/Train',
-      bg: AppColors.secondaryContainer,
-      fg: AppColors.onSecondaryContainer,
-      delay: 320,
-      float: 0,
-    ),
-    (
-      icon: Icons.history,
-      label: 'Recent Search History',
-      bg: AppColors.tertiaryContainer,
-      fg: AppColors.onTertiaryContainer,
-      delay: 400,
-      float: 400,
-    ),
-    (
-      icon: Icons.near_me,
-      label: 'Live Navigation',
-      bg: AppColors.primaryContainer,
-      fg: AppColors.onPrimaryContainer,
-      delay: 480,
-      float: 800,
-    ),
-    (
-      icon: Icons.map_outlined,
-      label: 'Nearby Stops',
-      bg: AppColors.secondaryContainer,
-      fg: AppColors.onSecondaryContainer,
-      delay: 560,
-      float: 1200,
-    ),
-  ];
+  
 
   @override
   Widget build(BuildContext context) {
+     final languageCode =
+      context.watch<LanguageProvider>()
+          .languageCode;
+
+  final lang =
+      AppLocalizations(languageCode);
+
+   final actions = [
+  (
+    key: 'findBus',
+    icon: Icons.directions_bus,
+    label: lang.text('findBus'),
+    bg: AppColors.secondaryContainer,
+    fg: AppColors.onSecondaryContainer,
+    delay: 320,
+    float: 0,
+  ),
+  (
+    key: 'recentSearch',
+    icon: Icons.history,
+    label: lang.text('recentSearch'),
+    bg: AppColors.tertiaryContainer,
+    fg: AppColors.onTertiaryContainer,
+    delay: 400,
+    float: 400,
+  ),
+  (
+    key: 'liveNavigation',
+    icon: Icons.near_me,
+    label: lang.text('liveNavigation'),
+    bg: AppColors.primaryContainer,
+    fg: AppColors.onPrimaryContainer,
+    delay: 480,
+    float: 800,
+  ),
+  (
+    key: 'nearbyStops',
+    icon: Icons.map_outlined,
+    label: lang.text('nearbyStops'),
+    bg: AppColors.secondaryContainer,
+    fg: AppColors.onSecondaryContainer,
+    delay: 560,
+    float: 1200,
+  ),
+];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'QUICK ACTIONS',
+  lang.text('quickActions'),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -271,7 +455,7 @@ class _QuickActionsSection extends StatelessWidget {
               spacing: AppColors.cardGap,
               runSpacing: AppColors.cardGap,
               children: [
-                for (final action in _actions)
+                for (final action in actions)
                   SizedBox(
                     width: itemWidth,
                     child: QuickActionCard(
@@ -284,7 +468,7 @@ class _QuickActionsSection extends StatelessWidget {
 
   onTap: () {
 
-  if (action.label == 'Find Bus/Train') {
+  if (action.key == 'findBus'){
 
     Navigator.push(
       context,
@@ -295,7 +479,7 @@ class _QuickActionsSection extends StatelessWidget {
 
   }
 
-  else if (action.label == 'Recent Search History') {
+  else if (action.key == 'recentSearch'){
 
     Navigator.push(
       context,
@@ -306,7 +490,7 @@ class _QuickActionsSection extends StatelessWidget {
 
   }
 
-  else if (action.label == 'Nearby Stops') {
+  else if (action.key == 'nearbyStops'){
 
     Navigator.push(
       context,
@@ -317,7 +501,7 @@ class _QuickActionsSection extends StatelessWidget {
 
   }
 
-  else if (action.label == 'Live Navigation') {
+  else if (action.key == 'liveNavigation'){
 
     Navigator.push(
       context,
@@ -350,14 +534,20 @@ class _SavedRoutesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+        Wrap(
+  spacing: 12,
+  runSpacing: 8,
+  children: [
             Text(
-              'SAVED ROUTES',
+              lang.text('savedRoutes'),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
@@ -372,7 +562,7 @@ class _SavedRoutesSection extends StatelessWidget {
               pressScale: 0.95,
               onTap: () {},
               child: Text(
-                'View All',
+                lang.text('viewAll'),
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -394,8 +584,9 @@ class _SavedRoutesSection extends StatelessWidget {
             children: [
               RouteCard(
                 imageUrl: routeImageCourtallam,
-                fromCity: 'Tenkasi',
-                toCity: 'Courtallam',
+
+  fromCity: lang.text('tenkasi'),
+  toCity: lang.text('courtallam'),
 
                 onTap: () {
 
@@ -408,36 +599,38 @@ class _SavedRoutesSection extends StatelessWidget {
 
                 },
 
-                duration: '15 mins',
-                frequencyLabel: 'Every 10m',
+                 duration: lang.text('mins15'),
+  frequencyLabel: lang.text('every10m'),
                 frequencyIcon: Icons.directions_bus,
                 frequencyColor: AppColors.primary,
                 animateDelayMs: 680,
               ),
               const SizedBox(width: AppColors.cardGap),
               RouteCard(
-                imageUrl: routeImageTirunelveli,
+  imageUrl: routeImageTirunelveli,
 
-                onTap: () {
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const RouteSearchScreen(),
+      ),
+    );
+  },
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RouteSearchScreen(),
-                    ),
-                  );
+  imageBackgroundColor: AppColors.secondaryFixed,
 
-                },
+  fromCity: lang.text('sengottai'),
+  toCity: lang.text('tirunelveli'),
 
-                imageBackgroundColor: AppColors.secondaryFixed,
-                fromCity: 'Sengottai',
-                toCity: 'Tirunelveli',
-                duration: '1h 20m',
-                frequencyLabel: '3 trains daily',
-                frequencyIcon: Icons.train,
-                frequencyColor: AppColors.secondary,
-                animateDelayMs: 760,
-              ),
+  duration: lang.text('hour20'),
+  frequencyLabel: lang.text('trainsDaily'),
+
+  frequencyIcon: Icons.train,
+  frequencyColor: AppColors.secondary,
+  animateDelayMs: 760,
+)
+
             ],
           ),
         ),

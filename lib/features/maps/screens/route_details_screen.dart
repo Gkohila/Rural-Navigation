@@ -9,6 +9,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
 import 'package:smartnav/features/maps/widgets/arrival_alert_dialog.dart';
 import 'package:smartnav/screens/navigation/last_mile_screen.dart';
+import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
 
@@ -574,46 +575,39 @@ const Positioned.fill(
 
            onTap: () async {
 
-  /// =========================================
-  /// IF START BUTTON
-  /// =========================================
   if (!isNavigationStarted) {
 
-    setState(() {
-      isNavigationStarted = true;
-    });
+    final shouldStart =
+        await showStartTripDialog(context);
 
-    /// TESTING → 10 sec
-    Future.delayed(
+    if (shouldStart == true) {
 
-      const Duration(seconds: 10),
+      setState(() {
+        isNavigationStarted = true;
+      });
 
-      () {
+      Future.delayed(
+        const Duration(seconds: 10),
+        () {
 
-        if (!mounted) return;
+          if (!mounted) return;
 
-        showArrivalAlertDialog(context);
-      },
-    );
+          showArrivalAlertDialog(context);
+        },
+      );
+    }
   }
 
-  /// =========================================
-  /// IF END BUTTON
-  /// =========================================
   else {
 
     setState(() {
       isNavigationStarted = false;
     });
 
-    /// OPEN LAST MILE SCREEN
     Navigator.push(
-
       context,
-
       MaterialPageRoute(
-        builder: (_) =>
-        const LastMileScreen(),
+        builder: (_) => const LastMileScreen(),
       ),
     );
   }

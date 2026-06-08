@@ -111,36 +111,44 @@ class RouteCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: [
-                          Text(
-                            fromCity,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            child: Icon(
-                              Icons.arrow_forward,
-                              size: 16,
-                              color: AppColors.outline,
-                            ),
-                          ),
-                          Text(
-                            toCity,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ],
-                      ),
+  children: [
+    Expanded(
+      child: Text(
+        fromCity,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.primary,
+        ),
+      ),
+    ),
+    const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Icon(
+        Icons.arrow_forward,
+        size: 16,
+        color: AppColors.outline,
+      ),
+    ),
+    Expanded(
+      child: Text(
+        toCity,
+        textAlign: TextAlign.end,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.primary,
+        ),
+      ),
+    ),
+  ],
+),
                       const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Wrap(
+  spacing: 10,
+  runSpacing: 6,
                         children: [
                           _MetaRow(
                             icon: Icons.schedule,
@@ -179,23 +187,31 @@ class _MetaRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: color),
-        const SizedBox(width: 6),
-        Text(
+@override
+Widget build(BuildContext context) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(
+        icon,
+        size: 16,
+        color: color,
+      ),
+      const SizedBox(width: 6),
+      SizedBox(
+        width: 90,
+        child: Text(
           label,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: color,
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

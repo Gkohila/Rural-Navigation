@@ -3,7 +3,6 @@ import 'package:smartnav/theme/smart_nav_theme.dart';
 import '../../../screens/home/home_screen.dart';
 import '../../../screens/profile/profile_screen.dart';
 import '../../../screens/alert/alerts_screen.dart';
-import '../../../screens/routes/trip_planner_screen.dart';
 
 /// Fixed bottom navigation matching the HTML nav bar.
 class SmartNavBottomBar extends StatelessWidget {

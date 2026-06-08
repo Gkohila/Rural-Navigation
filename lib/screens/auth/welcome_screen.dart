@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 
+import '../../localization/app_localizations.dart';
+
+
+import 'package:provider/provider.dart';
+import '../../localization/language_provider.dart';
+
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -8,11 +14,57 @@ class WelcomeScreen extends StatefulWidget {
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
-  bool isEnglish = true;
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  
+  late AnimationController _controller;
+late Animation<double> _fadeAnimation;
+late Animation<double> _scaleAnimation;
 
   @override
+void initState() {
+  super.initState();
+
+  _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1200),
+  );
+
+  _fadeAnimation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeIn,
+  );
+
+  _scaleAnimation = Tween<double>(
+    begin: 0.7,
+    end: 1.0,
+  ).animate(
+    CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    ),
+  );
+
+  _controller.forward();
+
+
+}
+
+ 
+ @override
+void dispose() {
+  _controller.dispose();
+  super.dispose();
+}
+  @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>()
+        .languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -25,18 +77,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
           // Dark Overlay
           Container(
-  decoration: BoxDecoration(
-    gradient: LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        Colors.black.withOpacity(0.15),
-        Colors.black.withOpacity(0.35),
-        Colors.black.withOpacity(0.55),
-      ],
-    ),
-  ),
-),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.15),
+                  Colors.black.withOpacity(0.35),
+                  Colors.black.withOpacity(0.55),
+                ],
+              ),
+            ),
+          ),
 
           SafeArea(
             child: Column(
@@ -44,61 +96,74 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 const Spacer(),
 
                 // Logo Circle
-                Container(
-                  width: 90,
-                  height: 90,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white54,
-                      width: 1.5,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.explore_outlined,
-                    color: Colors.white,
-                    size: 35,
-                  ),
-                ),
+                FadeTransition(
+  opacity: _fadeAnimation,
+  child: ScaleTransition(
+    scale: _scaleAnimation,
+    child: Container(
+      width: 90,
+      height: 90,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.white54,
+          width: 1.5,
+        ),
+      ),
+      child: const Icon(
+        Icons.explore_outlined,
+        color: Colors.white,
+        size: 35,
+      ),
+    ),
+  ),
+),
 
                 const SizedBox(height: 40),
 
-                const Text(
-                  "TENKASI SMARTNAV",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-  color: Colors.white,
-  fontSize: 24,
-  fontWeight: FontWeight.bold,
-  shadows: [
-    Shadow(
-      blurRadius: 10,
-      color: Colors.black54,
-      offset: Offset(0, 2),
+                FadeTransition(
+  opacity: _fadeAnimation,
+  child: Text(
+    lang.text('title'),
+    textAlign: TextAlign.center,
+    style: const TextStyle(
+      color: Colors.white,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      shadows: [
+        Shadow(
+          blurRadius: 10,
+          color: Colors.black54,
+          offset: Offset(0, 2),
+        ),
+      ],
     ),
-  ],
+  ),
 ),
-                ),
 
-                const SizedBox(height: 12),
+const SizedBox(height: 12),
 
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 40),
+                FadeTransition(
+  opacity: _fadeAnimation,
+  child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Text(
-                    "Navigating Rural Excellence with Modern Precision",
+                    lang.text('subtitle'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       height: 1.4,
                     ),
                   ),
                 ),
-
+                ),
                 const SizedBox(height: 35),
 
                 // Language Toggle
-                Container(
+                FadeTransition(
+  opacity: _fadeAnimation,
+  child: Container(
                   width: 240,
                   height: 52,
                   decoration: BoxDecoration(
@@ -109,24 +174,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     children: [
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isEnglish = true;
-                            });
-                          },
+                          onTap: () async {
+
+  await context
+      .read<LanguageProvider>()
+      .changeLanguage('en');
+},
                           child: Container(
                             margin: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: isEnglish
+                              color: languageCode == 'en'
                                   ? Colors.white
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(25),
                             ),
                             child: Center(
                               child: Text(
-                                "English",
+                                lang.text('english'),
                                 style: TextStyle(
-                                  color: isEnglish
+                                  color: languageCode == 'en'
                                       ? Colors.black
                                       : Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -138,24 +204,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isEnglish = false;
-                            });
-                          },
+                          onTap: () async {
+
+  await context
+      .read<LanguageProvider>()
+      .changeLanguage('ta');
+},
                           child: Container(
                             margin: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: !isEnglish
+                              color: languageCode == 'ta'
                                   ? Colors.white
                                   : Colors.transparent,
                               borderRadius: BorderRadius.circular(25),
                             ),
                             child: Center(
                               child: Text(
-                                "தமிழ்",
+                                lang.text('tamil'),
                                 style: TextStyle(
-                                  color: !isEnglish
+                                  color: languageCode == 'ta'
                                       ? Colors.black
                                       : Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -168,11 +235,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ],
                   ),
                 ),
-
+                ),
                 const Spacer(),
 
                 // Get Started Button
-                Padding(
+                FadeTransition(
+  opacity: _fadeAnimation,
+  child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(
                     width: double.infinity,
@@ -185,25 +254,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ),
                       ),
                       onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const LoginScreen(),
-    ),
-  );
-},
-                      child: const Row(
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      },
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Get Started",
-                            style: TextStyle(
+                            lang.text('getStarted'),
+                            style: const TextStyle(
                               fontSize: 24,
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(width: 12),
-                          Icon(
+                          const SizedBox(width: 12),
+                          const Icon(
                             Icons.arrow_forward,
                             color: Colors.white,
                           ),
@@ -212,21 +281,21 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-
+                ),
                 const SizedBox(height: 25),
 
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.verified_user_outlined,
                       color: Colors.white70,
                       size: 18,
                     ),
-                    SizedBox(width: 6),
+                    const SizedBox(width: 6),
                     Text(
-                      "Powered by KHV",
-                      style: TextStyle(
+                      lang.text('poweredBy'),
+                      style: const TextStyle(
                         color: Colors.white70,
                       ),
                     ),
