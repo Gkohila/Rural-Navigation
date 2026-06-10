@@ -295,7 +295,7 @@ class _HomeHeader extends StatelessWidget {
 
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: languageCode == 'ta' ? 13 : 20,
+                            fontSize: languageCode == 'ta' ? 16 : 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primary,
                           ),
@@ -307,74 +307,6 @@ class _HomeHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-              Consumer<LanguageProvider>(
-  builder: (context, provider, child) {
-    return Container(
-      width: 130,
-      height: 36,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Colors.grey.shade200,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () {
-                provider.changeLanguage('en');
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: provider.languageCode == 'en'
-                      ? AppColors.primary
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    'English',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: provider.languageCode == 'en'
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              onTap: () async {
-                provider.changeLanguage('ta');
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: provider.languageCode == 'ta'
-                      ? AppColors.primary
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Center(
-                  child: Text(
-                    'தமிழ்',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: provider.languageCode == 'ta'
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    ).animate(delay: 120.ms).fadeIn(duration: 350.ms);
-  },
-)
               ],
             ),
           ),

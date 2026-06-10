@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../localization/language_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -24,50 +26,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: const Color(0xFFF6F7F9),
 
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF6F7F9),
+  backgroundColor: const Color(0xFFF6F7F9),
+  elevation: 0,
 
-        elevation: 0,
+  leading: IconButton(
+    icon: const Icon(
+      Icons.arrow_back_ios_new,
+      color: Colors.black87,
+    ),
+    onPressed: () {
+      Navigator.pop(context);
+    },
+  ),
 
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black87,
-          ),
-
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-
-        title: Text(
-          "Settings & Privacy",
-
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w700,
-            color: Colors.black87,
-            fontSize: 24,
-          ),
-        ),
-
-        actions: [
-
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-
-            child: Center(
-              child: Text(
-                "EN/தமிழ்",
-
-                style: GoogleFonts.poppins(
-                  color: const Color(0xFF0B5D1E),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+  title: Text(
+    "Settings & Privacy",
+    style: GoogleFonts.poppins(
+      fontWeight: FontWeight.w700,
+      color: Colors.black87,
+      fontSize: 24,
+    ),
+  ),
+),
 
       body: SingleChildScrollView(
 
@@ -403,6 +383,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     });
                   },
                 ),
+                divider(),
+
+Consumer<LanguageProvider>(
+  builder: (context, provider, child) {
+    return ListTile(
+      leading: const Icon(
+        Icons.language,
+        color: Color(0xFF1565C0),
+      ),
+
+      title: Text(
+        "Language",
+        style: GoogleFonts.poppins(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+
+      trailing: DropdownButton<String>(
+        value: provider.languageCode,
+        underline: const SizedBox(),
+
+        items: const [
+          DropdownMenuItem(
+            value: 'en',
+            child: Text('English'),
+          ),
+          DropdownMenuItem(
+            value: 'ta',
+            child: Text('தமிழ்'),
+          ),
+        ],
+
+        onChanged: (value) {
+          if (value != null) {
+            provider.changeLanguage(value);
+          }
+        },
+      ),
+    );
+  },
+),
 
                 divider(),
 
