@@ -590,7 +590,7 @@ final lang =
               RouteCard(
                 imageUrl: routeImageCourtallam,
 
-  fromCity: lang.text('tenkasi'),
+fromCity: lang.text('tenkasi'),
   toCity: lang.text('courtallam'),
 
                 onTap: () {
@@ -604,8 +604,8 @@ final lang =
 
                 },
 
-                 duration: lang.text('mins15'),
-  frequencyLabel: lang.text('every10m'),
+                duration: lang.text('mins15'),
+                frequencyLabel: lang.text('every10m'),
                 frequencyIcon: Icons.directions_bus,
                 frequencyColor: AppColors.primary,
                 animateDelayMs: 680,

@@ -36,16 +36,6 @@ class AppStrings {
 'savedRoutes': 'SAVED ROUTES',
 'viewAll': 'View All',
 
-'tenkasi': 'Tenkasi',
-'courtallam': 'Courtallam',
-'sengottai': 'Sengottai',
-'tirunelveli': 'Tirunelveli',
-
-'mins15': '15 mins',
-'every10m': 'Every 10m',
-'hour20': '1h 20m',
-'trainsDaily': '3 trains daily',
-
 'startTripTitle': 'Start this trip?',
 
 'startTripDescription':
@@ -151,16 +141,6 @@ class AppStrings {
 'nearbyStops': 'அருகிலுள்ள நிறுத்தங்கள்',
 'savedRoutes': 'சேமிக்கப்பட்ட வழித்தடங்கள்',
 'viewAll': 'அனைத்தையும் காண்க',
-
-'tenkasi': 'தென்காசி',
-'courtallam': 'குற்றாலம்',
-'sengottai': 'செங்கோட்டை',
-'tirunelveli': 'திருநெல்வேலி',
-
-'mins15': '15 நிமி',
-'every10m': '10 நிமி',
-'hour20': '1ம 20நி',
-'trainsDaily': '3 ரயில்கள்',
 
 'startTripTitle': 'இந்த பயணத்தை தொடங்கவா?',
 
