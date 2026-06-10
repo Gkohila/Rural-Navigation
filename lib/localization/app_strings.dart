@@ -55,6 +55,63 @@ class AppStrings {
 
 'startTrip': 'Start trip',
 
+'arrivalTitle': '10 Minutes away to reach your STOP',
+'prepareGetOff': 'Prepare to get off at',
+'ready': "I'm Ready",
+'muteAlert': 'Mute Alert',
+
+'arrivedTitle': 'You have arrived!',
+'reachedDestination': "You've reached ",
+'done': 'Done',
+'shareTrip': 'Share Trip',
+
+'closeDestination':
+    "You're close to your destination",
+
+'nearbyHelp': 'Nearby Help',
+
+'autoRickshaws': 'Auto Rickshaws',
+
+'nearestAuto':
+    'Way to the Nearest Auto',
+
+'privateTaxis': 'Private Taxis',
+
+'taxiDescription':
+    'Available for long distance and site seeing tours around Tenkasi.',
+
+'viewRates': 'View Rates',
+
+'startWalking': 'Start Walking',
+'appName': 'Tenkasi SmartNav',
+
+'liveNavigationTitle': 'Live Navigation',
+'eta': 'ETA',
+'distance': 'Distance',
+'nextStop': 'Next Stop',
+'voiceNavigationOn': 'Voice Navigation ON',
+'endTrip': 'End Trip',
+
+'recentSearchHistory': 'Recent Search History',
+'searchHistory': 'Search your history...',
+'today': 'Today',
+'yesterday': 'Yesterday',
+'clearAllHistory': 'Clear All History',
+
+'bus': 'Bus',
+'train': 'Train',
+'location': 'Location',
+
+'nearbyStopsTitle': 'Nearby Stops',
+'searchNearbyStops': 'Search nearby stops...',
+'stopsNearYou': 'Stops Near You',
+'viewMore': 'View More',
+'directions': 'Directions',
+
+'busStop': 'Bus Stop',
+'railwayStation': 'Railway Station',
+'autoStand': 'Auto Stand',
+'away': 'away',
 
     },
 
@@ -113,6 +170,74 @@ class AppStrings {
 'dismiss': 'ரத்து செய்',
 
 'startTrip': 'பயணத்தை தொடங்கு',
+
+'arrivalTitle': 'இன்னும் 10 நிமிடங்களில் உங்கள் நிறுத்தத்தை அடைவீர்கள்',
+'prepareGetOff': 'இறங்க தயாராகுங்கள்',
+'ready': 'நான் தயாராக உள்ளேன்',
+'muteAlert': 'அறிவிப்பை நிறுத்து',
+
+'arrivedTitle': 'நீங்கள் வந்துவிட்டீர்கள்!',
+
+'reachedDestination':
+    'நீங்கள் வந்தடைந்த இடம் ',
+
+'done': 'முடிந்தது',
+
+'shareTrip': 'பயணத்தை பகிர்',
+
+'closeDestination':
+    'உங்கள் இலக்கு அருகில் உள்ளது',
+
+'nearbyHelp':
+    'அருகிலுள்ள உதவிகள்',
+
+'autoRickshaws':
+    'ஆட்டோ ரிக்ஷாக்கள்',
+
+'nearestAuto':
+'அருகிலுள்ள ஆட்டோ',
+
+'privateTaxis':
+    'தனியார் டாக்ஸிகள்',
+
+'taxiDescription':
+    'தென்காசி சுற்றுலா மற்றும் நீண்ட தூர பயணங்களுக்கு கிடைக்கும்.',
+
+'viewRates':
+    'கட்டணங்களை காண்க',
+
+'startWalking':
+    'நடக்க தொடங்கு',
+
+'appName': 'தென்காசி ஸ்மார்ட் நாவ்',
+
+'liveNavigationTitle': 'நேரடி வழிகாட்டல்',
+'eta': 'வருகை நேரம்',
+'distance': 'தூரம்',
+'nextStop': 'அடுத்த நிறுத்தம்',
+'voiceNavigationOn': 'குரல் வழிகாட்டல் இயக்கத்தில்',
+'endTrip': 'பயணத்தை முடி',
+
+'recentSearchHistory': 'சமீபத்திய தேடல்கள்',
+'searchHistory': 'உங்கள் தேடல்களைத் தேடுங்கள்...',
+'today': 'இன்று',
+'yesterday': 'நேற்று',
+'clearAllHistory': 'அனைத்து தேடல்களையும் நீக்கு',
+
+'bus': 'பேருந்து',
+'train': 'ரயில்',
+'location': 'இடம்',
+
+'nearbyStopsTitle': 'அருகிலுள்ள நிறுத்தங்கள்',
+'searchNearbyStops': 'அருகிலுள்ள நிறுத்தங்களை தேடுங்கள்...',
+'stopsNearYou': 'உங்களுக்கு அருகிலுள்ள நிறுத்தங்கள்',
+'viewMore': 'மேலும் காண்க',
+'directions': 'வழிகாட்டல்',
+
+'busStop': 'பேருந்து நிறுத்தம்',
+'railwayStation': 'ரயில் நிலையம்',
+'autoStand': 'ஆட்டோ நிறுத்தம்',
+'away': 'தொலைவில்',
     },
   };
 }

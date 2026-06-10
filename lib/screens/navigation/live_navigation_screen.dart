@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
 
 class LiveNavigationScreen extends StatelessWidget {
   const LiveNavigationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
 
     return Scaffold(
 
@@ -42,15 +51,15 @@ class LiveNavigationScreen extends StatelessWidget {
                     ),
                   ),
 
-                  Text(
-                    "Live Navigation",
 
-                    style: GoogleFonts.poppins(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF0B5D1E),
-                    ),
-                  ),
+                    Text(
+  lang.text('liveNavigationTitle'),
+  style: GoogleFonts.poppins(
+    fontSize: 20,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFF0B5D1E),
+  ),
+),
 
                   const Icon(
                     Icons.volume_up_outlined,
@@ -160,25 +169,25 @@ class LiveNavigationScreen extends StatelessWidget {
 
                             children: [
 
-                              infoColumn(
-                                "ETA",
-                                "12 min",
-                              ),
+  infoColumn(
+    lang.text('eta'),
+    "12 min",
+  ),
 
-                              divider(),
+  divider(),
 
-                              infoColumn(
-                                "Distance",
-                                "4.5 km",
-                              ),
+  infoColumn(
+    lang.text('distance'),
+    "4.5 km",
+  ),
 
-                              divider(),
+  divider(),
 
-                              infoColumn(
-                                "Next Stop",
-                                "Courtallam",
-                              ),
-                            ],
+  infoColumn(
+    lang.text('nextStop'),
+    "Courtallam",
+  ),
+],
                           ),
 
                           const SizedBox(height: 22),
@@ -213,7 +222,7 @@ class LiveNavigationScreen extends StatelessWidget {
                                 const SizedBox(width: 10),
 
                                 Text(
-                                  "Voice Navigation ON",
+  lang.text('voiceNavigationOn'),
 
                                   style:
                                       GoogleFonts.poppins(
@@ -247,7 +256,7 @@ class LiveNavigationScreen extends StatelessWidget {
                             child: Center(
 
                               child: Text(
-                                "End Trip",
+                                lang.text('endTrip'),
 
                                 style:
                                     GoogleFonts.poppins(

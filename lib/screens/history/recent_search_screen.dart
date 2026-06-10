@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
 
 class RecentSearchScreen extends StatelessWidget {
   const RecentSearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+    final lang =
+      AppLocalizations(languageCode);
 
     return Scaffold(
 
@@ -31,7 +41,7 @@ class RecentSearchScreen extends StatelessWidget {
         ),
 
         title: Text(
-          "Recent Search History",
+          lang.text('recentSearchHistory'),
 
           style: GoogleFonts.poppins(
             color: const Color(0xFF0B5D1E),
@@ -112,7 +122,7 @@ class RecentSearchScreen extends StatelessWidget {
                             border: InputBorder.none,
 
                             hintText:
-                                "Search your history...",
+                                lang.text('searchHistory'),
 
                             hintStyle:
                                 GoogleFonts.poppins(
@@ -130,7 +140,7 @@ class RecentSearchScreen extends StatelessWidget {
 
                 /// TODAY
                 Text(
-                  "Today",
+                  lang.text('today'),
 
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w700,
@@ -145,26 +155,26 @@ class RecentSearchScreen extends StatelessWidget {
                 historyCard(
                   Icons.directions_bus,
                   "Tenkasi  →  Chennai",
-                  "Bus • 8:30 AM",
+                  "${lang.text('bus')} • 8:30 AM",
                 ),
 
                 historyCard(
                   Icons.train,
                   "Courtallam  →  Madurai",
-                  "Train • 7:15 AM",
+                  "${lang.text('train')} • 7:15 AM",
                 ),
 
                 historyCard(
                   Icons.location_on,
                   "Tirunelveli Bus Stand",
-                  "Location • 6:45 AM",
+                  "${lang.text('location')} • 6:45 AM",
                 ),
 
                 const SizedBox(height: 20),
 
                 /// YESTERDAY
                 Text(
-                  "Yesterday",
+                  lang.text('yesterday'),
 
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w700,
@@ -179,19 +189,19 @@ class RecentSearchScreen extends StatelessWidget {
                 historyCard(
                   Icons.directions_bus,
                   "Tenkasi  →  Coimbatore",
-                  "Bus • 9:10 PM",
+                  "${lang.text('bus')} • 9:10 PM",
                 ),
 
                 historyCard(
                   Icons.location_on,
                   "Madurai Railway Station",
-                  "Location • 8:05 PM",
+                  "${lang.text('location')} • 8:05 PM",
                 ),
 
                 historyCard(
                   Icons.train,
                   "Sengottai  →  Chennai Egmore",
-                  "Train • 5:40 PM",
+                  "${lang.text('train')} • 5:40 PM",
                 ),
 
                 const SizedBox(height: 30),
@@ -223,7 +233,7 @@ class RecentSearchScreen extends StatelessWidget {
                       const SizedBox(width: 8),
 
                       Text(
-                        "Clear All History",
+                        lang.text('clearAllHistory'),
 
                         style:
                             GoogleFonts.poppins(

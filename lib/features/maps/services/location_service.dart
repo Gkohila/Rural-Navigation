@@ -1,6 +1,8 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class LocationService {
+
   static Future<Position?> getCurrentLocation() async {
 
     bool serviceEnabled =
@@ -28,5 +30,51 @@ class LocationService {
     return await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
+  }
+
+  static Future<String> getLocationName(
+    double lat,
+    double lon,
+  ) async {
+
+    try {
+
+      final placemarks =
+          await placemarkFromCoordinates(
+        lat,
+        lon,
+      );
+
+      if (placemarks.isEmpty) {
+        return "Unknown";
+      }
+
+      final place =
+          placemarks.first;
+
+      if ((place.subLocality ?? '')
+          .trim()
+          .isNotEmpty) {
+        return place.subLocality!;
+      }
+
+      if ((place.locality ?? '')
+          .trim()
+          .isNotEmpty) {
+        return place.locality!;
+      }
+
+      if ((place.subAdministrativeArea ?? '')
+          .trim()
+          .isNotEmpty) {
+        return place.subAdministrativeArea!;
+      }
+
+      return "Unknown";
+
+    } catch (e) {
+
+      return "Unknown";
+    }
   }
 }

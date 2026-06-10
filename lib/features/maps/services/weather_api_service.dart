@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../models/weather_model.dart';
+import 'package:flutter/foundation.dart';
 
 class WeatherApiService {
 
@@ -13,16 +14,23 @@ class WeatherApiService {
 
     try {
 
-      final url =
-          'https://api.openweathermap.org/data/2.5/weather'
-          '?lat=$lat'
-          '&lon=$lon'
-          '&appid=5fa30522f6eb281b2347ac033a9c8311'
-          '&units=metric'
-          '&lang=$language';
+      final baseUrl = kIsWeb
+    ? 'http://localhost:8081'
+    : 'http://10.0.2.2:8081';
+
+final url =
+    '$baseUrl/api/weather/current'
+    '?lat=$lat'
+    '&lon=$lon'
+    '&lang=$language';
+
+      print("API URL = $url");
 
       final response =
           await http.get(Uri.parse(url));
+
+      print("STATUS CODE = ${response.statusCode}");
+      print("RESPONSE = ${response.body}");
 
       if (response.statusCode != 200) {
         return null;
@@ -31,23 +39,30 @@ class WeatherApiService {
       final data =
           jsonDecode(response.body);
 
-      final now = DateTime.now();
+      print("PARSED DATA = $data");
 
       return WeatherModel(
-        location: data['name'] ?? '',
+        location:
+            data['location'] ?? '',
+
         temperature:
-            (data['main']['temp'] ?? 0).toDouble(),
+            (data['temperature'] ?? 0)
+                .toDouble(),
+
         weather:
-            data['weather'][0]['description'] ?? '',
+            data['weather'] ?? '',
+
         time:
-            '${now.hour}:${now.minute}',
+            data['time'] ?? '',
       );
 
     } catch (e) {
 
-      print('Weather Error: $e');
-      return null;
+      print(
+        'Weather API Error: $e',
+      );
 
+      return null;
     }
   }
 }

@@ -5,6 +5,10 @@ import '../../theme/app_colors.dart';
 import '../navigation/live_navigation_screen.dart';
 import '../home/home_screen.dart';
 import '../../widgets/home/bottom_navbar.dart';
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
 
 class LastMileScreen extends StatefulWidget {
 
@@ -38,6 +42,12 @@ void initState() {
 }
 
 void showArrivalPopup() {
+
+  final languageCode =
+      context.read<LanguageProvider>().languageCode;
+
+  final lang =
+      AppLocalizations(languageCode);
 
   showDialog(
 
@@ -111,7 +121,7 @@ void showArrivalPopup() {
 
               Text(
 
-                "You have arrived!",
+                lang.text('arrivedTitle'),
 
                 textAlign: TextAlign.center,
 
@@ -137,7 +147,7 @@ void showArrivalPopup() {
                     TextSpan(
 
                       text:
-                          "You've reached ",
+                          lang.text('reachedDestination'),
 
                       style:
                           GoogleFonts.plusJakartaSans(
@@ -209,7 +219,7 @@ void showArrivalPopup() {
 
                   child: Text(
 
-                    "Done",
+                    lang.text('done'),
 
                     style:
                         GoogleFonts.plusJakartaSans(
@@ -243,7 +253,7 @@ void showArrivalPopup() {
 
                   label: Text(
 
-                    "Share Trip",
+                    lang.text('shareTrip'),
 
                     style:
                         GoogleFonts.plusJakartaSans(
@@ -265,6 +275,12 @@ void showArrivalPopup() {
 
   @override
   Widget build(BuildContext context) {
+
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
 
     return Scaffold(
 
@@ -341,14 +357,14 @@ void showArrivalPopup() {
                         const SizedBox(width: 12),
 
                         Text(
-                          'Tenkasi SmartNav',
-
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.primary,
-                          ),
-                        ),
+  lang.text('appName'),
+  overflow: TextOverflow.ellipsis,
+  style: GoogleFonts.plusJakartaSans(
+    fontSize: languageCode == 'ta' ? 16 : 22,
+    fontWeight: FontWeight.w700,
+    color: AppColors.primary,
+  ),
+),
                       ],
                     ),
                   ],
@@ -419,7 +435,7 @@ void showArrivalPopup() {
                         ),
 
                         child: Text(
-                         "You're close to your destination",
+                         lang.text('closeDestination'),
 
                           textAlign: TextAlign.center,
 
@@ -443,7 +459,7 @@ void showArrivalPopup() {
                 ),
 
                 child: Text(
-                  "Nearby Help",
+                  lang.text('nearbyHelp'),
 
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 20,
@@ -461,17 +477,17 @@ void showArrivalPopup() {
               const SizedBox(height: 26),
 
               /// AUTO CARD
-              _buildAutoCard(context),
+              _buildAutoCard(context, lang),
 
               const SizedBox(height: 26),
 
               /// TAXI CARD
-              _buildTaxiCard(context),
+              _buildTaxiCard(context, lang),
 
               const SizedBox(height: 26),
 
               /// WALK CARD
-              _buildWalkCard(context),
+              _buildWalkCard(context, lang),
 
               const SizedBox(height: 40),
             ],
@@ -615,7 +631,10 @@ void showArrivalPopup() {
   }
 
   /// AUTO
-  Widget _buildAutoCard(BuildContext context) {
+  Widget _buildAutoCard(
+  BuildContext context,
+  AppLocalizations lang,
+) {
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -644,7 +663,7 @@ void showArrivalPopup() {
             children: [
 
               Text(
-                "Auto Rickshaws",
+                lang.text('autoRickshaws'),
 
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 20,
@@ -727,7 +746,7 @@ void showArrivalPopup() {
               },
 
               child: Text(
-                "Way to the Nearest Auto",
+                lang.text('nearestAuto'),
 
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
@@ -742,7 +761,10 @@ void showArrivalPopup() {
   }
 
   /// TAXI
-  Widget _buildTaxiCard(BuildContext context) {
+  Widget _buildTaxiCard(
+  BuildContext context,
+  AppLocalizations lang,
+) {
 
     return Container(
       margin: const EdgeInsets.symmetric(
@@ -771,7 +793,7 @@ void showArrivalPopup() {
             children: [
 
               Text(
-                "Private Taxis",
+                lang.text('privateTaxis'),
 
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 26,
@@ -790,7 +812,7 @@ void showArrivalPopup() {
           const SizedBox(height: 30),
 
           Text(
-            "Available for long distance and site seeing tours around Tenkasi.",
+            lang.text('taxiDescription'),
 
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
@@ -836,7 +858,7 @@ void showArrivalPopup() {
               },
 
               child: Text(
-                "View Rates",
+              lang.text('viewRates'),
 
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
@@ -854,7 +876,10 @@ void showArrivalPopup() {
   }
 
 /// WALK
-Widget _buildWalkCard(BuildContext context) {
+Widget _buildWalkCard(
+  BuildContext context,
+  AppLocalizations lang,
+) {
 
   return Container(
     margin: const EdgeInsets.symmetric(
@@ -938,7 +963,7 @@ Widget _buildWalkCard(BuildContext context) {
                 ),
 
                 label: Text(
-                  "Start Walking",
+                  lang.text('startWalking'),
 
                   style:
                       GoogleFonts.plusJakartaSans(

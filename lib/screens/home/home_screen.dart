@@ -29,7 +29,7 @@ import '../../features/maps/services/location_service.dart';
 
 import '../../features/maps/models/weather_model.dart';
 import '../../features/maps/services/weather_api_service.dart';
-
+import 'package:intl/intl.dart';
 
 
 class HomeScreen extends StatefulWidget {
@@ -51,44 +51,49 @@ void initState() {
 }
 Future<void> _loadWeather() async {
   try {
+
     final position =
-    await LocationService.getCurrentLocation();
+        await LocationService.getCurrentLocation();
 
-if (position == null) {
-  setState(() {
-    isLoadingWeather = false;
-  });
-  return;
-}
+    if (position == null) {
+      setState(() {
+        isLoadingWeather = false;
+      });
+      return;
+    }
 
-debugPrint("LAT = ${position.latitude}");
-debugPrint("LON = ${position.longitude}");
+    debugPrint("LAT = ${position.latitude}");
+    debugPrint("LON = ${position.longitude}");
 
+    final languageCode =
+        context.read<LanguageProvider>().languageCode;
 
-
-
-
-final languageCode =
-    context.read<LanguageProvider>().languageCode;
-
-final result =
-    await WeatherApiService.getWeather(
+    final result =
+        await WeatherApiService.getWeather(
       position.latitude,
       position.longitude,
       languageCode,
     );
 
-setState(() {
-  weather = result;
-  
-  isLoadingWeather = false;
-});
+    if (result == null) {
+      setState(() {
+        isLoadingWeather = false;
+      });
+      return;
+    }
+
+    setState(() {
+      weather = result;
+      isLoadingWeather = false;
+    });
 
     debugPrint("LOCATION = ${weather?.location}");
-debugPrint("WEATHER = ${weather?.weather}");
-debugPrint("TEMP = ${weather?.temperature}");
-debugPrint("TIME = ${weather?.time}");
+    debugPrint("WEATHER = ${weather?.weather}");
+    debugPrint("TEMP = ${weather?.temperature}");
+    debugPrint("TIME = ${weather?.time}");
+
   } catch (e) {
+
     debugPrint("WEATHER ERROR = $e");
 
     setState(() {
@@ -290,7 +295,7 @@ class _HomeHeader extends StatelessWidget {
 
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: languageCode == 'ta' ? 15 : 20,
+                            fontSize: languageCode == 'ta' ? 13 : 20,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primary,
                           ),

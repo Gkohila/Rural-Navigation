@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
 
 class NearbyStopsScreen extends StatelessWidget {
   const NearbyStopsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    final languageCode =
+    context.watch<LanguageProvider>().languageCode;
+
+final lang =
+    AppLocalizations(languageCode);
 
     return Scaffold(
 
@@ -45,18 +55,19 @@ class NearbyStopsScreen extends StatelessWidget {
                     child: Center(
 
                       child: Text(
-                        "Nearby Stops",
-
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF0B5D1E),
-                        ),
-                      ),
+  lang.text('nearbyStopsTitle'),
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,
+  style: GoogleFonts.poppins(
+    fontSize: languageCode == 'ta' ? 16 : 20,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFF0B5D1E),
+  ),
+),
                     ),
                   ),
 
-                  const SizedBox(width: 42),
+                  const SizedBox(width: 20),
                 ],
               ),
             ),
@@ -96,7 +107,7 @@ class NearbyStopsScreen extends StatelessWidget {
                     const SizedBox(width: 10),
 
                     Text(
-                      "Search nearby stops...",
+                      lang.text('searchNearbyStops'),
 
                       style:
                           GoogleFonts.poppins(
@@ -267,7 +278,7 @@ class NearbyStopsScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
 
                 child: Text(
-                  "Stops Near You",
+                  lang.text('stopsNearYou'),
 
                   style:
                       GoogleFonts.poppins(
@@ -295,26 +306,29 @@ class NearbyStopsScreen extends StatelessWidget {
                 ),
 
                 children: [
-
                   stopCard(
-                    "Courtallam Bus Stop",
-                    "Bus Stop",
-                    "200 m away",
+                     context,
+                     "Courtallam Bus Stop",
+                     lang.text('busStop'),
+                     "200 m ${lang.text('away')}",
                   ),
 
                   stopCard(
+                     context,
                     "Tenkasi Railway Station",
                     "Railway Station",
                     "1.2 km away",
                   ),
 
                   stopCard(
+                    context,
                     "Main Auto Stand",
                     "Auto Stand",
                     "350 m away",
                   ),
 
                   stopCard(
+                    context,
                     "Old Bus Stand",
                     "Bus Stop",
                     "650 m away",
@@ -342,7 +356,7 @@ class NearbyStopsScreen extends StatelessWidget {
                       children: [
 
                         Text(
-                          "View More",
+                          lang.text('viewMore'),
 
                           style:
                               GoogleFonts.poppins(
@@ -378,10 +392,17 @@ class NearbyStopsScreen extends StatelessWidget {
   }
 
   Widget stopCard(
+    BuildContext context,
     String title,
     String type,
     String distance,
   ) {
+    final languageCode =
+      context.watch<LanguageProvider>().languageCode;
+
+    final lang =
+      AppLocalizations(languageCode);
+
 
     return Container(
 
@@ -532,7 +553,7 @@ class NearbyStopsScreen extends StatelessWidget {
                 const SizedBox(width: 5),
 
                 Text(
-                  "Directions",
+                  lang.text('directions'),
 
                   style:
                       GoogleFonts.poppins(
