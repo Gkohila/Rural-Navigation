@@ -59,6 +59,12 @@ class _RouteDetailsScreenState
 
   int currentStopIndex = -1;
 
+  bool arrivalAlertShown = false;
+
+  bool destinationReached = false;
+
+  int remainingMinutes = 15;
+
   @override
   void initState() {
     super.initState();
@@ -410,15 +416,18 @@ else
     return timelineRow(
 
       icon:
-          index == currentStopIndex
-              ? busNode()
-              : stopDot(),
+        index < currentStopIndex
+          ? completedStopNode()
+          : index == currentStopIndex
+            ? busNode()
+            : stopDot(),
 
       lineAfter: greenLine(36),
 
       child: stopTile(
         stop['stopName'],
         stop['arrivalTime'],
+        index < currentStopIndex,
       ),
 
     );
@@ -514,10 +523,13 @@ else
 
         setState(() {
           currentStopIndex++;
+          remainingMinutes = ((stops.length-1)-currentStopIndex)*3;
         });
 
         /// Final stop-ku munnaadi alert
-        if (currentStopIndex == stops.length - 2) {
+        if(remainingMinutes <= 5 && !arrivalAlertShown){
+
+          arrivalAlertShown = true;
 
           showArrivalAlertDialog(context);
 
@@ -527,9 +539,73 @@ else
 
       else {
 
-        timer?.cancel();
+  timer?.cancel();
 
-      }
+  if (!destinationReached) {
+
+    destinationReached = true;
+
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+
+        if (!mounted) return;
+
+        showDialog(
+
+          context: context,
+
+          barrierDismissible: false,
+
+          builder: (_) => AlertDialog(
+
+            title: const Text(
+              "Destination Reached 🎉",
+            ),
+
+            content: Text(
+              "You have arrived at ${widget.destination}",
+            ),
+
+            actions: [
+
+              TextButton(
+
+                onPressed: () {
+
+                  Navigator.pop(context);
+
+                  Navigator.push(
+
+                    context,
+
+                    MaterialPageRoute(
+                      builder: (_) => const LastMileScreen(),
+                    ),
+
+                  );
+
+                },
+
+                child: const Text(
+                  "Continue",
+                ),
+
+              ),
+
+            ],
+
+          ),
+
+        );
+
+      },
+
+    );
+
+  }
+
+}
 
     },
 
@@ -590,7 +666,7 @@ void dispose() {
               children: [
 
                 Text(
-                  "31 min",
+                  "$remainingMinutes min",
 
                   style:
                   GoogleFonts.inter(
@@ -618,7 +694,8 @@ void dispose() {
                       ),
 
                       TextSpan(
-                        text: "5:55 pm",
+                        text: remainingMinutes == 0 ? "Reached"
+                          : "${DateTime.now().hour}:${DateTime.now().minute}",
 
                         style:
                         GoogleFonts.inter(
@@ -666,12 +743,48 @@ void dispose() {
       isNavigationStarted = false;
     });
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LastMileScreen(),
+    showDialog(
+
+  context: context,
+
+  builder: (_) => AlertDialog(
+
+    title: const Text(
+      "Destination Reached 🎉",
+    ),
+
+    content: Text(
+      "You have arrived at ${widget.destination}",
+    ),
+
+    actions: [
+
+      TextButton(
+
+        onPressed: () {
+
+          Navigator.pop(context);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LastMileScreen(),
+            ),
+          );
+
+        },
+
+        child: const Text(
+          "Continue",
+        ),
+
       ),
-    );
+
+    ],
+
+  ),
+
+);
   }
 },
 
@@ -917,6 +1030,25 @@ void dispose() {
     );
   }
 
+  Widget completedStopNode() {
+
+  return Container(
+    width: 22,
+    height: 22,
+
+    decoration: const BoxDecoration(
+      color: green,
+      shape: BoxShape.circle,
+    ),
+
+    child: const Icon(
+      Icons.check,
+      size: 14,
+      color: Colors.white,
+    ),
+  );
+}
+
   Widget floatingButton(Widget child) {
 
     return Container(
@@ -1103,37 +1235,41 @@ void dispose() {
   }
 
   Widget stopTile(
-      String title,
-      String time,
-      ) {
+  String title,
+  String time,
+  bool completed,
+) {
 
-    return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-      children: [
+    children: [
 
-        Text(
-          title,
+      Text(
+        title,
 
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight:
-            FontWeight.w500,
-          ),
+        style: GoogleFonts.inter(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: completed
+              ? Colors.grey
+              : Colors.black,
         ),
+      ),
 
-        Text(
-          time,
+      Text(
+        time,
 
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          color: completed
+              ? Colors.grey
+              : Colors.black54,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   Widget rideTitle() {
 
@@ -1144,15 +1280,16 @@ void dispose() {
       children: [
 
         Text(
-          "Ride ${stops.length} stops (15 min)",
+  remainingMinutes == 0
+      ? "Destination reached"
+      : "${stops.length-currentStopIndex} stops left • $remainingMinutes min",
 
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight:
-            FontWeight.w600,
-            color: green,
-          ),
-        ),
+  style: GoogleFonts.inter(
+    fontSize: 14,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFF188038), // Google green
+  ),
+),
 
         const Icon(
           Icons.keyboard_arrow_up,
