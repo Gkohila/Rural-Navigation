@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../localization/language_provider.dart';
+import 'location_permission_screen.dart';
+import 'privacy_policy_screen.dart';
+import 'terms_screen.dart';
+import 'help_support_screen.dart';
+import '../../localization/app_localizations.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -13,13 +19,19 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
 
   bool voiceNavigation = true;
-  bool highContrast = false;
-
   bool pushNotifications = true;
-  bool delayAlerts = true;
+  String voiceLanguage = 'en';
+String alertVolume = 'Medium';
 
   @override
   Widget build(BuildContext context) {
+    final languageProvider =
+    Provider.of<LanguageProvider>(context);
+
+final localizations =
+    AppLocalizations(
+      languageProvider.languageCode,
+    );
 
     return Scaffold(
 
@@ -40,13 +52,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ),
 
   title: Text(
-    "Settings & Privacy",
-    style: GoogleFonts.poppins(
-      fontWeight: FontWeight.w700,
-      color: Colors.black87,
-      fontSize: 24,
-    ),
+  localizations.text('settingsPrivacy'),
+  maxLines: 1,
+  overflow: TextOverflow.ellipsis,
+  style: GoogleFonts.poppins(
+    fontSize:
+        languageProvider.languageCode == 'ta'
+            ? 17
+            : 22,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFF0B5D1E),
   ),
+),
 ),
 
       body: SingleChildScrollView(
@@ -65,7 +82,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 8),
 
             /// ACCOUNT
-            sectionTitle("ACCOUNT"),
+            
+            sectionTitle(
+  localizations.text('account'),
+),
 
             const SizedBox(height: 14),
 
@@ -128,219 +148,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
 
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 8),
 
-                        Text(
-                          "kohila@tenkasi.gov.in",
-
-                          style: GoogleFonts.poppins(
-                            color: Colors.black54,
-                            fontSize: 14,
-                          ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        GestureDetector(
-
-                          onTap: () {
-
-                            showDialog(
-
-                              context: context,
-
-                              builder: (context) {
-
-                                return AlertDialog(
-
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(20),
-                                  ),
-
-                                  title: Text(
-                                    "Edit Profile",
-
-                                    style: GoogleFonts.poppins(
-                                      fontWeight:
-                                          FontWeight.w700,
-                                    ),
-                                  ),
-
-                                  content: Column(
-                                    mainAxisSize:
-                                        MainAxisSize.min,
-
-                                    children: [
-
-                                      TextField(
-                                        decoration:
-                                            InputDecoration(
-                                          labelText: "Name",
-
-                                          border:
-                                              OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    12),
-                                          ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(
-                                          height: 16),
-
-                                      TextField(
-                                        decoration:
-                                            InputDecoration(
-                                          labelText: "Email",
-
-                                          border:
-                                              OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(
-                                                    12),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                 actions: [
-
-  /// CANCEL BUTTON
-  TextButton(
-
-    style: TextButton.styleFrom(
-
-      foregroundColor:
-          const Color(0xFF0B5D1E),
-
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 12,
-      ),
-    ),
-
-    onPressed: () {
-
-      Navigator.pop(context);
-    },
-
-    child: Text(
-
-      "Cancel",
-
-      style: GoogleFonts.poppins(
-
-        fontWeight: FontWeight.w500,
-
-        fontSize: 15,
-      ),
-    ),
+Text(
+  localizations.text(
+  'loveExploring',
+),
+  style: GoogleFonts.poppins(
+    color: Colors.black54,
+    fontSize: 14,
   ),
-
-  /// SAVE BUTTON
-  ElevatedButton(
-
-    style: ElevatedButton.styleFrom(
-
-      backgroundColor:
-          const Color(0xFF0B5D1E),
-
-      foregroundColor: Colors.white,
-
-      elevation: 0,
-
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 28,
-        vertical: 12,
-      ),
-
-      shape: RoundedRectangleBorder(
-
-        borderRadius:
-            BorderRadius.circular(14),
-      ),
-    ),
-
-    onPressed: () {
-
-      Navigator.pop(context);
-    },
-
-    child: Text(
-
-      "Save",
-
-      style: GoogleFonts.poppins(
-
-        color: Colors.white,
-
-        fontWeight: FontWeight.w600,
-
-        fontSize: 15,
-      ),
-    ),
-  ),
-],
-                                );
-                              },
-                            );
-                          },
-
-                          child: Container(
-                            padding:
-                                const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-
-                            decoration: BoxDecoration(
-                              color:
-                                  const Color(0xFFE8F5E9),
-
-                              borderRadius:
-                                  BorderRadius.circular(
-                                      12),
-                            ),
-
-                            child: Row(
-                              mainAxisSize:
-                                  MainAxisSize.min,
-
-                              children: [
-
-                                Text(
-                                  "Edit Profile",
-
-                                  style:
-                                      GoogleFonts.poppins(
-                                    color:
-                                        const Color(
-                                            0xFF0B5D1E),
-
-                                    fontWeight:
-                                        FontWeight.w600,
-
-                                    fontSize: 13,
-                                  ),
-                                ),
-
-                                const SizedBox(width: 4),
-
-                                const Icon(
-                                  Icons.edit,
-                                  size: 14,
-                                  color:
-                                      Color(0xFF0B5D1E),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+),
                       ],
                     ),
                   ),
@@ -351,59 +169,126 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 26),
 
             /// ACCESSIBILITY
-            sectionTitle("ACCESSIBILITY"),
+            sectionTitle(
+  localizations.text(
+    'accessibility',
+  ),
+),
 
             const SizedBox(height: 14),
 
             settingsCard(
-              children: [
+  children: [
 
-                switchTile(
-                  Icons.record_voice_over_outlined,
-                  "Voice Navigation",
-                  voiceNavigation,
+        Consumer<LanguageProvider>(
+      builder: (context, provider, child) {
+        return ListTile(
+          leading: const Icon(
+            Icons.language,
+            color: Color(0xFF1565C0),
+          ),
 
-                  (value) {
-                    setState(() {
-                      voiceNavigation = value;
-                    });
-                  },
-                ),
+          title: Text(
+            localizations.text(
+  'language',
+),
+            style: GoogleFonts.poppins(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
 
-                divider(),
+          trailing: DropdownButton<String>(
+            value: provider.languageCode,
+            underline: const SizedBox(),
 
-                switchTile(
-                  Icons.visibility_outlined,
-                  "High Contrast Mode",
-                  highContrast,
+            items: const [
+              DropdownMenuItem(
+                value: 'en',
+                child: Text('English'),
+              ),
+              DropdownMenuItem(
+                value: 'ta',
+                child: Text('தமிழ்'),
+              ),
+            ],
 
-                  (value) {
-                    setState(() {
-                      highContrast = value;
-                    });
-                  },
-                ),
-                divider(),
+            onChanged: (value) {
+              if (value != null) {
+                provider.changeLanguage(value);
+              }
+            },
+          ),
+        );
+      },
+    ),
+    
 
-Consumer<LanguageProvider>(
-  builder: (context, provider, child) {
-    return ListTile(
-      leading: const Icon(
-        Icons.language,
-        color: Color(0xFF1565C0),
+    switchTile(
+      Icons.record_voice_over_outlined,
+      localizations.text(
+  'voiceNavigation',
+),
+      voiceNavigation,
+      (value) {
+        setState(() {
+          voiceNavigation = value;
+        });
+      },
+    ),
+
+    
+
+
+  ],
+),
+ const SizedBox(height: 26),
+
+
+sectionTitle(
+  localizations.text(
+    'navigationSettings',
+  ),
+),
+
+const SizedBox(height: 14),
+
+settingsCard(
+  children: [
+
+    ListTile(
+      leading: Icon(
+        Icons.record_voice_over,
+        color: voiceNavigation
+            ? const Color(0xFF1565C0)
+            : Colors.grey,
       ),
 
       title: Text(
-        "Language",
+        localizations.text(
+  'voiceLanguage',
+),
         style: GoogleFonts.poppins(
           fontSize: 15,
           fontWeight: FontWeight.w500,
+          color: voiceNavigation
+              ? Colors.black87
+              : Colors.grey,
         ),
       ),
 
       trailing: DropdownButton<String>(
-        value: provider.languageCode,
+        value: voiceLanguage,
+
         underline: const SizedBox(),
+
+        onChanged: voiceNavigation
+            ? (value) {
+                setState(() {
+                  voiceLanguage = value!;
+                });
+              }
+            : null,
 
         items: const [
           DropdownMenuItem(
@@ -415,101 +300,336 @@ Consumer<LanguageProvider>(
             child: Text('தமிழ்'),
           ),
         ],
+      ),
+    ),
 
-        onChanged: (value) {
-          if (value != null) {
-            provider.changeLanguage(value);
-          }
-        },
+    divider(),
+
+    ListTile(
+      leading: Icon(
+        Icons.volume_up,
+        color: voiceNavigation
+            ? const Color(0xFF1565C0)
+            : Colors.grey,
+      ),
+
+      title: Text(
+        localizations.text(
+  'alertVolume',
+),
+        style: GoogleFonts.poppins(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: voiceNavigation
+              ? Colors.black87
+              : Colors.grey,
+        ),
+      ),
+
+      trailing: DropdownButton<String>(
+        value: alertVolume,
+
+        underline: const SizedBox(),
+
+        onChanged: voiceNavigation
+            ? (value) {
+                setState(() {
+                  alertVolume = value!;
+                });
+              }
+            : null,
+
+       items: [
+  DropdownMenuItem(
+    value: 'Low',
+    child: Text(
+      localizations.text('low'),
+    ),
+  ),
+  DropdownMenuItem(
+    value: 'Medium',
+    child: Text(
+      localizations.text('medium'),
+    ),
+  ),
+  DropdownMenuItem(
+    value: 'High',
+    child: Text(
+      localizations.text('high'),
+    ),
+  ),
+],
+      ),
+    ),
+  ],
+),
+
+const SizedBox(height: 26), 
+
+sectionTitle(
+  localizations.text(
+    'notifications',
+  ),
+),
+
+const SizedBox(height: 14),
+
+settingsCard(
+  children: [
+
+    switchTile(
+      Icons.notifications_active_outlined,
+      localizations.text(
+  'pushNotifications',
+),
+      pushNotifications,
+      (value) {
+        setState(() {
+          pushNotifications = value;
+        });
+      },
+    ),
+  ],
+),
+            
+const SizedBox(height: 26),
+         /// PRIVACY
+sectionTitle(
+  localizations.text(
+    'privacy',
+  ),
+),
+
+const SizedBox(height: 14),
+
+settingsCard(
+  children: [
+   InkWell(
+  onTap: () {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const LocationPermissionScreen(),
       ),
     );
   },
+
+  child: listTile(
+    Icons.location_on_outlined,
+    localizations.text(
+  'locationPermissions',
+),
+  ),
+),
+  ],
 ),
 
-                divider(),
+const SizedBox(height: 26),
 
-                listTile(
-                  Icons.text_fields,
-                  "Font Size",
-                  trailing: "Default (16px)",
-                ),
-              ],
-            ),
+/// ABOUT
+sectionTitle(
+  localizations.text(
+    'aboutSection',
+  ),
+),
 
-            const SizedBox(height: 26),
+const SizedBox(height: 14),
 
-            /// NOTIFICATIONS
-            sectionTitle("NOTIFICATIONS"),
+settingsCard(
+  children: [
 
-            const SizedBox(height: 14),
+    InkWell(
+  onTap: () {
 
-            settingsCard(
-              children: [
-
-                switchTile(
-                  Icons.notifications_active_outlined,
-                  "Push Notifications",
-                  pushNotifications,
-
-                  (value) {
-                    setState(() {
-                      pushNotifications = value;
-                    });
-                  },
-                ),
-
-                divider(),
-
-                switchTile(
-                  Icons.warning_amber_rounded,
-                  "Delay Alerts",
-                  delayAlerts,
-
-                  (value) {
-                    setState(() {
-                      delayAlerts = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 26),
-
-            /// PRIVACY
-            sectionTitle("PRIVACY"),
-
-            const SizedBox(height: 14),
-
-            settingsCard(
-              children: [
-
-                listTile(
-                  Icons.location_on_outlined,
-                  "Location Permissions",
-                ),
-
-                divider(),
-
-                listTile(
-                  Icons.share_outlined,
-                  "Data Sharing Settings",
-                ),
-
-                divider(),
-
-                listTile(
-                  Icons.security,
-                  "Two-Factor Auth",
-                  trailing: "Enabled",
-                ),
-              ],
-            ),
-          ],
-        ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const PrivacyPolicyScreen(),
       ),
     );
-  }
+  },
+
+  child: listTile(
+    Icons.privacy_tip_outlined,
+    localizations.text(
+  'privacyPolicy',
+),
+  ),
+),
+
+    divider(),
+
+    InkWell(
+  onTap: () {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const TermsScreen(),
+      ),
+    );
+  },
+
+  child: listTile(
+    Icons.description_outlined,
+    localizations.text(
+  'termsConditions',
+),
+  ),
+),
+
+    divider(),
+
+    listTile(
+      Icons.info_outline,
+      localizations.text(
+  'appVersion',
+),
+      trailing: "v1.0.0",
+    ),
+  ],
+),
+
+const SizedBox(height: 26),
+
+/// SUPPORT
+sectionTitle(
+  localizations.text(
+    'support',
+  ),
+),
+
+const SizedBox(height: 14),
+
+settingsCard(
+  children: [
+
+   InkWell(
+  onTap: () {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const HelpSupportScreen(),
+      ),
+    );
+  },
+
+  child: listTile(
+    Icons.help_outline,
+    localizations.text(
+  'helpSupport',
+),
+  ),
+),
+  ],
+),
+
+const SizedBox(height: 26),
+
+/// LOGOUT
+SizedBox(
+  width: double.infinity,
+
+  child: ElevatedButton.icon(
+    icon: const Icon(
+  Icons.logout,
+  color: Colors.white,
+),
+
+    label: Text(
+  localizations.text(
+  'logout',
+),
+  style: GoogleFonts.poppins(
+    fontWeight: FontWeight.w600,
+    fontSize: 16,
+  ),
+),
+
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFFC62828),
+      foregroundColor: Colors.white,
+      minimumSize: const Size(
+        double.infinity,
+        55,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(18),
+      ),
+    ),
+
+    onPressed: () {
+
+  showDialog(
+
+    context: context,
+
+    builder: (context) {
+
+      return AlertDialog(
+
+        
+          title: Text(
+  localizations.text(
+    'logoutTitle',
+  ),
+),
+      
+
+        content: Text(
+          localizations.text(
+  'logoutMessage',
+),
+        ),
+
+        actions: [
+
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+           child: Text(
+  localizations.text(
+    'cancel',
+  ),
+),
+          ),
+
+          ElevatedButton(
+            onPressed: () {
+
+              Navigator.pop(context);
+
+              // Logout Logic Here
+
+            },
+            child: Text(
+  localizations.text(
+    'logout',
+  ),
+),
+          ),
+        ],
+      );
+    },
+  );
+},
+  ),
+),
+
+],
+),
+),
+);
+}
+
 
   Widget sectionTitle(String text) {
 
