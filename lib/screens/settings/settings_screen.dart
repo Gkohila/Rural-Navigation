@@ -140,7 +140,7 @@ final localizations =
                       children: [
 
                         Text(
-                          "Kohila",
+                          "Guest User",
 
                           style: GoogleFonts.poppins(
                             fontSize: 22,
@@ -151,9 +151,7 @@ final localizations =
                         const SizedBox(height: 8),
 
 Text(
-  localizations.text(
-  'loveExploring',
-),
+   "Add your bio",
   style: GoogleFonts.poppins(
     color: Colors.black54,
     fontSize: 14,

@@ -11,6 +11,8 @@ import 'screens/auth/welcome_screen.dart';
 import 'package:provider/provider.dart';
 import 'localization/language_provider.dart';
 
+import 'providers/profile_provider.dart';
+
 
 Future<void> main() async {
 
@@ -34,8 +36,19 @@ Future<void> main() async {
 await languageProvider.loadLanguage();
 
 runApp(
-  ChangeNotifierProvider.value(
-    value: languageProvider,
+  MultiProvider(
+    providers: [
+
+      ChangeNotifierProvider.value(
+        value: languageProvider,
+      ),
+
+      ChangeNotifierProvider(
+        create: (_) => ProfileProvider(),
+      ),
+
+    ],
+
     child: const SmartNavApp(),
   ),
 );

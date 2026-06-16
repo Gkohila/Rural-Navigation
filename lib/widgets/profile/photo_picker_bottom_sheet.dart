@@ -6,8 +6,32 @@ import 'package:provider/provider.dart';
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
 
-class PhotoPickerBottomSheet extends StatelessWidget {
+import '../../providers/profile_provider.dart';
+
+class PhotoPickerBottomSheet extends StatefulWidget {
   const PhotoPickerBottomSheet({super.key});
+
+  @override
+  State<PhotoPickerBottomSheet> createState() =>
+      _PhotoPickerBottomSheetState();
+}
+
+class _PhotoPickerBottomSheetState
+    extends State<PhotoPickerBottomSheet> {
+
+  final TextEditingController nameController =
+      TextEditingController();
+
+  final TextEditingController bioController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.text = "Guest User";
+    bioController.text = "Add your bio";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +139,7 @@ final localizations =
 
                     const SizedBox(height: 24),
                    TextField(
-  controller: TextEditingController(
-    text: "Kohila",
-  ),
+  controller: nameController,
   decoration: InputDecoration(
     labelText: localizations.text('name'),
     border: OutlineInputBorder(
@@ -129,9 +151,7 @@ final localizations =
 const SizedBox(height: 16),
 
 TextField(
-  controller: TextEditingController(
-    text: "Love exploring new places",
-  ),
+  controller: bioController,
   maxLines: 2,
   maxLength: 60,
   decoration: InputDecoration(
@@ -298,11 +318,19 @@ Row(
         ),
         onPressed: () {
 
-          // Save Profile Logic
+  final profileProvider =
+      Provider.of<ProfileProvider>(
+        context,
+        listen: false,
+      );
 
-          Navigator.pop(context);
+  profileProvider.updateProfile(
+  name: nameController.text.trim(),
+  bio: bioController.text.trim(),
+);
 
-        },
+  Navigator.pop(context);
+},
         child: Text(
           localizations.text('save'),
           style: GoogleFonts.poppins(
@@ -401,4 +429,10 @@ Row(
       ),
     );
   }
+  @override
+void dispose() {
+  nameController.dispose();
+  bioController.dispose();
+  super.dispose();
+}
 }

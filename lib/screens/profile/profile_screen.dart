@@ -9,11 +9,25 @@ import 'package:provider/provider.dart';
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
 
-class ProfileScreen extends StatelessWidget {
+import '../../providers/profile_provider.dart';
+import 'dart:io';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() =>
+      _ProfileScreenState();
+}
+
+class _ProfileScreenState
+    extends State<ProfileScreen> {
+
+  @override
   Widget build(BuildContext context) {
+
+    final profileProvider =
+    Provider.of<ProfileProvider>(context);
 
     final languageProvider =
     Provider.of<LanguageProvider>(context);
@@ -131,33 +145,34 @@ final localizations =
                   Stack(
 
                     children: [
+CircleAvatar(
+  radius: 52,
+  backgroundColor: Colors.white,
 
-                      CircleAvatar(
+  child: CircleAvatar(
+    radius: 46,
 
-                        radius: 52,
+    backgroundColor: const Color(0xFFE9F4EC),
 
-                        backgroundColor:
-                            Colors.white,
+    backgroundImage:
+        profileProvider.profile.imagePath != null
+            ? FileImage(
+                File(
+                  profileProvider.profile.imagePath!,
+                ),
+              )
+            : null,
 
-                        child: CircleAvatar(
-
-                          radius: 46,
-
-                          backgroundColor:
-                              const Color(
-                                  0xFFE9F4EC),
-
-                          child: Icon(
-
-                            Icons.person,
-
-                            size: 60,
-
-                            color:
-                                Colors.green.shade800,
-                          ),
-                        ),
-                      ),
+    child:
+        profileProvider.profile.imagePath == null
+            ? Icon(
+                Icons.person,
+                size: 60,
+                color: Colors.green.shade800,
+              )
+            : null,
+  ),
+),
 
                       Positioned(
 
@@ -217,7 +232,7 @@ final localizations =
 
                   Text(
 
-                    "Kohila",
+                     profileProvider.profile.name,
 
                     style: GoogleFonts.poppins(
 
@@ -249,7 +264,7 @@ final localizations =
 
                       Text(
 
-                        "Love exploring new places",
+                         profileProvider.profile.bio,
 
                         style: GoogleFonts.poppins(
 
