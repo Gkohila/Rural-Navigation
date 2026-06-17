@@ -2,12 +2,40 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
-class PhotoPickerBottomSheet extends StatelessWidget {
+class PhotoPickerBottomSheet extends StatefulWidget {
   const PhotoPickerBottomSheet({super.key});
 
   @override
+  State<PhotoPickerBottomSheet> createState() =>
+      _PhotoPickerBottomSheetState();
+}
+
+class _PhotoPickerBottomSheetState
+    extends State<PhotoPickerBottomSheet> {
+
+  final TextEditingController nameController =
+      TextEditingController();
+
+  final TextEditingController bioController =
+      TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.text = "Guest User";
+    bioController.text = "Add your bio";
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final languageProvider =
+    Provider.of<LanguageProvider>(context);
+
+final localizations =
+    AppLocalizations(
+      languageProvider.languageCode,
+    );
     return BackdropFilter(
       filter: ImageFilter.blur(
         sigmaX: 8,
@@ -82,39 +110,64 @@ class PhotoPickerBottomSheet extends StatelessWidget {
                         children: [
 
                           Text(
-                            "Update Photo",
-
-                            style: GoogleFonts.poppins(
-                              fontSize: 28,
-                              fontWeight:
-                                  FontWeight.w700,
-                              color:
-                                  const Color(0xFF0B5D1E),
-                            ),
-                          ),
+  localizations.text('editProfile'),
+  style: GoogleFonts.poppins(
+    fontSize: 30,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFF0B5D1E),
+  ),
+),
 
                           const SizedBox(height: 6),
 
                           Text(
-                            "Personalize your Tenkasi profile",
-
-                            style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              color: Colors.black54,
-                            ),
-                          ),
+  localizations.text('updateProfileInfo'),
+  style: GoogleFonts.poppins(
+    fontSize: 12,
+    color: Colors.black54,
+  ),
+),
                         ],
                       ),
                     ),
 
                     const SizedBox(height: 24),
+                   TextField(
+  controller: nameController,
+  decoration: InputDecoration(
+    labelText: localizations.text('name'),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+  ),
+),
+
+const SizedBox(height: 16),
+
+TextField(
+  controller: bioController,
+  maxLines: 2,
+  maxLength: 60,
+  decoration: InputDecoration(
+    labelText: localizations.text('about'),
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 14,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+  ),
+),
+
+const SizedBox(height: 24),
 
                     /// CAMERA
                     _optionTile(
                       icon:
                           Icons.camera_alt_outlined,
 
-                      title: "Take Photo",
+                      title: localizations.text('takePhoto'),
 
                       iconBg:
                           const Color(0xFFE8F7EA),
@@ -130,7 +183,7 @@ class PhotoPickerBottomSheet extends StatelessWidget {
                       icon: Icons.image_outlined,
 
                       title:
-                          "Choose from Gallery",
+                          localizations.text('chooseGallery'),
 
                       iconBg:
                           const Color(0xFFEAF2FF),
@@ -141,159 +194,6 @@ class PhotoPickerBottomSheet extends StatelessWidget {
 
                     const SizedBox(height: 14),
 
-                    /// FACEBOOK
-                    _optionTile(
-                      icon: Icons.facebook,
-
-                      title:
-                          "Import from Facebook",
-
-                      iconBg:
-                          const Color(0xFFEAF0FF),
-
-                      iconColor:
-                          const Color(0xFF1877F2),
-                    ),
-
-                    const SizedBox(height: 14),
-
-                    /// AI AVATAR
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-
-                        borderRadius:
-                            BorderRadius.circular(24),
-
-                        border: Border.all(
-                          color:
-                              const Color(0xFFEAEAEA),
-                        ),
-
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withOpacity(0.03),
-
-                            blurRadius: 12,
-
-                            offset:
-                                const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-
-                      child: Row(
-                        children: [
-
-                          Container(
-                            width: 56,
-                            height: 56,
-
-                            decoration:
-                                const BoxDecoration(
-                              shape: BoxShape.circle,
-
-                              gradient:
-                                  LinearGradient(
-                                colors: [
-                                  Color(0xFF1C4B1A),
-                                  Color(0xFF0B5D1E),
-                                ],
-                              ),
-                            ),
-
-                            child: const Icon(
-                              Icons.auto_awesome,
-
-                              color: Colors.white,
-                              size: 28,
-                            ),
-                          ),
-
-                          const SizedBox(width: 16),
-
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment
-                                      .start,
-
-                              children: [
-
-                                Text(
-                                  "Generate AI Avatar",
-
-                                  style:
-                                      GoogleFonts.poppins(
-                                    fontSize: 16,
-
-                                    fontWeight:
-                                        FontWeight.w600,
-                                  ),
-                                ),
-
-                                const SizedBox(
-                                    height: 5),
-
-                                Container(
-                                  padding:
-                                      const EdgeInsets
-                                          .symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-
-                                  decoration:
-                                      BoxDecoration(
-                                    color:
-                                        const Color(
-                                            0xFFFFE5D9),
-
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                                8),
-                                  ),
-
-                                  child: Text(
-                                    "PREMIUM",
-
-                                    style:
-                                        GoogleFonts
-                                            .poppins(
-                                      fontSize: 10,
-
-                                      fontWeight:
-                                          FontWeight
-                                              .w700,
-
-                                      color:
-                                          const Color(
-                                              0xFFE57D45),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: Colors.black38,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 14),
 
                     /// REMOVE PHOTO
                     Container(
@@ -327,8 +227,8 @@ class PhotoPickerBottomSheet extends StatelessWidget {
                         children: [
 
                           Container(
-                            width: 56,
-                            height: 56,
+                            width: 50,
+                            height: 50,
 
                             decoration:
                                 const BoxDecoration(
@@ -350,11 +250,11 @@ class PhotoPickerBottomSheet extends StatelessWidget {
 
                           Expanded(
                             child: Text(
-                              "Remove Current Photo",
+                              localizations.text('removeCurrentPhoto'),
 
                               style:
                                   GoogleFonts.poppins(
-                                fontSize: 16,
+                                fontSize: 14,
 
                                 fontWeight:
                                     FontWeight.w600,
@@ -375,76 +275,72 @@ class PhotoPickerBottomSheet extends StatelessWidget {
 
                     const SizedBox(height: 20),
 
-                    /// CANCEL BUTTON
-                    SizedBox(
-                      width: double.infinity,
-                      height: 58,
+Row(
+  children: [
 
-                      child: ElevatedButton(
+    Expanded(
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(0, 54),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Text(
+          localizations.text('cancel'),
+          style: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    ),
 
-                        style:
-                            ElevatedButton.styleFrom(
-                          elevation: 0,
+    const SizedBox(width: 12),
 
-                          backgroundColor:
-                              const Color(
-                                  0xFFF3F4F6),
+    Expanded(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          minimumSize: const Size(0, 58),
+          backgroundColor: const Color(0xFF0B5D1E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        onPressed: () {
 
-                          shape:
-                              RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(
-                                    24),
-                          ),
-                        ),
+  final profileProvider =
+      Provider.of<ProfileProvider>(
+        context,
+        listen: false,
+      );
 
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
+  profileProvider.updateProfile(
+  name: nameController.text.trim(),
+  bio: bioController.text.trim(),
+);
 
-                        child: Text(
-                          "Cancel",
+  Navigator.pop(context);
+},
+        child: Text(
+          localizations.text('save'),
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ),
 
-                          style:
-                              GoogleFonts.poppins(
-                            fontSize: 18,
+  ],
+),
 
-                            fontWeight:
-                                FontWeight.w500,
+                   const SizedBox(height: 8),
 
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 14),
-
-                    /// PRIVACY TEXT
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-
-                      children: [
-
-                        const Icon(
-                          Icons.lock_outline,
-                          size: 15,
-                          color: Colors.black45,
-                        ),
-
-                        const SizedBox(width: 6),
-
-                        Text(
-                          "Your photo is private and secure",
-
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            color: Colors.black45,
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -490,8 +386,8 @@ class PhotoPickerBottomSheet extends StatelessWidget {
         children: [
 
           Container(
-            width: 56,
-            height: 56,
+            width: 50,
+            height: 50,
 
             decoration: BoxDecoration(
               color: iconBg,
@@ -512,7 +408,7 @@ class PhotoPickerBottomSheet extends StatelessWidget {
               title,
 
               style: GoogleFonts.poppins(
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -527,4 +423,10 @@ class PhotoPickerBottomSheet extends StatelessWidget {
       ),
     );
   }
+  @override
+void dispose() {
+  nameController.dispose();
+  bioController.dispose();
+  super.dispose();
+}
 }
