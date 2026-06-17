@@ -6,7 +6,6 @@ class NotificationService {
       notifications =
       FlutterLocalNotificationsPlugin();
 
-  /// INITIALIZE
   static Future init() async {
 
     const android =
@@ -24,28 +23,36 @@ class NotificationService {
     );
   }
 
-  /// TEST NOTIFICATION
-  static Future showTestNotification() async {
+  static Future showAlertNotification(
+  String title,
+  String body,
+) async {
 
-    const androidDetails =
-        AndroidNotificationDetails(
-      'smartnav_alert',
-      'SmartNav Alert',
+  const androidDetails =
+      AndroidNotificationDetails(
+    'smartnav_alert',
+    'SmartNav Alert',
 
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+    importance: Importance.max,
+    priority: Priority.high,
+  );
 
-    const details =
-        NotificationDetails(
-      android: androidDetails,
-    );
+  const details =
+      NotificationDetails(
+    android: androidDetails,
+  );
 
-    await notifications.show(
-      0,
-      'Tenkasi SmartNav',
-      '10 minutes away from your stop',
-      details,
-    );
-  }
+  await notifications.show(
+
+    DateTime.now()
+            .millisecondsSinceEpoch ~/
+        1000,
+
+    title,
+
+    body,
+
+    details,
+  );
+}
 }

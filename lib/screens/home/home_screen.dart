@@ -20,6 +20,8 @@ import '../stops/nearby_stops_screen.dart';
 import '../../features/maps/screens/route_search_screen.dart';
 import '../navigation/live_navigation_screen.dart';
 import '../alert/alerts_screen.dart';
+import '../../services/alert_service.dart';
+import 'package:smartnav/screens/notification/notification_screen.dart';
 
 import 'package:provider/provider.dart';
 
@@ -41,13 +43,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   WeatherModel? weather;
-bool isLoadingWeather = true;
+  bool isLoadingWeather = true;
 
   HomeNavItem _selectedNavItem = HomeNavItem.home;
+  int unreadCount = 0;
+
+  final AlertService alertService = AlertService();
 @override
 void initState() {
   super.initState();
   _loadWeather();
+  loadUnreadCount();
 }
 Future<void> _loadWeather() async {
   try {
@@ -100,6 +106,24 @@ Future<void> _loadWeather() async {
       isLoadingWeather = false;
     });
   }
+}
+
+  Future<void> loadUnreadCount() async {
+
+  int count =
+      await alertService
+          .getUnreadCount(
+              "147C");
+  print("Unread Count = $count");
+
+  if (!mounted) return;
+
+  setState(() {
+
+    unreadCount = count;
+
+  });
+
 }
 Future<void> _testLocation() async {
 
@@ -203,13 +227,14 @@ Future<void> _testLocation() async {
       ),
      bottomNavigationBar: HomeBottomNavbar(
 
-  selectedItem: _selectedNavItem,
+      selectedItem: _selectedNavItem,
+      unreadCount: unreadCount,
 
-  onItemSelected: (item) {
+      onItemSelected: (item) {
 
-    setState(() {
-      _selectedNavItem = item;
-    });
+        setState(() {
+          _selectedNavItem = item;
+        });
 
     if (item == HomeNavItem.alerts) {
 
@@ -218,7 +243,7 @@ Future<void> _testLocation() async {
         context,
 
         MaterialPageRoute(
-          builder: (_) => const AlertsScreen(),
+          builder: (_) => NotificationScreen(),
         ),
       );
     }

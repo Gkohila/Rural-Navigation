@@ -12,9 +12,7 @@ import '../../screens/profile/profile_screen.dart';
 
 /// ADD THIS IMPORT
 import '../../features/maps/screens/route_search_screen.dart';
-
-/// ADD THIS IMPORT
-import '../../screens/alert/alerts_screen.dart';
+import 'package:smartnav/screens/notification/notification_screen.dart';
 
 import 'package:provider/provider.dart';
 
@@ -29,10 +27,12 @@ class HomeBottomNavbar extends StatelessWidget {
     super.key,
     required this.selectedItem,
     required this.onItemSelected,
+    this.unreadCount = 0,
   });
 
   final HomeNavItem selectedItem;
   final ValueChanged<HomeNavItem> onItemSelected;
+  final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -162,14 +162,11 @@ final lang =
                   /// ALERTS
                   _NavItem(
 
-                    icon:
-                        Icons.notifications_outlined,
+                    icon: Icons.notifications_outlined,
 
                     label: lang.text('alerts'),
-
-                    isSelected:
-                        selectedItem ==
-                            HomeNavItem.alerts,
+                    unreadCount: unreadCount,
+                    isSelected: selectedItem == HomeNavItem.alerts,
 
                     onTap: () {
 
@@ -178,14 +175,14 @@ final lang =
                       );
 
                       /// OPEN ALERTS SCREEN
-                      Navigator.push(
+                      Navigator.pushReplacement(
 
                         context,
 
                         MaterialPageRoute(
 
                           builder: (context) =>
-                              const AlertsScreen(),
+                              NotificationScreen(),
                         ),
                       );
                     },
@@ -245,12 +242,14 @@ class _NavItem extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
+    this.unreadCount = 0,
   });
 
   final IconData icon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
+  final int unreadCount;
 
   @override
   Widget build(BuildContext context) {
@@ -334,17 +333,48 @@ class _NavItem extends StatelessWidget {
 
                   : null,
 
-              child: Icon(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
 
-                icon,
+                Icon(
+                  icon,
+                  size: 24,
+                  color: isSelected ? AppColors.onPrimary : inactiveColor,
+                ),
 
-                size: 24,
+                if (unreadCount > 0)
 
-                color: isSelected
+                  Positioned(
+                    right: -6,
+                    top: -6,
 
-                    ? AppColors.onPrimary
+                    child: Container(
+                      constraints: const BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
 
-                    : inactiveColor,
+                      padding: const EdgeInsets.all(2),
+                      alignment: Alignment.center,
+
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+
+                      child: Text(
+                        unreadCount.toString(),
+
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 

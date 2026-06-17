@@ -1,104 +1,290 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class NotificationScreen extends StatelessWidget {
+import 'package:smartnav/models/alert_model.dart';
+import 'package:smartnav/services/alert_service.dart';
+
+import 'dart:async';
+import 'package:smartnav/features/maps/services/notification_service.dart';
+
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<NotificationScreen> createState() =>
+      _NotificationScreenState();
+}
 
-    return Scaffold(
+class _NotificationScreenState
+    extends State<NotificationScreen> {
+  List<AlertModel> alerts = [];
 
+  bool isLoading = true;
+  int previousAlertCount = 0;
+  int unreadCount = 0;
+  final AlertService alertService = AlertService();
+  Timer? timer;
+
+  @override
+void initState() {
+  super.initState();
+
+  loadAlerts();
+
+  timer = Timer.periodic(
+    const Duration(seconds: 15),
+    (_) {
+      loadAlerts();
+    },
+  );
+}
+
+  Future<void> loadAlerts() async {
+
+  print("Loading alerts...");
+
+  List<AlertModel> latestAlerts =
+      await alertService.getAlerts(
+          "147C");
+
+  print(
+      "Alert loaded = ${latestAlerts.length}");
+
+  unreadCount =
+      await alertService.getUnreadCount(
+          "147C");
+
+  print(
+      "Unread Count = $unreadCount");
+
+  if (previousAlertCount != 0 &&
+      latestAlerts.length >
+          previousAlertCount) {
+
+    AlertModel newest =
+        latestAlerts.first;
+
+    await NotificationService
+        .showAlertNotification(
+
+      "Tenkasi SmartNav",
+
+      newest.message,
+
+    );
+  }
+
+  previousAlertCount =
+      latestAlerts.length;
+
+  if (!mounted) return;
+
+  setState(() {
+
+    alerts = latestAlerts;
+
+    isLoading = false;
+
+  });
+}
+
+  Future<void> loadUnreadCount() async {
+
+    unreadCount = await alertService.getUnreadCount("147C");
+
+    if (!mounted) return;
+
+    setState(() {});
+  }
+
+  @override
+Widget build(BuildContext context) {
+
+  return Scaffold(
+
+    backgroundColor: const Color(0xFFF6F7F9),
+
+    appBar: AppBar(
       backgroundColor: const Color(0xFFF6F7F9),
+      elevation: 0,
 
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF6F7F9),
-
-        elevation: 0,
-
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Color(0xFF0B5D1E),
-          ),
-
-          onPressed: () {
-            Navigator.pop(context);
-          },
+      leading: IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
+          color: Color(0xFF0B5D1E),
         ),
 
-        title: Text(
-          "Alerts",
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
 
-          style: GoogleFonts.poppins(
-            color: const Color(0xFF0B5D1E),
-            fontWeight: FontWeight.w700,
-            fontSize: 24,
-          ),
+      title: Text(
+        "Alerts",
+
+        style: GoogleFonts.poppins(
+          color: const Color(0xFF0B5D1E),
+          fontWeight: FontWeight.w700,
+          fontSize: 24,
         ),
+      ),
 
-        actions: const [
+      actions: [
 
-          Padding(
-            padding: EdgeInsets.only(right: 16),
+        Padding(
+          padding: const EdgeInsets.only(right: 16,),
 
-            child: Icon(
-              Icons.notifications_active_outlined,
-              color: Color(0xFF0B5D1E),
-              size: 26,
+          child: Stack(
+
+            children: [
+
+              const Icon(
+                Icons.notifications_active_outlined,
+                color: Color(0xFF0B5D1E),
+                size: 26,
+              ),
+
+              if (unreadCount > 0)
+
+                Positioned(
+
+                  right: 0, top: 0,
+
+                  child: Container(
+
+                    padding:
+                      const EdgeInsets.all(4),
+
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+
+                    child: Text(
+
+                      unreadCount.toString(),
+
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight:
+                          FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
-      ),
+    ),
 
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+    body: isLoading
 
-        children: [
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
 
-          notificationCard(
-            icon: Icons.directions_bus,
-            title: "Bus Delayed",
-            subtitle: "Tenkasi → Chennai bus delayed by 10 mins",
-            time: "5 mins ago",
-            color: Colors.red,
-          ),
+        : ListView.builder(
 
-          notificationCard(
-            icon: Icons.train,
-            title: "Train Arriving",
-            subtitle: "Madurai Express arriving at Platform 2",
-            time: "10 mins ago",
-            color: Colors.blue,
-          ),
+            padding: const EdgeInsets.all(16),
 
-          notificationCard(
-            icon: Icons.route,
-            title: "Route Updated",
-            subtitle: "New shortcut available for Courtallam route",
-            time: "20 mins ago",
-            color: Colors.green,
-          ),
+            itemCount: alerts.length,
 
-          notificationCard(
-            icon: Icons.warning_amber_rounded,
-            title: "Weather Alert",
-            subtitle: "Heavy rain expected near Tirunelveli",
-            time: "30 mins ago",
-            color: Colors.orange,
-          ),
+            itemBuilder: (context, index) {
 
-          notificationCard(
-            icon: Icons.security,
-            title: "Emergency Alert",
-            subtitle: "Traffic congestion near Tenkasi Bus Stand",
-            time: "1 hour ago",
-            color: Colors.deepOrange,
-          ),
-        ],
-      ),
+              AlertModel alert = alerts[index];
+
+              return GestureDetector(
+
+  onTap: () async {
+
+    await alertService.markAsRead(
+      alert.id,
     );
+
+    loadAlerts();
+
+    loadUnreadCount();
+
+  },
+
+  child: notificationCard(
+
+    icon: getIcon(
+      alert.alertType,
+    ),
+
+    title: alert.alertType,
+
+    subtitle: alert.message,
+
+    time: alert.createdTime,
+
+    color: getColor(
+      alert.priority,
+    ),
+
+    isRead: alert.isRead,
+
+  ),
+);
+            },
+          ),
+
+  );
+
+}
+
+  @override
+void dispose() {
+
+  timer?.cancel();
+
+  super.dispose();
+
+}
+
+  IconData getIcon(String type) {
+
+  switch(type){
+
+    case "DELAY":
+      return Icons.warning;
+
+    case "ROUTE_DEVIATION":
+      return Icons.route;
+
+    case "APPROACHING_DESTINATION":
+      return Icons.access_time_filled;
+
+    case "DESTINATION_REACHED":
+      return Icons.flag_circle;
+
+    default:
+      return Icons.notifications;
   }
+
+}
+
+  Color getColor(String? priority){
+
+  switch(priority){
+
+    case "HIGH":
+      return Colors.red;
+
+    case "MEDIUM":
+      return Colors.orange;
+
+    case "LOW":
+      return Colors.green;
+
+    default:
+      return Colors.blue;
+  }
+
+}
 
   Widget notificationCard({
     required IconData icon,
@@ -106,6 +292,7 @@ class NotificationScreen extends StatelessWidget {
     required String subtitle,
     required String time,
     required Color color,
+    required bool isRead,
   }) {
 
     return Container(
@@ -114,7 +301,7 @@ class NotificationScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isRead  ? Colors.grey.shade100 : Colors.white,
 
         borderRadius: BorderRadius.circular(22),
 
@@ -158,7 +345,7 @@ class NotificationScreen extends StatelessWidget {
               children: [
 
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
 
@@ -166,21 +353,28 @@ class NotificationScreen extends StatelessWidget {
                       child: Text(
                         title,
 
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
 
+                    const SizedBox(width: 10),
+
                     Text(
-                      time,
+
+                      time.length >= 16 ? time.substring(11,16) : time,
 
                       style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: Colors.black54,
+                        fontSize: 11,
+                        color: Colors.black45,
                       ),
                     ),
+
                   ],
                 ),
 
