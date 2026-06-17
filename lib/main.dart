@@ -1,51 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-import 'package:smartnav/features/maps/services/notification_service.dart';
-
-import 'screens/auth/login_screen.dart';
 import 'theme/app_theme.dart';
-import 'screens/profile/profile_screen.dart';
-import 'screens/auth/welcome_screen.dart';
+import 'screens/auth/splash_screen.dart';
+
+import 'localization/language_provider.dart';
+import 'providers/profile_provider.dart';
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
-  await NotificationService.init();
+  final languageProvider = LanguageProvider();
+  await languageProvider.loadLanguage();
 
   SystemChrome.setSystemUIOverlayStyle(
-
     const SystemUiOverlayStyle(
-
       statusBarColor: Colors.transparent,
-
-      statusBarIconBrightness:
-          Brightness.dark,
+      statusBarIconBrightness: Brightness.dark,
     ),
   );
 
-  final languageProvider = LanguageProvider();
-
-await languageProvider.loadLanguage();
-
-runApp(
-  MultiProvider(
-    providers: [
-
-      ChangeNotifierProvider.value(
-        value: languageProvider,
-      ),
-
-      ChangeNotifierProvider(
-        create: (_) => ProfileProvider(),
-      ),
-
-    ],
-
-    child: const SmartNavApp(),
-  ),
-);
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: languageProvider,
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProfileProvider(),
+        ),
+      ],
+      child: const SmartNavApp(),
+    ),
+  );
 }
 
 class SmartNavApp extends StatelessWidget {
@@ -53,13 +41,11 @@ class SmartNavApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        return MaterialApp(
-  debugShowCheckedModeBanner: false,
-  theme: AppTheme.light,
-
-      home: const  WelcomeScreen(),
+    return MaterialApp(
+      title: 'Tenkasi SmartNav',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      home: const SplashScreen(),
     );
   }
 }

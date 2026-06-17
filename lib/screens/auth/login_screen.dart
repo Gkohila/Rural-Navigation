@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'otp_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -177,25 +178,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 14),
 
-                    TextField(
-                      controller: mobileController,
-                      keyboardType: TextInputType.phone,
-
-                      decoration: InputDecoration(
-                        prefixText: "+91  ",
-
-                        hintText: "Enter 10 digit number",
-
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 15,
-                        ),
-
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ),
+                  TextField(
+  controller: mobileController,
+  keyboardType: TextInputType.number,
+  maxLength: 10,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+  decoration: InputDecoration(
+    prefixText: "+91 ",
+    hintText: "Enter 10 digit number",
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+  ),
+),
 
                     const SizedBox(height: 10),
 
