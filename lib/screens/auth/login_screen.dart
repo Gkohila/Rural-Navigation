@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'otp_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter/services.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+  final TextEditingController mobileController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -166,24 +178,21 @@ class LoginScreen extends StatelessWidget {
 
                     const SizedBox(height: 14),
 
-                    TextField(
-                      keyboardType: TextInputType.phone,
-
-                      decoration: InputDecoration(
-                        prefixText: "+91  ",
-
-                        hintText: "Enter 10 digit number",
-
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 15,
-                        ),
-
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ),
+                  TextField(
+  controller: mobileController,
+  keyboardType: TextInputType.number,
+  maxLength: 10,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+  decoration: InputDecoration(
+    prefixText: "+91 ",
+    hintText: "Enter 10 digit number",
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(15),
+    ),
+  ),
+),
 
                     const SizedBox(height: 10),
 
@@ -200,21 +209,55 @@ class LoginScreen extends StatelessWidget {
                     const SizedBox(height: 25),
 
                     // SEND OTP BUTTON
-                    SizedBox(
-                      width: double.infinity,
+                   // SEND OTP BUTTON
+SizedBox(
+  width: double.infinity,
 
-                      child: ElevatedButton(
-                        onPressed: () {
+  child: ElevatedButton(
+    onPressed: () async {
 
-                          Navigator.push(
-                            context,
+  if (mobileController.text.length != 10) {
 
-                            MaterialPageRoute(
-                              builder: (context) => const OtpScreen(),
-                            ),
-                          );
-                        },
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Enter valid 10 digit mobile number"),
+      ),
+    );
 
+    return;
+  }
+
+  print("BUTTON CLICKED");
+
+  try {
+
+    final response = await http.post(
+      Uri.parse("http://127.0.0.1:8081/api/auth/send-otp"),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: jsonEncode({
+        "mobile": mobileController.text
+      }),
+    );
+
+    print("STATUS = ${response.statusCode}");
+    print("BODY = ${response.body}");
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OtpScreen(
+  mobile: mobileController.text,
+),
+      ),
+    );
+
+  } catch (e) {
+
+    print("ERROR = $e");
+  }
+},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF006400),
 

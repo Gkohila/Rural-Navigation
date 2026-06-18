@@ -1,9 +1,55 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
+import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OtpScreen extends StatelessWidget {
-  const OtpScreen({super.key});
+class OtpScreen extends StatefulWidget {
 
+  final String mobile;
+
+  const OtpScreen({
+    super.key,
+    required this.mobile,
+  });
+
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
+
+
+
+class _OtpScreenState extends State<OtpScreen> {
+
+  final TextEditingController otpController =
+      TextEditingController();
+      int seconds = 120;
+  Timer? timer;
+
+   @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        if (seconds > 0) {
+          setState(() {
+            seconds--;
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    otpController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,34 +162,26 @@ class OtpScreen extends StatelessWidget {
 
                 const SizedBox(height: 10),
 
-                const Text(
-                  "+91 9876543210",
-
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
+               Text(
+  "+91 ${widget.mobile}",
+  style: const TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+    color: Colors.green,
+  ),
+),
 
                 const SizedBox(height: 35),
 
                 // OTP BOXES
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
-                  children: [
-
-                    otpBox(),
-                    otpBox(),
-                    otpBox(),
-                    otpBox(),
-                  ],
-                ),
+              Pinput(
+  length: 4,
+  controller: otpController,
+),
 
                 const SizedBox(height: 30),
 
-                const Row(
+                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
 
                   children: [
@@ -155,14 +193,13 @@ class OtpScreen extends StatelessWidget {
                     ),
 
                     SizedBox(width: 6),
+Text(
+  "OTP expires in ${seconds}s",
 
-                    Text(
-                      "OTP expires in 01:45",
-
-                      style: TextStyle(
-                        fontSize: 15,
-                      ),
-                    ),
+  style: const TextStyle(
+    fontSize: 15,
+  ),
+),
                   ],
                 ),
 
@@ -173,16 +210,58 @@ class OtpScreen extends StatelessWidget {
                   width: double.infinity,
 
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+
+  print("OTP ENTERED = ${otpController.text}");
+
+  final response = await http.post(
+    Uri.parse("http://127.0.0.1:8081/api/auth/verify-otp"),
+    headers: {
+      "Content-Type": "application/json",
+    },
+   body: jsonEncode({
+  "mobile": widget.mobile,
+  "otp": otpController.text,
+}),
+  );
+
+  print("RESPONSE = ${response.body}");
+
+ if (response.body == "Login Success") {
+
+  SharedPreferences prefs =
+      await SharedPreferences.getInstance();
+
+  bool saved =
+      await prefs.setBool("isLoggedIn", true);
+
+  print("SAVE RESULT = $saved");
+
+  print(
+    "READ AFTER SAVE = ${prefs.getBool("isLoggedIn")}",
+  );
+
+  await prefs.setString(
+    "mobile",
+    widget.mobile,
+  );
 
   Navigator.pushReplacement(
     context,
-
     MaterialPageRoute(
       builder: (context) => const HomeScreen(),
     ),
   );
+}else {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Invalid OTP"),
+      ),
+    );
+  }
 },
+                   
 
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF006400),
@@ -227,7 +306,30 @@ class OtpScreen extends StatelessWidget {
 
                 // RESEND BUTTON
                 OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+
+  final response = await http.post(
+    Uri.parse("http://127.0.0.1:8081/api/auth/send-otp"),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode({
+      "mobile": widget.mobile,
+    }),
+  );
+
+  print(response.body);
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("OTP Sent Again"),
+    ),
+  );
+
+  setState(() {
+    seconds = 120;
+  });
+},
 
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 55),
@@ -260,21 +362,5 @@ class OtpScreen extends StatelessWidget {
     );
   }
 
-  Widget otpBox() {
-    return Container(
-      height: 60,
-      width: 55,
-
-      decoration: BoxDecoration(
-        color: Colors.white,
-
-        border: Border.all(
-          color: Colors.green,
-          width: 2,
-        ),
-
-        borderRadius: BorderRadius.circular(15),
-      ),
-    );
-  }
+  
 }

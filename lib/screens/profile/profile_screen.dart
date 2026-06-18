@@ -4,11 +4,38 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../screens/settings/settings_screen.dart';
 import '../../widgets/profile/photo_picker_bottom_sheet.dart';
 
-class ProfileScreen extends StatelessWidget {
+import 'package:provider/provider.dart';
+
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
+
+import '../../providers/profile_provider.dart';
+import 'dart:io';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() =>
+      _ProfileScreenState();
+}
+
+class _ProfileScreenState
+    extends State<ProfileScreen> {
+
+  @override
   Widget build(BuildContext context) {
+
+    final profileProvider =
+    Provider.of<ProfileProvider>(context);
+
+    final languageProvider =
+    Provider.of<LanguageProvider>(context);
+
+final localizations =
+    AppLocalizations(
+      languageProvider.languageCode,
+    );
 
     return Scaffold(
 
@@ -36,7 +63,7 @@ class ProfileScreen extends StatelessWidget {
 
         title: Text(
 
-          "Profile",
+          localizations.text('profile'),
 
           style: GoogleFonts.poppins(
 
@@ -118,33 +145,34 @@ class ProfileScreen extends StatelessWidget {
                   Stack(
 
                     children: [
+CircleAvatar(
+  radius: 52,
+  backgroundColor: Colors.white,
 
-                      CircleAvatar(
+  child: CircleAvatar(
+    radius: 46,
 
-                        radius: 52,
+    backgroundColor: const Color(0xFFE9F4EC),
 
-                        backgroundColor:
-                            Colors.white,
+    backgroundImage:
+        profileProvider.profile.imagePath != null
+            ? FileImage(
+                File(
+                  profileProvider.profile.imagePath!,
+                ),
+              )
+            : null,
 
-                        child: CircleAvatar(
-
-                          radius: 46,
-
-                          backgroundColor:
-                              const Color(
-                                  0xFFE9F4EC),
-
-                          child: Icon(
-
-                            Icons.person,
-
-                            size: 60,
-
-                            color:
-                                Colors.green.shade800,
-                          ),
-                        ),
-                      ),
+    child:
+        profileProvider.profile.imagePath == null
+            ? Icon(
+                Icons.person,
+                size: 60,
+                color: Colors.green.shade800,
+              )
+            : null,
+  ),
+),
 
                       Positioned(
 
@@ -204,7 +232,7 @@ class ProfileScreen extends StatelessWidget {
 
                   Text(
 
-                    "Kohila",
+                     profileProvider.profile.name,
 
                     style: GoogleFonts.poppins(
 
@@ -236,7 +264,7 @@ class ProfileScreen extends StatelessWidget {
 
                       Text(
 
-                        "Travel Explorer",
+                         profileProvider.profile.bio,
 
                         style: GoogleFonts.poppins(
 
@@ -257,7 +285,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 32),
 
             /// QUICK ACTIONS
-            sectionTitle("QUICK ACTIONS"),
+            sectionTitle(localizations.text('quickActions')),
 
             const SizedBox(height: 18),
 
@@ -273,152 +301,116 @@ class ProfileScreen extends StatelessWidget {
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
 
-              childAspectRatio: 1.12,
+              childAspectRatio: 1.3,
 
               children: [
 
                 quickCard(
                   Icons.route,
-                  "Saved Routes",
+                   localizations.text('savedRoutes'),
                   Colors.blue,
                 ),
 
                 quickCard(
                   Icons.favorite,
-                  "Favorites",
+                  localizations.text('favorites'),
                   Colors.green,
                 ),
 
                 quickCard(
                   Icons.download,
-                  "Offline Maps",
+                  localizations.text('offlineMaps'),
                   Colors.brown,
                 ),
 
                 quickCard(
                   Icons.history,
-                  "Travel History",
+                  localizations.text('travelHistory'),
                   Colors.lightBlue,
                 ),
               ],
             ),
 
-            const SizedBox(height: 34),
-
-            /// RECENT ACTIVITY
-            Row(
-
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-
-              children: [
-
-                sectionTitle("RECENT ACTIVITY"),
-
-                Text(
-
-                  "View All",
-
-                  style: GoogleFonts.poppins(
-
-                    color:
-                        const Color(0xFF0B5D1E),
-
-                    fontSize: 14,
-
-                    fontWeight:
-                        FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 18),
-
-            activityCard(
-              Icons.directions_bus,
-              "Tenkasi → Chennai",
-              "Luxury Bus • 8h journey",
-              "Oct 12",
-              Colors.green,
-            ),
-
-            activityCard(
-              Icons.train,
-              "Courtallam → Madurai",
-              "Express Train • 3h journey",
-              "Oct 10",
-              Colors.blue,
-            ),
-
-            activityCard(
-              Icons.directions_bus,
-              "Tirunelveli → CBE",
-              "Intercity Bus • 6h journey",
-              "Oct 5",
-              Colors.green,
-            ),
-
-            const SizedBox(height: 34),
-
-            /// SETTINGS
-            sectionTitle("SETTINGS & PRIVACY"),
-
-            const SizedBox(height: 18),
-
-            Container(
-
-              decoration: BoxDecoration(
-
-                color: Colors.white,
-
-                borderRadius:
-                    BorderRadius.circular(24),
-
-                boxShadow: [
-
-                  BoxShadow(
-                    color:
-                        Colors.black.withOpacity(0.03),
-
-                    blurRadius: 8,
-
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-
-              child: Column(
-
-                children: [
-
-                  settingsTile(
-                    Icons.dark_mode_outlined,
-                    "Dark Mode",
-                  ),
-
-                  settingsTile(
-                    Icons.language,
-                    "Language",
-                    trailing: "English",
-                  ),
-
-                  settingsTile(
-                    Icons.lock_outline,
-                    "Privacy Policy",
-                  ),
-
-                  settingsTile(
-                    Icons.logout,
-                    "Logout",
-                    iconColor: Colors.red,
-                    textColor: Colors.red,
-                  ),
-                ],
-              ),
-            ),
-
             const SizedBox(height: 24),
+
+/// APP INFORMATION
+Container(
+  width: double.infinity,
+
+  padding: const EdgeInsets.all(20),
+
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(24),
+
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: 0.03),
+        blurRadius: 10,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  ),
+
+  child: Column(
+    children: [
+
+      const Icon(
+        Icons.navigation,
+        size: 35,
+        color: Color(0xFF0B5D1E),
+      ),
+
+      const SizedBox(height: 12),
+
+      Text(
+         localizations.text('tenkasiSmartNav'),
+        style: GoogleFonts.poppins(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFF0B5D1E),
+        ),
+      ),
+
+      const SizedBox(height: 8),
+
+      Text(
+         localizations.text('appDescription'),
+        textAlign: TextAlign.center,
+        style: GoogleFonts.poppins(
+          fontSize: 13,
+          color: Colors.black54,
+          height: 1.5,
+        ),
+      ),
+
+      const SizedBox(height: 12),
+
+      Text(
+        localizations.text('version'),
+        style: GoogleFonts.poppins(
+          fontSize: 12,
+          color: Colors.grey,
+        ),
+      ),
+    ],
+  ),
+),
+
+const SizedBox(height: 20),
+
+Center(
+  child: Text(
+    "© 2026 ${localizations.text('tenkasiSmartNav')}",
+    style: GoogleFonts.poppins(
+      fontSize: 12,
+      color: Colors.grey,
+    ),
+  ),
+),
+
+const SizedBox(height: 10),
+            
           ],
         ),
       ),
@@ -494,7 +486,7 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
 
               color:
-                  color.withOpacity(0.14),
+                  color.withValues(alpha: 0.14),
 
               borderRadius:
                   BorderRadius.circular(16),
@@ -509,192 +501,20 @@ class ProfileScreen extends StatelessWidget {
 
           const SizedBox(height: 18),
 
-          Text(
-
-            title,
-
-            style: GoogleFonts.poppins(
-
-              fontSize: 15,
-
-              fontWeight: FontWeight.w600,
-
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// ACTIVITY CARD
-  Widget activityCard(
-    IconData icon,
-    String route,
-    String type,
-    String date,
-    Color color,
-  ) {
-
-    return Container(
-
-      margin:
-          const EdgeInsets.only(bottom: 14),
-
-      padding: const EdgeInsets.all(15),
-
-      decoration: BoxDecoration(
-
-        color: Colors.white,
-
-        borderRadius:
-            BorderRadius.circular(22),
-
-        boxShadow: [
-
-          BoxShadow(
-            color:
-                Colors.black.withOpacity(0.03),
-
-            blurRadius: 10,
-
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-
-      child: Row(
-
-        children: [
-
-          CircleAvatar(
-
-            radius: 25,
-
-            backgroundColor:
-                color.withOpacity(0.12),
-
-            child: Icon(
-              icon,
-              color: color,
-              size: 22,
-            ),
-          ),
-
-          const SizedBox(width: 14),
-
           Expanded(
-
-            child: Column(
-
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-
-                Text(
-
-                  route,
-
-                  style: GoogleFonts.poppins(
-
-                    fontSize: 16,
-
-                    fontWeight:
-                        FontWeight.w600,
-
-                    height: 1.2,
-                  ),
-                ),
-
-                const SizedBox(height: 4),
-
-                Text(
-
-                  type,
-
-                  style: GoogleFonts.poppins(
-
-                    color: Colors.black54,
-
-                    fontSize: 13,
-
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Text(
-
-            date,
-
-            style: GoogleFonts.poppins(
-
-              fontSize: 13,
-
-              color: Colors.black54,
-            ),
-          ),
+  child: Text(
+    title,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: GoogleFonts.poppins(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      height: 1.3,
+    ),
+  ),
+)
         ],
       ),
-    );
-  }
-
-  /// SETTINGS TILE
-  Widget settingsTile(
-    IconData icon,
-    String title, {
-    Color iconColor = Colors.black54,
-    Color textColor = Colors.black87,
-    String? trailing,
-  }) {
-
-    return ListTile(
-
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 2,
-      ),
-
-      leading: Icon(
-        icon,
-        color: iconColor,
-      ),
-
-      title: Text(
-
-        title,
-
-        style: GoogleFonts.poppins(
-
-          color: textColor,
-
-          fontSize: 15,
-
-          fontWeight: FontWeight.w500,
-
-          height: 1.2,
-        ),
-      ),
-
-      trailing: trailing != null
-
-          ? Text(
-
-              trailing,
-
-              style: GoogleFonts.poppins(
-                fontSize: 13,
-              ),
-            )
-
-          : const Icon(
-              Icons.arrow_forward_ios,
-              size: 14,
-            ),
     );
   }
 }
