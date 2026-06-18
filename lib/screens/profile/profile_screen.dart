@@ -163,7 +163,7 @@ class ProfileScreen extends StatelessWidget {
                                   Colors.transparent,
 
                               isScrollControlled:
-                                  true,
+                                  trugit statuse,
 
                               builder: (context) {
 
