@@ -307,9 +307,10 @@ return [
             /// MAP
 
 Positioned.fill(
-
-  child: const SizedBox(),
-),
+          child: TripMapPreview(
+            vehicleNumber: "147",
+          ),
+        ),
 
 /// SEARCH BAR
             
