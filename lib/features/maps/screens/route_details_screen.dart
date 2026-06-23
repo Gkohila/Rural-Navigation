@@ -24,6 +24,13 @@ class RouteDetailsScreen extends StatefulWidget {
   final String source;
   final String destination;
   final String status;
+  final String departureTime;
+  final String arrivalTime;
+  final int duration;
+  final int fare;
+  final int transferCount;
+  final int walkingDistance;
+  final String transportMode;
 
   const RouteDetailsScreen({
     super.key,
@@ -32,6 +39,13 @@ class RouteDetailsScreen extends StatefulWidget {
     required this.source,
     required this.destination,
     required this.status,
+    required this.departureTime,
+    required this.arrivalTime,
+    required this.duration,
+    required this.fare,
+    required this.transferCount,
+    required this.walkingDistance,
+    required this.transportMode,
   });
 
   @override

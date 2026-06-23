@@ -24,8 +24,11 @@ import 'package:smartnav/theme/smart_nav_theme.dart';
 
 import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
 
+import 'package:smartnav/features/maps/widgets/direction_preview_card.dart';
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -45,9 +48,15 @@ class _RouteSearchScreenState
   /// 2 = Bus
   /// 3 = Walk
   int _selectedTransportIndex = 2;
+  String selectedFilter = "Best route";
+  List<String> selectedModes = [];
 
   List<dynamic> buses = [];
   bool isLoading = true;
+  String selectedLeaveTime = "4:50 PM";
+  bool isArriveSelected = false;
+  String sourceLocation = "Tenkasi";
+  String destinationLocation = "Tirunelveli";
 
   @override
   void initState() {
@@ -81,207 +90,212 @@ class _RouteSearchScreenState
   /// DYNAMIC ROUTE CARDS
   List<Widget> _buildRouteCards() {
 
-    /// CAR
-    if (_selectedTransportIndex == 0) {
+//     /// CAR / BIKE / WALK
+// if (_selectedTransportIndex != 2) {
 
-      return [
+//   return [
 
-        RouteCard(
-          data: StaticRouteData.routeCards[0],
+//     DirectionPreviewCard(
+//       transportIndex: _selectedTransportIndex,
+//     )
 
-          animationDelay: Duration.zero,
+//   ];
 
-          onTap: () {
+// }
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RouteDetailsScreen(
-                  vehicleNumber: "",
-                  busName: "",
-                  source: "",
-                  destination: "",
-                  status: "",
-                ),
-              ),
-            );
+/// CAR
+if (_selectedTransportIndex == 0) {
 
-          },
-        ),
+  return [
 
-        const SizedBox(
-          height: 18,
-        ),
+    DirectionPreviewCard(
+      transportIndex: 0,
+      source: sourceLocation,
+      destination: destinationLocation,
+    ),
 
-        RouteCard(
-          data: StaticRouteData.routeCards[1],
+  ];
 
-          animationDelay: const Duration(
-            milliseconds: 60,
-          ),
+}
 
-          onTap: () {
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RouteDetailsScreen(
-                  vehicleNumber: "",
-                  busName: "",
-                  source: "",
-                  destination: "",
-                  status: "",
-                ),
-              ),
-            );
-
-          },
-        ),
-      ];
-    }
-
-    
-    /// BIKE
+/// BIKE
 if (_selectedTransportIndex == 1) {
 
   return [
 
-    RouteCard(
-      data: StaticRouteData.routeCards[2],
-
-      animationDelay: Duration.zero,
-
-      onTap: () {
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => RouteDetailsScreen(
-              vehicleNumber: "",
-              busName: "",
-              source: "",
-              destination: "",
-              status: "",
-            ),
-          ),
-        );
-
-      },
+    DirectionPreviewCard(
+      transportIndex: 1,
+      source: sourceLocation,
+      destination: destinationLocation,
     ),
 
-    const SizedBox(
-      height: 18,
-    ),
-
-    RouteCard(
-      data: StaticRouteData.routeCards[0],
-
-      animationDelay: const Duration(
-        milliseconds: 60,
-      ),
-
-      onTap: () {
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => RouteDetailsScreen(
-              vehicleNumber: "",
-              busName: "",
-              source: "",
-              destination: "",
-              status: "",
-            ),
-          ),
-        );
-
-      },
-    ),
   ];
+
 }
 
     
     /// BUS
-    if (_selectedTransportIndex == 2) {
-      print(buses);
-  return buses.map<Widget>((bus) {
+if (_selectedTransportIndex == 2) {
 
-    return Column(
-  children: [
+  print(buses);
+  print("SELECTED FILTER = $selectedFilter");
 
-    RouteCard(
-  data: RouteCardData(
-    type: RouteCardType.busOnly,
+  List<dynamic> filteredBuses = [...buses];
 
-    busBadges: [
-      bus['busNumber'],
-    ],
+/// Preferred modes filter
+if (selectedModes.isNotEmpty) {
 
-    routeName: bus['busName'],
+  filteredBuses = filteredBuses.where((bus) {
 
-    duration: "32 min",
+    String mode = bus['transportMode'] ?? "Bus";
 
-    timeRange: "10:34 am - 11:05 am",
-
-    scheduleInfo:
-        "${bus['source']} → ${bus['destination']}",
-
-    price: "₹9",
-  ),
-
-  onTap: () {
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => RouteDetailsScreen(
-        vehicleNumber: bus['busNumber'],
-        busName: bus['busName'],
-        source: bus['source'],
-        destination: bus['destination'],
-        status: bus['status'],
-      ),
-    ),
-  );
-
-}
-),
-
-    const SizedBox(height: 18),
-
-  ],
-);
+    return selectedModes.contains(mode);
 
   }).toList();
 
 }
 
-    /// WALK
-return [
+/// Leave time filter
+filteredBuses = filteredBuses.where((bus) {
 
-  RouteCard(
-    data: StaticRouteData.routeCards[2],
+  final busTime = DateFormat(
+  "hh:mm a",
+).parse(
 
-    animationDelay: Duration.zero,
+  isArriveSelected
+      ? bus['arrivalTime']
+      : bus['departureTime'],
 
-    onTap: () {
+);
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => RouteDetailsScreen(
-            vehicleNumber: "",
-            busName: "",
-            source: "",
-            destination: "",
-            status: "",
+  final selectedTime = DateFormat(
+    "hh:mm a",
+  ).parse(
+    selectedLeaveTime,
+  );
+
+  return !busTime.isBefore(
+    selectedTime,
+  );
+
+}).toList();
+
+  // Best route
+  if (selectedFilter == "Best route") {
+    print("BEST ROUTE");
+
+  filteredBuses.sort(
+    (a, b) =>
+        (a['duration'] ?? 0)
+            .compareTo(
+              b['duration'] ?? 0,
+            ),
+  );
+
+}
+
+  // Fewer transfers
+  if (selectedFilter == "Fewer transfers") {
+    print("FEWER TRANSFERS");
+    //filteredBuses = filteredBuses.reversed.toList();
+
+  filteredBuses.sort(
+    (a, b) =>
+        (a['transferCount'] ?? 0)
+            .compareTo(
+              b['transferCount'] ?? 0,
+            ),
+  );
+
+}
+
+  // Less walking
+if (selectedFilter == "Less walking") {
+  print("LESS WALKING");
+  //filteredBuses.shuffle();
+
+  filteredBuses.sort(
+    (a, b) =>
+        (a['walkingDistance'] ?? 0)
+            .compareTo(
+              b['walkingDistance'] ?? 0,
+            ),
+  );
+
+}
+
+  return filteredBuses.map<Widget>((bus) {
+
+    return Column(
+      children: [
+
+        RouteCard(
+          data: RouteCardData(
+            type: RouteCardType.busOnly,
+
+            busBadges: [
+              bus['busNumber'],
+            ],
+
+            routeName: bus['busName'],
+
+            duration: "${bus['duration']} min",
+
+            timeRange: "${bus['departureTime']} - ${bus['arrivalTime']}",
+
+            scheduleInfo:
+                "${bus['source']} → ${bus['destination']}",
+
+            price: "₹${bus['fare']}",
           ),
-        ),
-      );
+          onTap: () {
 
-    },
-  ),
-];
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RouteDetailsScreen(
+                  vehicleNumber: bus['busNumber'],
+                  busName: bus['busName'],
+                  source: bus['source'],
+                  destination: bus['destination'],
+                  status: bus['status'],
+                   departureTime: bus['departureTime'],
+                  arrivalTime: bus['arrivalTime'],
+                  duration: bus['duration'],
+                  fare: bus['fare'],
+                  transferCount: bus['transferCount'],
+                  walkingDistance: bus['walkingDistance'],
+                  transportMode: bus['transportMode'],
+                ),
+              ),
+            );
+
+          },
+        ),
+
+        const SizedBox(height: 18),
+
+      ],
+    );
+
+  }).toList();
+}
+
+/// WALK
+if (_selectedTransportIndex == 3) {
+
+  return [
+
+    DirectionPreviewCard(
+      transportIndex: 3,
+      source: sourceLocation,
+      destination: destinationLocation,
+    ),
+
+  ];
+
+}
+    return [];
   }
 
   @override
@@ -602,75 +616,107 @@ physics:
                                 ),
 
                                 /// FILTER CHIPS
+                                if (_selectedTransportIndex == 2)
                                 Padding(
 
-                                  padding:
-                                      const EdgeInsets.symmetric(
-                                    horizontal:
-                                        20,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
                                   ),
 
-                                  child:
-                                      SingleChildScrollView(
+                                  child: SingleChildScrollView(
 
-                                    scrollDirection:
-                                        Axis.horizontal,
+                                    scrollDirection: Axis.horizontal,
 
                                     child: Row(
 
                                       children: [
-
                                         _InteractiveFilterChip(
+  label: isArriveSelected
+    ? 'Arrive $selectedLeaveTime'
+    : 'Leave $selectedLeaveTime',
+  onTap: () async {
 
-                                          label:
-                                              'Leave 4:50 PM',
+    final result = await showDepartureTimeDialog(
+      context,
+      DateTime.now(),
+    );
 
-                                          onTap:
-                                              () async {
+    if (result != null) {
 
-                                            await showDepartureTimeDialog(
-                                              context,
-                                              DateTime.now(),
-                                            );
-                                          },
-                                        ),
+      setState(() {
 
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
+        selectedLeaveTime = DateFormat(
+          "hh:mm a",
+        ).format(
+          result["time"],
+        );
 
-                                        _InteractiveFilterChip(
+        isArriveSelected =
+            result["isArrive"];
 
-                                          label:
-                                              'Preferred modes',
+      });
 
-                                          onTap:
-                                              () async {
+    }
 
-                                            await showTransportPreferencesDialog(
-                                              context,
-                                              [],
-                                            );
-                                          },
-                                        ),
+  },
+),
 
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
+const SizedBox(
+  width: 10,
+),
 
-                                        _InteractiveFilterChip(
+_InteractiveFilterChip(
+  label: selectedModes.isEmpty
+    ? 'Preferred modes'
+    : selectedModes.join(", "),
 
-                                          label:
-                                              'Filter by',
+  onTap: () async {
 
-                                          onTap:
-                                              () async {
+    final result =
+        await showTransportPreferencesDialog(
+      context,
+      selectedModes,
+    );
 
-                                            await showFilterOptionsDialog(
-                                              context,
-                                            );
-                                          },
-                                        ),
+    if (result != null) {
+
+      setState(() {
+
+        selectedModes = result;
+
+      });
+
+    }
+
+  },
+),
+
+const SizedBox(
+  width: 10,
+),
+
+_InteractiveFilterChip(
+  label: selectedFilter,
+
+  onTap: () async {
+
+    final result =
+        await showFilterOptionsDialog(
+      context,
+    );
+
+    if (result != null) {
+
+      setState(() {
+
+        selectedFilter = result;
+
+      });
+
+    }
+
+  },
+),
                                       ],
                                     ),
                                   ),
@@ -788,20 +834,15 @@ class _StickyHeaderDelegate
 }
 
 /// FILTER CHIP
-class _InteractiveFilterChip
-    extends StatelessWidget {
+class _InteractiveFilterChip extends StatelessWidget {
 
   const _InteractiveFilterChip({
-
     required this.label,
-
     required this.onTap,
-
     super.key,
   });
 
   final String label;
-
   final VoidCallback onTap;
 
   @override
@@ -813,40 +854,33 @@ class _InteractiveFilterChip
 
       child: InkWell(
 
-        borderRadius:
-            BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12),
 
         onTap: onTap,
 
         child: Container(
 
-          padding:
-              const EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 14,
             vertical: 7,
           ),
 
-          decoration:
-              BoxDecoration(
+          decoration: BoxDecoration(
 
-            color:
-                SmartNavColors.surfaceContainer,
+            color: SmartNavColors.surfaceContainer,
 
-            borderRadius:
-                BorderRadius.circular(
+            borderRadius: BorderRadius.circular(
               12,
             ),
 
             border: Border.all(
-              color:
-                  SmartNavColors.outlineVariant,
+              color: SmartNavColors.outlineVariant,
             ),
           ),
 
           child: Row(
 
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
 
             children: [
 
@@ -854,9 +888,7 @@ class _InteractiveFilterChip
 
                 label,
 
-                style:
-                    SmartNavTextStyles.labelLg
-                        .copyWith(
+                style: SmartNavTextStyles.labelLg.copyWith(
                   fontSize: 12,
                 ),
               ),
@@ -878,8 +910,7 @@ class _InteractiveFilterChip
 }
 
 /// ICON BUTTON
-class _SheetIconButton
-    extends StatelessWidget {
+class _SheetIconButton extends StatelessWidget {
 
   final IconData icon;
 
@@ -899,16 +930,13 @@ class _SheetIconButton
 
     return Material(
 
-      color:
-          SmartNavColors.surfaceContainer,
+      color: SmartNavColors.surfaceContainer,
 
-      shape:
-          const CircleBorder(),
+      shape: const CircleBorder(),
 
       child: InkWell(
 
-        customBorder:
-            const CircleBorder(),
+        customBorder: const CircleBorder(),
 
         onTap: onTap,
 
@@ -923,9 +951,8 @@ class _SheetIconButton
 
             size: 22,
 
-            color:
-                SmartNavColors
-                    .onSurfaceVariant,
+            color: SmartNavColors.onSurfaceVariant,
+
           ),
         ),
       ),

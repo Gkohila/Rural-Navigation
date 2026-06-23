@@ -65,9 +65,12 @@ Future<void> loadBusLocation() async {
     print(busLocation);
 
     mapController?.animateCamera(
-
-      CameraUpdate.newLatLng(busLocation),
-
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: busLocation,
+          zoom: 16,
+        ),
+      ),
     );
   }
 }
