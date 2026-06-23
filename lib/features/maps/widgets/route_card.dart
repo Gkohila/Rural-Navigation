@@ -48,7 +48,18 @@ class RouteCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                
+                const SizedBox(height: 8),
+
+                Text(
+                  data.routeName,
+                  style: SmartNavTextStyles.labelLg.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+const SizedBox(height: 8),
+                
                 LayoutBuilder(
                   builder: (context, constraints) {
                     return Row(
@@ -174,22 +185,19 @@ class _RouteIconsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (data.type) {
       RouteCardType.busOnly => Row(
-          children: [
-            const Icon(
-              Icons.directions_bus,
-              color: SmartNavColors.onSurfaceVariant,
-              size: 22,
-            ),
-            const SizedBox(width: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: data.busBadges
-                  .map((badge) => _BusBadge(label: badge))
-                  .toList(),
-            ),
-          ],
-        ),
+  children: [
+    const Icon(
+      Icons.directions_bus,
+      color: SmartNavColors.onSurfaceVariant,
+      size: 22,
+    ),
+
+    const SizedBox(width: 8),
+
+    if (data.busBadges.isNotEmpty)
+      _BusBadge(label: data.busBadges.first),
+  ],
+),
       RouteCardType.walkAndBus => Row(
           children: [
             const Icon(

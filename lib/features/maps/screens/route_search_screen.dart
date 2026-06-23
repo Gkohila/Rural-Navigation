@@ -12,7 +12,7 @@ import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
 
 import 'package:smartnav/features/maps/widgets/route_card.dart';
 
-import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
+import 'package:smartnav/features/maps/models/route_card_data.dart';
 
 import 'package:smartnav/features/maps/widgets/transport_button.dart';
 
@@ -23,6 +23,9 @@ import 'package:smartnav/features/maps/screens/route_details_screen.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
 
 import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -43,6 +46,38 @@ class _RouteSearchScreenState
   /// 3 = Walk
   int _selectedTransportIndex = 2;
 
+  List<dynamic> buses = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadBuses();
+  }
+
+  Future<void> loadBuses() async {
+
+    final response = await http.get(
+      Uri.parse('http://127.0.0.1:8081/api/buses'),
+    );
+
+    print("STATUS CODE = ${response.statusCode}");
+    print("BODY = ${response.body}");
+
+    if (response.statusCode == 200) {
+
+      setState(() {
+
+        buses = jsonDecode(response.body);
+        print("TOTAL BUSES = ${buses.length}");
+        isLoading = false;
+
+      });
+
+    }
+
+  }
+
   /// DYNAMIC ROUTE CARDS
   List<Widget> _buildRouteCards() {
 
@@ -59,11 +94,17 @@ class _RouteSearchScreenState
           onTap: () {
 
             Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => const RouteDetailsScreen(),
-  ),
-);
+              context,
+              MaterialPageRoute(
+                builder: (_) => RouteDetailsScreen(
+                  vehicleNumber: "",
+                  busName: "",
+                  source: "",
+                  destination: "",
+                  status: "",
+                ),
+              ),
+            );
 
           },
         ),
@@ -84,7 +125,13 @@ class _RouteSearchScreenState
             Navigator.push(
               context,
               MaterialPageRoute(
-               builder: (_) => const RouteDetailsScreen(),
+                builder: (_) => RouteDetailsScreen(
+                  vehicleNumber: "",
+                  busName: "",
+                  source: "",
+                  destination: "",
+                  status: "",
+                ),
               ),
             );
 
@@ -93,6 +140,7 @@ class _RouteSearchScreenState
       ];
     }
 
+    
     /// BIKE
 if (_selectedTransportIndex == 1) {
 
@@ -108,7 +156,13 @@ if (_selectedTransportIndex == 1) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const RouteDetailsScreen(),
+            builder: (_) => RouteDetailsScreen(
+              vehicleNumber: "",
+              busName: "",
+              source: "",
+              destination: "",
+              status: "",
+            ),
           ),
         );
 
@@ -131,7 +185,13 @@ if (_selectedTransportIndex == 1) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const RouteDetailsScreen(),
+            builder: (_) => RouteDetailsScreen(
+              vehicleNumber: "",
+              busName: "",
+              source: "",
+              destination: "",
+              status: "",
+            ),
           ),
         );
 
@@ -140,57 +200,61 @@ if (_selectedTransportIndex == 1) {
   ];
 }
 
+    
     /// BUS
     if (_selectedTransportIndex == 2) {
+      print(buses);
+  return buses.map<Widget>((bus) {
 
-      return [
+    return Column(
+  children: [
 
-        RouteCard(
-  data: StaticRouteData.routeCards[1],
+    RouteCard(
+  data: RouteCardData(
+    type: RouteCardType.busOnly,
 
-  animationDelay: Duration.zero,
+    busBadges: [
+      bus['busNumber'],
+    ],
+
+    routeName: bus['busName'],
+
+    duration: "32 min",
+
+    timeRange: "10:34 am - 11:05 am",
+
+    scheduleInfo:
+        "${bus['source']} → ${bus['destination']}",
+
+    price: "₹9",
+  ),
 
   onTap: () {
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const RouteDetailsScreen(),
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => RouteDetailsScreen(
+        vehicleNumber: bus['busNumber'],
+        busName: bus['busName'],
+        source: bus['source'],
+        destination: bus['destination'],
+        status: bus['status'],
       ),
-    );
+    ),
+  );
 
-  },
+}
 ),
 
-        const SizedBox(
-          height: 18,
-        ),
+    const SizedBox(height: 18),
 
-        RouteCard(
-          data:
-              StaticRouteData.routeCards[2],
+  ],
+);
 
-          animationDelay:
-              const Duration(
-            milliseconds: 60,
-          ),
-        ),
+  }).toList();
 
-        const SizedBox(
-          height: 18,
-        ),
-
-        RouteCard(
-          data:
-              StaticRouteData.routeCards[0],
-
-          animationDelay:
-              const Duration(
-            milliseconds: 120,
-          ),
-        ),
-      ];
-    }
+}
 
     /// WALK
 return [
@@ -205,7 +269,13 @@ return [
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => const RouteDetailsScreen(),
+          builder: (_) => RouteDetailsScreen(
+            vehicleNumber: "",
+            busName: "",
+            source: "",
+            destination: "",
+            status: "",
+          ),
         ),
       );
 
@@ -238,7 +308,7 @@ return [
 
 Positioned.fill(
 
-  child: const TripMapPreview(),
+  child: const SizedBox(),
 ),
 
 /// SEARCH BAR
