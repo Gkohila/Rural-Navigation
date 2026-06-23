@@ -7,6 +7,10 @@ import 'screens/auth/login_screen.dart';
 import 'theme/app_theme.dart';
 import 'screens/profile/profile_screen.dart';
 import 'screens/auth/welcome_screen.dart';
+import 'package:provider/provider.dart';
+
+import 'providers/profile_provider.dart';
+import 'localization/language_provider.dart';
 
 Future<void> main() async {
 
@@ -56,10 +60,11 @@ class SmartNavApp extends StatelessWidget {
     return Consumer<LanguageProvider>(
       builder: (context, languageProvider, child) {
         return MaterialApp(
-  debugShowCheckedModeBanner: false,
-  theme: AppTheme.light,
-
-      home: const  WelcomeScreen(),
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          home: const WelcomeScreen(),
+        );
+      },
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
+import '../../services/feedback_api_service.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -236,76 +237,51 @@ final isTamil =
                   ),
                 ),
 
-                onPressed: () {
+                onPressed: () async {
 
-                 if (feedbackController.text.trim().isEmpty) {
+  if (feedbackController.text.trim().isEmpty) {
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        localizations.text(
-          'enterFeedback',
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          localizations.text('enterFeedback'),
         ),
       ),
-    ),
+    );
+
+    return;
+  }
+
+  final success =
+      await FeedbackApiService.submitFeedback(
+    category: selectedCategory,
+    feedback: feedbackController.text.trim(),
   );
 
-  return;
-}
+  if (success) {
 
-                  showDialog(
-                    context: context,
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Color(0xFF0B5D1E),
+        content: Text(
+          "Feedback Submitted Successfully",
+        ),
+      ),
+    );
 
-                    builder: (context) {
-                      return AlertDialog(
+    feedbackController.clear();
 
-                        shape:
-                            RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(
-                                  20),
-                        ),
+  } else {
 
-                        title: Text(
-  localizations.text(
-    'thankYou',
-  ),
-  style: GoogleFonts.poppins(
-    fontWeight: FontWeight.w700,
-  ),
-),
-
-                        content: Text(
-                          localizations.text(
-  'feedbackSubmitted',
-),
-                          style:
-                              GoogleFonts.poppins(),
-                        ),
-
-                        actions: [
-
-                          TextButton(
-                            onPressed: () {
-
-                              Navigator.pop(
-                                  context);
-
-                              Navigator.pop(
-                                  context);
-                            },
-
-                            child: Text(
-  localizations.text(
-    'ok',
-  ),
-),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Failed to Submit Feedback",
+        ),
+      ),
+    );
+  }
+},
 
                 child: Text(
                   localizations.text(

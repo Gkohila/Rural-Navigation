@@ -1,18 +1,17 @@
-import 'package:flutter/material.dart';
-import '../models/profile_model.dart';
-import '../services/profile_storage_service.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/profile_model.dart';
-import '../services/profile_storage_service.dart';
+import '../services/profile_api_service.dart';
 
 class ProfileProvider extends ChangeNotifier {
 
   ProfileModel profile = ProfileModel(
     name: "Guest User",
     bio: "Add your bio",
-    imagePath: null,
   );
 
   ProfileProvider() {
@@ -20,12 +19,42 @@ class ProfileProvider extends ChangeNotifier {
   }
 
   Future<void> loadProfile() async {
-    final data =
-        await ProfileStorageService.loadProfile();
 
-    profile.name = data['name'];
-    profile.bio = data['bio'];
-    profile.imagePath = data['imagePath'];
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final mobile =
+        prefs.getString("mobile");
+
+    if (mobile == null) {
+      return;
+    }
+
+    final data =
+        await ProfileApiService.getProfile(
+      mobile,
+    );
+
+    if (data == null) {
+      return;
+    }
+
+    profile.name =
+        data['name'] ?? "Guest User";
+
+    profile.bio =
+        data['bio'] ?? "Add your bio";
+
+    if (data['profileImage'] != null &&
+        data['profileImage']
+            .toString()
+            .isNotEmpty) {
+
+      profile.imageBytes =
+          base64Decode(
+        data['profileImage'],
+      );
+    }
 
     notifyListeners();
   }
@@ -38,37 +67,54 @@ class ProfileProvider extends ChangeNotifier {
     profile.name = name;
     profile.bio = bio;
 
-    await ProfileStorageService.saveProfile(
-      profile.name,
-      profile.bio,
-      profile.imagePath,
-    );
-
     notifyListeners();
   }
 
-  Future<void> updatePhoto(String path) async {
+  Future<void> updatePhoto(
+    Uint8List bytes,
+  ) async {
 
-    profile.imagePath = path;
+    profile.imageBytes = bytes;
 
-    await ProfileStorageService.saveProfile(
-      profile.name,
-      profile.bio,
-      profile.imagePath,
-    );
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final mobile =
+        prefs.getString("mobile");
+
+    if (mobile != null) {
+
+      await ProfileApiService.updateProfile(
+        mobile: mobile,
+        name: profile.name,
+        bio: profile.bio,
+        profileImage:
+            base64Encode(bytes),
+      );
+    }
 
     notifyListeners();
   }
 
   Future<void> removePhoto() async {
 
-    profile.imagePath = null;
+    profile.imageBytes = null;
 
-    await ProfileStorageService.saveProfile(
-      profile.name,
-      profile.bio,
-      null,
-    );
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final mobile =
+        prefs.getString("mobile");
+
+    if (mobile != null) {
+
+      await ProfileApiService.updateProfile(
+        mobile: mobile,
+        name: profile.name,
+        bio: profile.bio,
+        profileImage: "",
+      );
+    }
 
     notifyListeners();
   }

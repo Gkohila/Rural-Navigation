@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'otp_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,6 +22,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+  final languageProvider =
+    Provider.of<LanguageProvider>(context);
+
+  final localizations =
+    AppLocalizations(
+      languageProvider.languageCode,
+    );
+
+  final isTamil =
+      languageProvider.languageCode == 'ta';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF3F3F3),
 
@@ -33,55 +49,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
 
-                  children: [
+    Expanded(
+      child: Text(
+        localizations.text('appName'),
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontSize: isTamil ? 16 : 20,
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF006400),
+        ),
+      ),
+    ),
 
-                    const Text(
-                      "Tenkasi SmartNav",
-
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF006400),
-                      ),
-                    ),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black26),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-
-                      child: const Row(
-                        children: [
-
-                          Icon(
-                            Icons.language,
-                            color: Colors.green,
-                            size: 18,
-                          ),
-
-                          SizedBox(width: 5),
-
-                          Text(
-                            "EN/தமிழ்",
-
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+  ],
+),
               ),
 
               // IMAGE CARD
@@ -112,8 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 20),
 
-                    const Text(
-                      "Welcome Home",
+                    Text(
+                      localizations.text('welcomeHome'),
 
                       style: TextStyle(
                         fontSize: 30,
@@ -124,11 +107,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     const SizedBox(height: 10),
 
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                    Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 20),
 
-                      child: Text(
-                        "Connecting you to the heart of Tenkasi.",
+  child: Text(
+    localizations.text('welcomeSubtitle'),
 
                         textAlign: TextAlign.center,
 
@@ -166,8 +149,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   children: [
 
-                    const Text(
-                      "Mobile Number / கைபேசி எண்",
+                  Text(
+                      localizations.text('mobileNumber'),
 
                       style: TextStyle(
                         fontSize: 15,
@@ -175,7 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 14),
+                    SizedBox(height: 14),
 
                     TextField(
                       controller: mobileController,
@@ -184,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         prefixText: "+91  ",
 
-                        hintText: "Enter 10 digit number",
+                        hintText: localizations.text('mobileHint'),
 
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -197,10 +180,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 10),
+                  SizedBox(height: 10),
 
-                    const Text(
-                      "We will send a 4-digit OTP for verification.",
+                    Text(
+                      localizations.text('otpInfo'),
 
                       style: TextStyle(
                         color: Colors.black54,
@@ -234,15 +217,20 @@ SizedBox(
 
   try {
 
-    final response = await http.post(
-      Uri.parse("http://127.0.0.1:8081/api/auth/send-otp"),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: jsonEncode({
-        "mobile": mobileController.text
-      }),
-    );
+    final String baseUrl = kIsWeb
+    ? "http://localhost:8081"
+    : "http://10.0.2.2:8081";
+    print("BASE URL = $baseUrl");
+
+final response = await http.post(
+  Uri.parse("$baseUrl/api/auth/send-otp"),
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: jsonEncode({
+    "mobile": mobileController.text,
+  }),
+);
 
     print("STATUS = ${response.statusCode}");
     print("BODY = ${response.body}");
@@ -273,13 +261,13 @@ SizedBox(
                           ),
                         ),
 
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
 
                           children: [
 
                             Text(
-                              "Send OTP",
+                              localizations.text('sendOtp'),
 
                               style: TextStyle(
                                 fontSize: 17,
@@ -312,7 +300,7 @@ SizedBox(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
 
                           child: Text(
-                            "OR",
+                            localizations.text('or'),
                             style: TextStyle(
                               color: Colors.grey.shade700,
                               fontSize: 13,
@@ -348,8 +336,8 @@ SizedBox(
                           size: 20,
                         ),
 
-                        label: const Text(
-                          "Guest",
+                        label: Text(
+                          localizations.text('guest'),
 
                           style: TextStyle(
                             fontSize: 16,
@@ -364,7 +352,7 @@ SizedBox(
 
               const SizedBox(height: 25),
 
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
@@ -378,7 +366,7 @@ SizedBox(
                   SizedBox(width: 6),
 
                   Text(
-                    "Need help logging in?",
+                    localizations.text('needHelp'),
 
                     style: TextStyle(
                       color: Colors.blue,
@@ -390,8 +378,8 @@ SizedBox(
 
               const SizedBox(height: 20),
 
-              const Text(
-                "©2024 Tenkasi District Administration.",
+              Text(
+                localizations.text('footerLine1'),
 
                 style: TextStyle(
                   color: Colors.black54,
@@ -401,8 +389,8 @@ SizedBox(
 
               const SizedBox(height: 5),
 
-              const Text(
-                "Designed for the citizens of Western Ghats.",
+              Text(
+                localizations.text('footerLine2'),
 
                 style: TextStyle(
                   color: Colors.black54,
