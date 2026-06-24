@@ -3,8 +3,8 @@ import 'otp_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
 
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         prefixText: "+91  ",
 
-                        hintText: localizations.text('mobileHint'),
+                        hintText: "Enter 10 digit number",
 
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,

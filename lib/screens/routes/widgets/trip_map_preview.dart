@@ -21,12 +21,19 @@ class _TripMapPreviewState extends State<TripMapPreview> {
   GoogleMapController? mapController;
 
   LatLng busLocation = const LatLng(8.9598, 77.3152);
+  Timer? timer;
 
   @override
 void initState() {
   super.initState();
 
   loadBusLocation();
+  timer = Timer.periodic(
+    const Duration(seconds: 5),
+    (_) {
+      loadBusLocation();
+    },
+  );
 }
 
 Future<void> loadBusLocation() async {
@@ -42,6 +49,7 @@ Future<void> loadBusLocation() async {
   print(response.body);
 
   if (response.statusCode == 200) {
+    if (!mounted) return;
 
     final data = jsonDecode(response.body);
 
@@ -57,11 +65,12 @@ Future<void> loadBusLocation() async {
     print(busLocation);
 
     mapController?.animateCamera(
-
-      CameraUpdate.newLatLng(
-        busLocation
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: busLocation,
+          zoom: 16,
+        ),
       ),
-
     );
   }
 }
@@ -128,5 +137,13 @@ Future<void> loadBusLocation() async {
         },
       ),
     );
+  }
+  @override
+  void dispose() {
+
+    timer?.cancel();
+
+    super.dispose();
+
   }
 }

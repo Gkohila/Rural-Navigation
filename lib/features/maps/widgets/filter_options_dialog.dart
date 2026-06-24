@@ -183,8 +183,6 @@ class _FilterOptionsDialogState
                     widget.onApply(
                       selectedFilter,
                     );
-
-                    Navigator.pop(context);
                   },
 
                   style: ElevatedButton.styleFrom(
@@ -348,11 +346,8 @@ class _FilterOptionsDialogState
     );
   }
 }
-Future<void> showFilterOptionsDialog(
-  BuildContext context,
-) async {
-
-  await showDialog(
+Future<String?> showFilterOptionsDialog(BuildContext context,) async {
+  return showDialog<String>(
 
     context: context,
 
@@ -364,7 +359,11 @@ Future<void> showFilterOptionsDialog(
 
         onApply: (selectedFilter) {
 
-          debugPrint(selectedFilter);
+          Navigator.pop(
+            context,
+            selectedFilter,
+          );
+
         },
       );
     },

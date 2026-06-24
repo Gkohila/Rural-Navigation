@@ -208,7 +208,8 @@ GestureDetector(
                               backgroundColor:
                                   Colors.transparent,
 
-                              isScrollControlled: true,
+                              isScrollControlled:
+                                  true,
 
                               builder: (context) {
 

@@ -14,6 +14,9 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 
+import 'package:smartnav/models/route_progress_model.dart';
+import 'package:smartnav/services/route_progress_service.dart';
+
 class RouteDetailsScreen extends StatefulWidget {
 
   final String vehicleNumber;
@@ -21,6 +24,13 @@ class RouteDetailsScreen extends StatefulWidget {
   final String source;
   final String destination;
   final String status;
+  final String departureTime;
+  final String arrivalTime;
+  final int duration;
+  final int fare;
+  final int transferCount;
+  final int walkingDistance;
+  final String transportMode;
 
   const RouteDetailsScreen({
     super.key,
@@ -29,6 +39,13 @@ class RouteDetailsScreen extends StatefulWidget {
     required this.source,
     required this.destination,
     required this.status,
+    required this.departureTime,
+    required this.arrivalTime,
+    required this.duration,
+    required this.fare,
+    required this.transferCount,
+    required this.walkingDistance,
+    required this.transportMode,
   });
 
   @override
@@ -64,12 +81,18 @@ class _RouteDetailsScreenState
   bool destinationReached = false;
 
   int remainingMinutes = 15;
+  RouteProgressModel? progress;
+
+  final RouteProgressService routeProgressService = RouteProgressService();
+
+  bool isLoadingProgress = true;
 
   @override
   void initState() {
     super.initState();
     print("INIT STATE CALLED");
     loadStops();
+    loadProgress();
   }
 
   Future<void> loadStops() async {
@@ -97,6 +120,21 @@ class _RouteDetailsScreenState
 
     }
   }
+
+  Future<void> loadProgress() async {
+
+    progress = await routeProgressService.getProgress(widget.vehicleNumber);
+    print("ETA = ${progress?.etaMinutes}");
+    print("Current Stop = ${progress?.currentStop}");
+    print("Remaining Stops = ${progress?.stopsRemaining}");
+    if (!mounted) return;
+
+    setState(() {
+
+      isLoadingProgress = false;
+
+    });
+  } 
 
   @override
   Widget build(BuildContext context) {
@@ -552,58 +590,99 @@ else
         if (!mounted) return;
 
         showDialog(
+  context: context,
+  barrierDismissible: false,
+  builder: (_) => Dialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(28),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(28),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
 
-          context: context,
-
-          barrierDismissible: false,
-
-          builder: (_) => AlertDialog(
-
-            title: const Text(
-              "Destination Reached 🎉",
-            ),
-
-            content: Text(
-              "You have arrived at ${widget.destination}",
-            ),
-
-            actions: [
-
-              TextButton(
-
-                onPressed: () {
-
-                  Navigator.pop(context);
-
-                  Navigator.push(
-
-                    context,
-
-                    MaterialPageRoute(
-                      builder: (_) => const LastMileScreen(),
-                    ),
-
-                  );
-
-                },
-
-                child: const Text(
-                  "Continue",
-                ),
-
-              ),
-
-            ],
-
+          const Text(
+            "🎉",
+            style: TextStyle(fontSize: 42),
           ),
 
-        );
+          const SizedBox(height: 18),
+
+          Text(
+            "You have arrived at",
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              color: Colors.grey.shade700,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            widget.destination,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () {
+
+                Navigator.pop(context);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const LastMileScreen(),
+                  ),
+                );
+
+              },
+              child: Text(
+                "Continue",
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    ),
+  ),
+);
 
       },
 
     );
 
   }
+  else {
+
+  timer?.cancel();
+
+  setState(() {
+    isNavigationStarted = false;
+  });
+
+}
 
 }
 
@@ -1273,32 +1352,34 @@ void dispose() {
 
   Widget rideTitle() {
 
-    return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+  return Row(
 
-      children: [
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-        Text(
-  remainingMinutes == 0
-      ? "Destination reached"
-      : "${stops.length-currentStopIndex} stops left • $remainingMinutes min",
+    children: [
 
-  style: GoogleFonts.inter(
-    fontSize: 14,
-    fontWeight: FontWeight.w700,
-    color: const Color(0xFF188038), // Google green
-  ),
-),
+      Text(
 
-        const Icon(
-          Icons.keyboard_arrow_up,
-          size: 18,
-          color: Colors.grey,
+        destinationReached
+            ? "Destination reached"
+            : "${(stops.length - 1) - currentStopIndex} stops left • $remainingMinutes min",
+
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFF188038),
         ),
-      ],
-    );
-  }
+      ),
+
+      const Icon(
+        Icons.keyboard_arrow_up,
+        size: 18,
+        color: Colors.grey,
+      ),
+
+    ],
+  );
+}
 
   Widget floatingCrowdCard() {
 
