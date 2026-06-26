@@ -17,6 +17,11 @@ import 'package:http/http.dart' as http;
 import 'package:smartnav/models/route_progress_model.dart';
 import 'package:smartnav/services/route_progress_service.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../models/saved_route_model.dart';
+import '../../../services/saved_route_api_service.dart';
+
 class RouteDetailsScreen extends StatefulWidget {
 
   final String vehicleNumber;
@@ -525,20 +530,75 @@ else
                       children: [
 
                         Expanded(
-                          child: bottomButton(
-                            Icons.bookmark_border,
-                            "Save",
-                          ),
-                        ),
+  child: bottomButton(
+    Icons.bookmark_border,
+    "Save",
+    () async {
+
+      final prefs =
+          await SharedPreferences.getInstance();
+
+      final userId =
+          prefs.getInt("userId");
+
+      if (userId == null) {
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("User not found"),
+          ),
+        );
+
+        return;
+      }
+
+      final route = SavedRouteModel(
+        userId: userId,
+        vehicleNumber: widget.vehicleNumber,
+        busName: widget.busName,
+        source: widget.source,
+        destination: widget.destination,
+        departureTime: widget.departureTime,
+        arrivalTime: widget.arrivalTime,
+        duration: widget.duration,
+        fare: widget.fare.toDouble(),
+        transportMode: widget.transportMode,
+      );
+
+      final success =
+          await SavedRouteApiService.saveRoute(route);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? "Route Saved Successfully"
+                : "Failed to Save Route",
+          ),
+        ),
+      );
+
+    },
+  ),
+),
 
                         const SizedBox(width: 12),
 
-                        Expanded(
-                          child: bottomButton(
-                            Icons.share,
-                            "Share",
-                          ),
-                        ),
+                       Expanded(
+  child: bottomButton(
+    Icons.share,
+    "Share",
+    () {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Share Clicked"),
+        ),
+      );
+
+    },
+  ),
+),
                       ],
                     ),
                   ],
@@ -1500,76 +1560,34 @@ void dispose() {
   Widget bottomButton(
   IconData icon,
   String text,
+  VoidCallback onTap,
 ) {
 
   return Material(
-
     color: Colors.transparent,
-
-    borderRadius:
-    BorderRadius.circular(20),
+    borderRadius: BorderRadius.circular(20),
 
     child: InkWell(
+      borderRadius: BorderRadius.circular(20),
 
-      borderRadius:
-      BorderRadius.circular(20),
+      splashColor: const Color(0xFFE8F5E9),
+      highlightColor: const Color(0xFFE8F5E9),
 
-      splashColor:
-      const Color(0xFFE8F5E9),
-
-      highlightColor:
-      const Color(0xFFE8F5E9),
-
-      onTap: () {
-
-        ScaffoldMessenger.of(context)
-            .showSnackBar(
-
-          SnackBar(
-
-            backgroundColor: green,
-
-            behavior:
-            SnackBarBehavior.floating,
-
-            content: Text(
-
-              text == "Save"
-                  ? "Saved"
-                  : "Shared",
-
-              style: GoogleFonts.inter(
-                color: Colors.white,
-                fontWeight:
-                FontWeight.w500,
-              ),
-            ),
-
-            duration:
-            const Duration(seconds: 1),
-          ),
-        );
-      },
+      onTap: onTap,
 
       child: Ink(
-
         height: 50,
 
         decoration: BoxDecoration(
           color: Colors.white,
-
-          borderRadius:
-          BorderRadius.circular(20),
-
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color:
-            const Color(0xFFE8E8E8),
+            color: const Color(0xFFE8E8E8),
           ),
         ),
 
         child: Row(
-          mainAxisAlignment:
-          MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
 
@@ -1583,11 +1601,9 @@ void dispose() {
 
             Text(
               text,
-
               style: GoogleFonts.inter(
                 fontSize: 13,
-                fontWeight:
-                FontWeight.w500,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],

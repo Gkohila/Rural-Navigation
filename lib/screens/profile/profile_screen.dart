@@ -11,6 +11,7 @@ import '../../localization/language_provider.dart';
 
 import '../../providers/profile_provider.dart';
 import '../../screens/profile/full_screen_image.dart';
+import 'saved_routes_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -323,28 +324,37 @@ GestureDetector(
               children: [
 
                 quickCard(
-                  Icons.route,
-                   localizations.text('savedRoutes'),
-                  Colors.blue,
-                ),
+  Icons.route,
+  localizations.text('savedRoutes'),
+  Colors.blue,
+  () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const SavedRoutesScreen(),
+      ),
+    );
+  },
+),
 
                 quickCard(
-                  Icons.favorite,
-                  localizations.text('favorites'),
-                  Colors.green,
-                ),
-
+  Icons.favorite,
+  localizations.text('favorites'),
+  Colors.green,
+  () {},
+),
+               quickCard(
+  Icons.download,
+  localizations.text('offlineMaps'),
+  Colors.brown,
+  () {},
+),
                 quickCard(
-                  Icons.download,
-                  localizations.text('offlineMaps'),
-                  Colors.brown,
-                ),
-
-                quickCard(
-                  Icons.history,
-                  localizations.text('travelHistory'),
-                  Colors.lightBlue,
-                ),
+  Icons.history,
+  localizations.text('travelHistory'),
+  Colors.lightBlue,
+  () {},
+),
               ],
             ),
 
@@ -456,12 +466,15 @@ const SizedBox(height: 2),
 
   /// QUICK CARD
   Widget quickCard(
-    IconData icon,
-    String title,
-    Color color,
-  ) {
+  IconData icon,
+  String title,
+  Color color,
+  VoidCallback onTap,
+) {
 
-    return Container(
+    return GestureDetector(
+  onTap: onTap,
+  child: Container(
 
       padding: const EdgeInsets.all(18),
 
@@ -532,6 +545,7 @@ const SizedBox(height: 2),
 )
         ],
       ),
+  ),
     );
   }
 }

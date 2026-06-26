@@ -158,14 +158,20 @@ if (selectedModes.isNotEmpty) {
 /// Leave time filter
 filteredBuses = filteredBuses.where((bus) {
 
-  final busTime = DateFormat(
+  final timeValue =
+    isArriveSelected
+        ? bus['arrivalTime']
+        : bus['departureTime'];
+
+if (timeValue == null ||
+    timeValue.toString().isEmpty) {
+  return false;
+}
+
+final busTime = DateFormat(
   "hh:mm a",
 ).parse(
-
-  isArriveSelected
-      ? bus['arrivalTime']
-      : bus['departureTime'],
-
+  timeValue.toString(),
 );
 
   final selectedTime = DateFormat(

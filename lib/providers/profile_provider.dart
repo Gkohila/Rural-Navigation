@@ -38,6 +38,12 @@ class ProfileProvider extends ChangeNotifier {
     if (data == null) {
       return;
     }
+    await prefs.setInt(
+  "userId",
+  data["id"],
+);
+
+print("USER ID = ${data["id"]}");
 
     profile.name =
         data['name'] ?? "Guest User";
