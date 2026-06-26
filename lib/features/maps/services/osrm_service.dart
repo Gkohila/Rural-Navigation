@@ -22,3 +22,4 @@ class OsrmService {
     throw Exception('Failed to fetch route');
   }
 }
+
