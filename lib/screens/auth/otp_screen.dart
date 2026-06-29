@@ -207,8 +207,11 @@ Text(
   );
 
   print("VERIFY STATUS = ${response.statusCode}");
-  print("VERIFY BODY = ${response.body}");
-if (response.body == "Login Success") {
+print("VERIFY BODY = ${response.body}");
+
+final data = jsonDecode(response.body);
+
+if (data["message"] == "Login Success") {
 
   SharedPreferences prefs =
       await SharedPreferences.getInstance();
@@ -218,6 +221,11 @@ if (response.body == "Login Success") {
   await prefs.setString(
     "mobile",
     widget.mobile,
+  );
+
+  await prefs.setInt(
+    "userId",
+    data["userId"],
   );
 
   final profileProvider =
@@ -234,18 +242,18 @@ if (response.body == "Login Success") {
       builder: (context) => const HomeScreen(),
     ),
   );
-}
 
-  else {
+} else {
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-  localizations.text('invalidOtp'),
-),
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        localizations.text('invalidOtp'),
       ),
-    );
-  }
+    ),
+  );
+
+}
 },
                    
 

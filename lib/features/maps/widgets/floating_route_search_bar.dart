@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 
 class FloatingRouteSearchBar extends StatelessWidget {
 
-  const FloatingRouteSearchBar({super.key});
+  final String source;
+  final String destination;
+
+  const FloatingRouteSearchBar({
+    super.key,
+    required this.source,
+    required this.destination,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -154,18 +161,14 @@ class FloatingRouteSearchBar extends StatelessWidget {
                         ),
                       ),
 
-                      child: const Align(
-
-                        alignment:
-                            Alignment.centerLeft,
-
-                        child: TextField(
-
-                          decoration:
-                              InputDecoration(
-
-                            hintText:
-                                'Your location',
+                      child: Align(
+  alignment: Alignment.centerLeft,
+  child: TextField(
+    controller: TextEditingController(
+      text: source,
+    ),
+    decoration: const InputDecoration(
+      hintText: 'Your location',
 
                             hintStyle:
                                 TextStyle(
@@ -217,18 +220,14 @@ class FloatingRouteSearchBar extends StatelessWidget {
                         ),
                       ),
 
-                      child: const Align(
-
-                        alignment:
-                            Alignment.centerLeft,
-
-                        child: TextField(
-
-                          decoration:
-                              InputDecoration(
-
-                            hintText:
-                                'Choose destination',
+                      child: Align(
+  alignment: Alignment.centerLeft,
+  child: TextField(
+    controller: TextEditingController(
+      text: destination,
+    ),
+    decoration: const InputDecoration(
+      hintText: 'Choose destination',
 
                             hintStyle:
                                 TextStyle(

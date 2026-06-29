@@ -31,7 +31,19 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class RouteSearchScreen extends StatefulWidget {
-  const RouteSearchScreen({super.key});
+
+  final String? initialSource;
+  final String? initialDestination;
+  final String? initialTransportMode;
+  final bool fromSavedRoute;
+
+  const RouteSearchScreen({
+    super.key,
+    this.initialSource,
+    this.initialDestination,
+    this.initialTransportMode,
+     this.fromSavedRoute = false,
+  });
 
   @override
   State<RouteSearchScreen> createState() =>
@@ -55,14 +67,41 @@ class _RouteSearchScreenState
   bool isLoading = true;
   String selectedLeaveTime = "4:50 PM";
   bool isArriveSelected = false;
-  String sourceLocation = "Tenkasi";
-  String destinationLocation = "Tirunelveli";
+  String sourceLocation = "";
+String destinationLocation = "";
 
   @override
-  void initState() {
-    super.initState();
-    loadBuses();
-  }
+void initState() {
+  super.initState();
+
+  if (widget.fromSavedRoute) {
+
+  sourceLocation =
+      widget.initialSource ?? "";
+
+  destinationLocation =
+      widget.initialDestination ?? "";
+
+} else {
+
+  sourceLocation = "";
+  destinationLocation = "";
+
+}
+
+  selectedLeaveTime = DateFormat(
+    "hh:mm a",
+  ).format(
+    DateTime.now(),
+  );
+
+  selectedModes = [
+  widget.initialTransportMode ?? "Bus",
+];
+
+  loadBuses();
+}
+  
 
   Future<void> loadBuses() async {
 
@@ -141,6 +180,18 @@ if (_selectedTransportIndex == 2) {
   print("SELECTED FILTER = $selectedFilter");
 
   List<dynamic> filteredBuses = [...buses];
+  filteredBuses = filteredBuses.where((bus) {
+
+  return bus["source"]
+          .toString()
+          .toLowerCase() ==
+      sourceLocation.toLowerCase() &&
+      bus["destination"]
+          .toString()
+          .toLowerCase() ==
+      destinationLocation.toLowerCase();
+
+}).toList();
 
 /// Preferred modes filter
 if (selectedModes.isNotEmpty) {
@@ -257,24 +308,26 @@ if (selectedFilter == "Less walking") {
           onTap: () {
 
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RouteDetailsScreen(
-                  vehicleNumber: bus['busNumber'],
-                  busName: bus['busName'],
-                  source: bus['source'],
-                  destination: bus['destination'],
-                  status: bus['status'],
-                   departureTime: bus['departureTime'],
-                  arrivalTime: bus['arrivalTime'],
-                  duration: bus['duration'],
-                  fare: bus['fare'],
-                  transferCount: bus['transferCount'],
-                  walkingDistance: bus['walkingDistance'],
-                  transportMode: bus['transportMode'],
-                ),
-              ),
-            );
+  context,
+  MaterialPageRoute(
+    builder: (_) => RouteDetailsScreen(
+  vehicleNumber: bus['busNumber'],
+  busName: bus['busName'],
+  source: bus['source'],
+  destination: bus['destination'],
+  status: bus['status'],
+  departureTime: bus['departureTime'],
+  arrivalTime: bus['arrivalTime'],
+  duration: int.parse(bus['duration'].toString()),
+  fare: (bus['fare'] as num).toDouble(),
+  transferCount: bus['transferCount'] ?? 0,
+  walkingDistance: bus['walkingDistance'] ?? 0,
+  transportMode: bus['transportMode'],
+
+  isFromSavedRoute: widget.fromSavedRoute,
+),
+  ),
+);
 
           },
         ),
@@ -346,8 +399,10 @@ Positioned.fill(
               left: 14,
               right: 14,
 
-              child:
-                  const FloatingRouteSearchBar(),
+              child: FloatingRouteSearchBar(
+  source: sourceLocation,
+  destination: destinationLocation,
+),
             ),
 
             /// DRAGGABLE SHEET

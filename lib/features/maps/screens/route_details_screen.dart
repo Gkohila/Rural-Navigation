@@ -32,10 +32,11 @@ class RouteDetailsScreen extends StatefulWidget {
   final String departureTime;
   final String arrivalTime;
   final int duration;
-  final int fare;
-  final int transferCount;
-  final int walkingDistance;
+final double fare;
+final int transferCount;
+final double walkingDistance;
   final String transportMode;
+  final bool isFromSavedRoute;
 
   const RouteDetailsScreen({
     super.key,
@@ -51,6 +52,7 @@ class RouteDetailsScreen extends StatefulWidget {
     required this.transferCount,
     required this.walkingDistance,
     required this.transportMode,
+    this.isFromSavedRoute = false,
   });
 
   @override
@@ -90,16 +92,21 @@ class _RouteDetailsScreenState
 
   final RouteProgressService routeProgressService = RouteProgressService();
 
-  bool isLoadingProgress = true;
+  bool isSaved = false;
 
   @override
-  void initState() {
-    super.initState();
-    print("INIT STATE CALLED");
-    loadStops();
-    loadProgress();
-  }
+void initState() {
+  super.initState();
 
+  loadStops();
+  loadProgress();
+
+  if (widget.isFromSavedRoute) {
+    isSaved = true;
+  } else {
+    isSaved = false;
+  }
+}
   Future<void> loadStops() async {
 
     print("LOAD STOPS CALLED");
@@ -128,6 +135,7 @@ class _RouteDetailsScreenState
 
   Future<void> loadProgress() async {
 
+
     progress = await routeProgressService.getProgress(widget.vehicleNumber);
     print("ETA = ${progress?.etaMinutes}");
     print("Current Stop = ${progress?.currentStop}");
@@ -136,10 +144,21 @@ class _RouteDetailsScreenState
 
     setState(() {
 
-      isLoadingProgress = false;
+      bool isLoadingProgress = false;
 
     });
   } 
+
+  Future<void> checkIfRouteSaved() async {
+
+  isSaved = await SavedRouteApiService.isRouteSaved(
+    widget.vehicleNumber,
+  );
+
+  if (!mounted) return;
+
+  setState(() {});
+}
 
   @override
   Widget build(BuildContext context) {
@@ -531,8 +550,12 @@ else
 
                         Expanded(
   child: bottomButton(
-    Icons.bookmark_border,
-    "Save",
+    isSaved
+    ? Icons.bookmark
+    : Icons.bookmark_border,
+    isSaved
+    ? "Saved"
+    : "Save",
     () async {
 
       final prefs =
@@ -565,18 +588,77 @@ else
         transportMode: widget.transportMode,
       );
 
+if (isSaved) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: const Color(0xFF1B5E20),
+      content: const Text(
+        "Already saved",
+        style: TextStyle(color: Colors.white),
+      ),
+    ),
+  );
+  return;
+}
+
       final success =
           await SavedRouteApiService.saveRoute(route);
 
+          if (success) {
+
+  setState(() {
+    isSaved = true;
+  });
+
+}
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+  SnackBar(
+    behavior: SnackBarBehavior.floating,
+    backgroundColor: success
+        ? const Color(0xFF1B5E20)
+        : Colors.red.shade700,
+    elevation: 0,
+    margin: const EdgeInsets.fromLTRB(
+      16,
+      0,
+      16,
+      20,
+    ),
+    duration: const Duration(seconds: 2),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(14),
+    ),
+
+    content: Row(
+      children: [
+
+        Icon(
+          success
+              ? Icons.check_circle_rounded
+              : Icons.error_rounded,
+          color: Colors.white,
+        ),
+
+        const SizedBox(width: 10),
+
+        Expanded(
+          child: Text(
             success
-                ? "Route Saved Successfully"
+                ? "Saved to Saved Routes"
                 : "Failed to Save Route",
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
-      );
+      ],
+    ),
+  ),
+);
 
     },
   ),
@@ -1591,21 +1673,25 @@ void dispose() {
 
           children: [
 
-            Icon(
-              icon,
-              color: green,
-              size: 16,
-            ),
+           Icon(
+  icon,
+  color: text == "Saved"
+      ? green
+      : green,
+),
 
             const SizedBox(width: 6),
 
-            Text(
-              text,
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+           Text(
+  text,
+  style: GoogleFonts.inter(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    color: text == "Saved"
+        ? green
+        : Colors.black,
+  ),
+),
           ],
         ),
       ),
