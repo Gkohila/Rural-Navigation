@@ -16,6 +16,20 @@ class SavedRoutesScreen extends StatefulWidget {
 class _SavedRoutesScreenState
     extends State<SavedRoutesScreen> {
   late Future<List<SavedRouteModel>> routesFuture;
+  IconData getTransportIcon(String mode) {
+  switch (mode.toLowerCase()) {
+    case "bus":
+      return Icons.directions_bus_rounded;
+    case "train":
+      return Icons.train_rounded;
+    case "auto":
+      return Icons.electric_rickshaw_rounded;
+    case "walking":
+      return Icons.directions_walk_rounded;
+    default:
+      return Icons.route_rounded;
+  }
+}
 
   @override
   void initState() {
@@ -28,7 +42,47 @@ class _SavedRoutesScreenState
         SavedRouteApiService.getSavedRoutes();
   }
 
+  Future<void> deleteAllRoutes() async {
+  final confirm = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Remove All Routes"),
+      content: const Text(
+        "Do you want to remove all saved routes?",
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context, true),
+          child: const Text("Remove All"),
+        ),
+      ],
+    ),
+  );
+
+  if (confirm != true) return;
+
+  final success =
+      await SavedRouteApiService.deleteAllRoutes();
+
+  if (success) {
+    setState(() {
+      loadRoutes();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("All routes removed"),
+      ),
+    );
+  }
+}
+
   Future<void> deleteRoute(int id) async {
+    
 
   final confirm = await showDialog<bool>(
     context: context,
@@ -84,15 +138,46 @@ class _SavedRoutesScreenState
       backgroundColor: SmartNavColors.background,
 
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: SmartNavColors.surface,
-        title: Text(
-          "Saved Routes",
-          style: SmartNavTextStyles.headlineMdBold.copyWith(
-  color: const Color(0xFF0B5D1E),
-),
+  elevation: 0,
+  backgroundColor: SmartNavColors.surface,
+
+  title: Text(
+    "Saved Routes",
+    style: SmartNavTextStyles.headlineMdBold.copyWith(
+      color: const Color(0xFF0B5D1E),
+    ),
+  ),
+
+  actions: [
+
+    PopupMenuButton<String>(
+
+      onSelected: (value) {
+
+        if (value == "delete_all") {
+
+          deleteAllRoutes();
+
+        }
+
+      },
+
+      itemBuilder: (context) => [
+
+        const PopupMenuItem(
+
+          value: "delete_all",
+
+          child: Text("Delete All"),
+
         ),
-      ),
+
+      ],
+
+    ),
+
+  ],
+),
 
       body: FutureBuilder<List<SavedRouteModel>>(
         future: routesFuture,
@@ -206,24 +291,24 @@ class _SavedRoutesScreenState
         ),
 
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
 
           children: [
 
             Container(
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
 
               decoration: BoxDecoration(
                 color: SmartNavColors.primary.withOpacity(.08),
                 borderRadius: BorderRadius.circular(10),
               ),
 
-              child: const Icon(
-                Icons.directions_bus_rounded,
-                size: 18,
-                color: SmartNavColors.primary,
-              ),
+              child: Icon(
+  getTransportIcon(route.transportMode),
+  size: 20,
+  color: SmartNavColors.primary,
+),
             ),
 
             const SizedBox(width: 12),
@@ -235,51 +320,15 @@ class _SavedRoutesScreenState
 
                 children: [
 
-                  Text(
-                    route.vehicleNumber,
-                    style: SmartNavTextStyles.bodyLg.copyWith(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 17,
-                    ),
-                  ),
-
-                  const SizedBox(height: 3),
+                  
 
                   Text(
-                    "${route.source} → ${route.destination}",
-                    style: SmartNavTextStyles.bodyMd.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+  "${route.source}  →  ${route.destination}",
+  style: SmartNavTextStyles.bodyLg.copyWith(
+    fontWeight: FontWeight.w700,
+  ),
+),
 
-                  const SizedBox(height: 6),
-
-                  Row(
-                    children: [
-
-                      const Icon(
-                        Icons.schedule_outlined,
-                        size: 14,
-                        color: SmartNavColors.onSurfaceVariant,
-                      ),
-
-                      const SizedBox(width: 4),
-
-                      Expanded(
-                        child: Text(
-                          "${route.departureTime} • ${route.duration} min",
-                          style: SmartNavTextStyles.labelSm,
-                        ),
-                      ),
-
-                      Text(
-                        "₹${route.fare}",
-                        style: SmartNavTextStyles.titleSm.copyWith(
-                          fontSize: 18,
-                        ),
-                      ),
-                    ],
-                  ),
 
 
                 ],

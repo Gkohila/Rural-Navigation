@@ -180,18 +180,7 @@ if (_selectedTransportIndex == 2) {
   print("SELECTED FILTER = $selectedFilter");
 
   List<dynamic> filteredBuses = [...buses];
-  filteredBuses = filteredBuses.where((bus) {
-
-  return bus["source"]
-          .toString()
-          .toLowerCase() ==
-      sourceLocation.toLowerCase() &&
-      bus["destination"]
-          .toString()
-          .toLowerCase() ==
-      destinationLocation.toLowerCase();
-
-}).toList();
+ 
 
 /// Preferred modes filter
 if (selectedModes.isNotEmpty) {

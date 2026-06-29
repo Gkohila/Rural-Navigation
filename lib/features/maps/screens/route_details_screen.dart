@@ -546,143 +546,97 @@ else
                     /// SAVE SHARE
                     /// =====================================================
                     Row(
-                      children: [
+  children: [
 
-                        Expanded(
-  child: bottomButton(
-    isSaved
-    ? Icons.bookmark
-    : Icons.bookmark_border,
-    isSaved
-    ? "Saved"
-    : "Save",
-    () async {
+    if (!widget.isFromSavedRoute)
+      Expanded(
+        child: bottomButton(
+          isSaved
+              ? Icons.bookmark
+              : Icons.bookmark_border,
+          isSaved
+              ? "Saved"
+              : "Save",
+          () async {
 
-      final prefs =
-          await SharedPreferences.getInstance();
+            final prefs =
+                await SharedPreferences.getInstance();
 
-      final userId =
-          prefs.getInt("userId");
+            final userId =
+                prefs.getInt("userId");
 
-      if (userId == null) {
+            if (userId == null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("User not found"),
+                ),
+              );
+              return;
+            }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("User not found"),
-          ),
-        );
+            final route = SavedRouteModel(
+              userId: userId,
+              vehicleNumber: widget.vehicleNumber,
+              busName: widget.busName,
+              source: widget.source,
+              destination: widget.destination,
+              departureTime: widget.departureTime,
+              arrivalTime: widget.arrivalTime,
+              duration: widget.duration,
+              fare: widget.fare,
+              transportMode: widget.transportMode,
+            );
 
-        return;
-      }
+            if (isSaved) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Already saved"),
+                ),
+              );
+              return;
+            }
 
-      final route = SavedRouteModel(
-        userId: userId,
-        vehicleNumber: widget.vehicleNumber,
-        busName: widget.busName,
-        source: widget.source,
-        destination: widget.destination,
-        departureTime: widget.departureTime,
-        arrivalTime: widget.arrivalTime,
-        duration: widget.duration,
-        fare: widget.fare.toDouble(),
-        transportMode: widget.transportMode,
-      );
+            final success =
+                await SavedRouteApiService.saveRoute(route);
 
-if (isSaved) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      behavior: SnackBarBehavior.floating,
-      backgroundColor: const Color(0xFF1B5E20),
-      content: const Text(
-        "Already saved",
-        style: TextStyle(color: Colors.white),
+            if (success) {
+              setState(() {
+                isSaved = true;
+              });
+            }
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  success
+                      ? "Saved to Saved Routes"
+                      : "Failed to Save Route",
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+
+    if (!widget.isFromSavedRoute)
+      const SizedBox(width: 12),
+
+    Expanded(
+      child: bottomButton(
+        Icons.share,
+        "Share",
+        () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Share Clicked"),
+            ),
+          );
+        },
       ),
     ),
-  );
-  return;
-}
 
-      final success =
-          await SavedRouteApiService.saveRoute(route);
-
-          if (success) {
-
-  setState(() {
-    isSaved = true;
-  });
-
-}
-
-      ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    behavior: SnackBarBehavior.floating,
-    backgroundColor: success
-        ? const Color(0xFF1B5E20)
-        : Colors.red.shade700,
-    elevation: 0,
-    margin: const EdgeInsets.fromLTRB(
-      16,
-      0,
-      16,
-      20,
-    ),
-    duration: const Duration(seconds: 2),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(14),
-    ),
-
-    content: Row(
-      children: [
-
-        Icon(
-          success
-              ? Icons.check_circle_rounded
-              : Icons.error_rounded,
-          color: Colors.white,
-        ),
-
-        const SizedBox(width: 10),
-
-        Expanded(
-          child: Text(
-            success
-                ? "Saved to Saved Routes"
-                : "Failed to Save Route",
-            style: GoogleFonts.inter(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    ),
-  ),
-);
-
-    },
-  ),
+  ],
 ),
-
-                        const SizedBox(width: 12),
-
-                       Expanded(
-  child: bottomButton(
-    Icons.share,
-    "Share",
-    () {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Share Clicked"),
-        ),
-      );
-
-    },
-  ),
-),
-                      ],
-                    ),
                   ],
                 ),
               );

@@ -107,4 +107,23 @@ class SavedRouteApiService {
     return response.statusCode == 200 ||
         response.statusCode == 201;
   }
+    /// DELETE ALL ROUTES OF USER
+  static Future<bool> deleteAllRoutes() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final userId = prefs.getInt("userId");
+
+    if (userId == null) {
+      return false;
+    }
+
+    final response = await http.delete(
+      Uri.parse(
+        "$baseUrl/api/saved-routes/user/$userId",
+      ),
+    );
+
+    return response.statusCode == 200 ||
+        response.statusCode == 204;
+  }
 }
