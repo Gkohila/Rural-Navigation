@@ -1,8 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class FloatingRouteSearchBar extends StatelessWidget {
-
+class FloatingRouteSearchBar extends StatefulWidget {
   const FloatingRouteSearchBar({super.key});
+
+  @override
+  State<FloatingRouteSearchBar> createState() =>
+      _FloatingRouteSearchBarState();
+}
+
+class _FloatingRouteSearchBarState
+    extends State<FloatingRouteSearchBar> {
+       final TextEditingController sourceController =
+      TextEditingController();
+
+  final TextEditingController destinationController =
+      TextEditingController();
+      
+     @override
+  void dispose() {
+    sourceController.dispose();
+    destinationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,38 +176,28 @@ class FloatingRouteSearchBar extends StatelessWidget {
                         ),
                       ),
 
-                      child: const Align(
+                      child:  Align(
 
                         alignment:
                             Alignment.centerLeft,
 
                         child: TextField(
+  controller: sourceController,
 
-                          decoration:
-                              InputDecoration(
+  decoration: InputDecoration(
+    hintText: 'Your location',
 
-                            hintText:
-                                'Your location',
+    hintStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: Color(0xFF0B5D1E),
+    ),
 
-                            hintStyle:
-                                TextStyle(
+    border: InputBorder.none,
 
-                              fontSize: 16,
-
-                              fontWeight:
-                                  FontWeight.w500,
-
-                              color:
-                                  Color(0xFF0B5D1E),
-                            ),
-
-                            border:
-                                InputBorder.none,
-
-                            isCollapsed:
-                                true,
-                          ),
-                        ),
+    isCollapsed: true,
+  ),
+),
                       ),
                     ),
 
@@ -217,18 +229,73 @@ class FloatingRouteSearchBar extends StatelessWidget {
                         ),
                       ),
 
-                      child: const Align(
+                      child:  Align(
 
                         alignment:
                             Alignment.centerLeft,
 
-                        child: TextField(
+                       child: TextField(
 
-                          decoration:
-                              InputDecoration(
+  controller: destinationController,
 
-                            hintText:
-                                'Choose destination',
+  onSubmitted: (value) async {
+    print("SOURCE = ${sourceController.text}");
+    print("DESTINATION = ${destinationController.text}");
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt("user_id");
+
+print("USER ID = $userId");
+    final now = TimeOfDay.now();
+    final hour =
+    now.hourOfPeriod == 0
+        ? 12
+        : now.hourOfPeriod;
+
+final period =
+    now.period == DayPeriod.am
+        ? "AM"
+        : "PM";
+final time =
+"$hour:${now.minute.toString().padLeft(2, '0')} $period";
+
+final searches =
+    prefs.getStringList("search_history") ?? [];
+
+searches.insert(
+  0,
+  "${sourceController.text} -> ${destinationController.text}|$time",
+);
+
+await prefs.setStringList(
+  "search_history",
+  searches,
+);
+await http.post(
+  Uri.parse("http://localhost:8081/api/history"),
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: jsonEncode({
+    "userId": userId,
+    "source": sourceController.text,
+    "destination": destinationController.text,
+    "transportType": "BUS",
+  }),
+);
+
+print("HISTORY SAVED TO DATABASE");
+await prefs.setString(
+  "last_search_time",
+  time,
+);
+
+print("HISTORY SAVED");
+String? history = prefs.getString("last_search");
+print("HISTORY READ = $history");
+  },
+
+  decoration: InputDecoration(
+    hintText: 'Choose destination',
 
                             hintStyle:
                                 TextStyle(
