@@ -8,6 +8,8 @@ class DirectionData {
 
   final List<Map<String, dynamic>> directions;
 
+  final List<dynamic> polyline;
+
   DirectionData({
 
     required this.duration,
@@ -17,6 +19,8 @@ class DirectionData {
     required this.arrivalTime,
 
     required this.directions,
+
+    required this.polyline,
 
   });
 

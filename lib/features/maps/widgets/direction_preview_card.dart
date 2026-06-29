@@ -1,104 +1,115 @@
 import 'package:flutter/material.dart';
+import 'package:smartnav/features/maps/models/direction_data.dart';
+import 'package:smartnav/features/maps/screens/live_navigation_screen.dart';
 
 class DirectionPreviewCard extends StatelessWidget {
   final int transportIndex;
   final String source;
   final String destination;
+  final DirectionData? directionData;
 
   const DirectionPreviewCard({
     super.key,
     required this.transportIndex,
     required this.source,
     required this.destination,
+    this.directionData,
   });
 
   @override
   Widget build(BuildContext context) {
-    String duration = "";
-    String arrivalTime = "";
-    String distance = "";
+    String duration = directionData?.duration ?? "";
+    String arrivalTime = directionData?.arrivalTime ?? "";
+    String distance = directionData?.distance ?? "";
 
-    List<Map<String, dynamic>> directions = [];
+    List<Map<String, dynamic>> directions = directionData?.directions ?? [];
+  
+    if (directionData == null) {
 
-    /// CAR
-    if (transportIndex == 0) {
-      duration = "23 min";
-      arrivalTime = "03:00 PM";
-      distance = "19 km";
+  /// CAR
+  if (transportIndex == 0) {
 
-      directions = [
-        {
-          "icon": Icons.north,
-          "title": "Head north on NH744",
-          "distance": "5.2 km",
-        },
-        {
-          "icon": Icons.north,
-          "title": "Continue on NH744",
-          "distance": "11.8 km",
-        },
-        {
-          "icon": Icons.turn_right,
-          "title": "Turn right",
-          "distance": "1.3 km",
-        },
-        {
-          "icon": Icons.north,
-          "title": "Continue straight",
-          "distance": "700 m",
-        },
-      ];
-    }
+    duration = "23 min";
+    arrivalTime = "03:00 PM";
+    distance = "19 km";
 
-    /// BIKE
-    if (transportIndex == 1) {
-      duration = "19 min";
-      arrivalTime = "02:56 PM";
-      distance = "18 km";
+    directions = [
+      {
+        "icon": Icons.north,
+        "title": "Head north on NH744",
+        "distance": "5.2 km",
+      },
+      {
+        "icon": Icons.north,
+        "title": "Continue on NH744",
+        "distance": "11.8 km",
+      },
+      {
+        "icon": Icons.turn_right,
+        "title": "Turn right",
+        "distance": "1.3 km",
+      },
+      {
+        "icon": Icons.north,
+        "title": "Continue straight",
+        "distance": "700 m",
+      },
+    ];
+  }
 
-      directions = [
-        {
-          "icon": Icons.north,
-          "title": "Take bike route",
-          "distance": "4 km",
-        },
-        {
-          "icon": Icons.turn_right,
-          "title": "Continue straight",
-          "distance": "9 km",
-        },
-        {
-          "icon": Icons.north,
-          "title": "Reach destination",
-          "distance": "5 km",
-        },
-      ];
-    }
+  /// BIKE
+  if (transportIndex == 1) {
 
-    /// WALK
-    if (transportIndex == 3) {
-      duration = "1 hr 38 min";
-      arrivalTime = "04:10 PM";
-      distance = "6 km";
+    duration = "19 min";
+    arrivalTime = "02:56 PM";
+    distance = "18 km";
 
-      directions = [
-        {
-          "icon": Icons.directions_walk,
-          "title": "Walk towards NH744",
-          "distance": "500 m",
-        },
-        {
-          "icon": Icons.turn_right,
-          "title": "Cross road",
-          "distance": "1 km",
-        },
-        {
-          "icon": Icons.directions_walk,
-          "title": "Continue straight",
-          "distance": "4.5 km",
-        },
-      ];
-    }
+    directions = [
+      {
+        "icon": Icons.north,
+        "title": "Take bike route",
+        "distance": "4 km",
+      },
+      {
+        "icon": Icons.turn_right,
+        "title": "Continue straight",
+        "distance": "9 km",
+      },
+      {
+        "icon": Icons.north,
+        "title": "Reach destination",
+        "distance": "5 km",
+      },
+    ];
+  }
+
+  /// WALK
+  if (transportIndex == 3) {
+
+    duration = "1 hr 38 min";
+    arrivalTime = "04:10 PM";
+    distance = "6 km";
+
+    directions = [
+      {
+        "icon": Icons.directions_walk,
+        "title": "Walk towards NH744",
+        "distance": "500 m",
+      },
+      {
+        "icon": Icons.turn_right,
+        "title": "Cross road",
+        "distance": "1 km",
+      },
+      {
+        "icon": Icons.directions_walk,
+        "title": "Continue straight",
+        "distance": "4.5 km",
+      },
+    ];
+  }
+
+}
 
     return Column(
       children: [
@@ -110,9 +121,9 @@ class DirectionPreviewCard extends StatelessWidget {
 
         ...directions.map(
           (step) => _direction(
-            step["icon"],
-            step["title"],
-            step["distance"],
+            step["icon"] ?? Icons.north,
+            step["title"] ?? step["instruction"] ?? "",
+            step["distance"]?.toString() ?? "",
           ),
         ),
 
@@ -178,9 +189,22 @@ class DirectionPreviewCard extends StatelessWidget {
 
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pushNamed(
+                        print("START BUTTON CLICKED");
+                        Navigator.push(
                           context,
-                          "/liveNavigation",
+                          MaterialPageRoute(
+
+      builder: (_) => LiveNavigationScreen(
+
+  directionData: directionData,
+
+  source: source,
+
+  destination: destination,
+
+),
+
+    ),
                         );
                       },
 

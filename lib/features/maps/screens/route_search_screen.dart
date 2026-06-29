@@ -29,6 +29,8 @@ import 'package:smartnav/features/maps/widgets/direction_preview_card.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:smartnav/features/maps/services/osrm_service.dart';
+import 'package:smartnav/features/maps/models/direction_data.dart';
 
 class RouteSearchScreen extends StatefulWidget {
   const RouteSearchScreen({super.key});
@@ -57,11 +59,14 @@ class _RouteSearchScreenState
   bool isArriveSelected = false;
   String sourceLocation = "Tenkasi";
   String destinationLocation = "Tirunelveli";
+  DirectionData? directionData;
+  bool isLoadingRoute = false;
 
   @override
   void initState() {
     super.initState();
     loadBuses();
+    loadDirection();
   }
 
   Future<void> loadBuses() async {
@@ -87,21 +92,58 @@ class _RouteSearchScreenState
 
   }
 
+  Future<void> loadDirection() async {
+
+  setState(() {
+
+    isLoadingRoute = true;
+
+  });
+
+  try {
+
+    directionData =
+        await OsrmService().getRoute(
+
+      8.9598,
+      77.3152,
+
+      8.7139,
+      77.7567,
+
+    );
+
+  } catch (e, stackTrace) {
+    print("OSRM ERROR: $e");
+    print(stackTrace);
+  }
+
+  setState(() {
+
+    isLoadingRoute = false;
+
+  });
+
+}
+
   /// DYNAMIC ROUTE CARDS
   List<Widget> _buildRouteCards() {
 
 //     /// CAR / BIKE / WALK
-// if (_selectedTransportIndex != 2) {
+if (_selectedTransportIndex != 2 && isLoadingRoute) {
 
-//   return [
+  return const [
 
-//     DirectionPreviewCard(
-//       transportIndex: _selectedTransportIndex,
-//     )
+    Center(
+      child: Padding(
+        padding: EdgeInsets.all(30),
+        child: CircularProgressIndicator(),
+      ),
+    ),
 
-//   ];
+  ];
 
-// }
+}
 
 /// CAR
 if (_selectedTransportIndex == 0) {
@@ -112,6 +154,7 @@ if (_selectedTransportIndex == 0) {
       transportIndex: 0,
       source: sourceLocation,
       destination: destinationLocation,
+      directionData: directionData,
     ),
 
   ];
@@ -127,6 +170,7 @@ if (_selectedTransportIndex == 1) {
       transportIndex: 1,
       source: sourceLocation,
       destination: destinationLocation,
+      directionData: directionData,
     ),
 
   ];
@@ -290,6 +334,7 @@ if (_selectedTransportIndex == 3) {
       transportIndex: 3,
       source: sourceLocation,
       destination: destinationLocation,
+      directionData: directionData,
     ),
 
   ];
