@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:smartnav/theme/smart_nav_theme.dart';
 import '../../../screens/home/home_screen.dart';
 import '../../../screens/profile/profile_screen.dart';
-import '../../../screens/alert/alerts_screen.dart';
+import 'package:smartnav/screens/notification/notification_screen.dart';
 
 /// Fixed bottom navigation matching the HTML nav bar.
 class SmartNavBottomBar extends StatelessWidget {
@@ -15,7 +15,6 @@ class SmartNavBottomBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int>? onItemSelected;
 
-  /// Approximate content height for scroll padding (excluding SafeArea).
   static const double contentHeight = 64;
 
   static const List<_NavItem> _items = [
@@ -30,7 +29,9 @@ class SmartNavBottomBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: SmartNavColors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(12),
+        ),
         boxShadow: SmartNavElevation.bottomNav,
       ),
       child: SafeArea(
@@ -43,46 +44,44 @@ class SmartNavBottomBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: List.generate(_items.length, (index) {
-                final item = _items[index];
-                final isSelected = index == selectedIndex;
-                return _BottomNavButton(
-                  item: item,
-                  isSelected: isSelected,
-                  onTap: () {
+              children: List.generate(
+                _items.length,
+                (index) {
+                  final item = _items[index];
+                  final isSelected = index == selectedIndex;
 
-  onItemSelected?.call(index);
+                  return _BottomNavButton(
+                    item: item,
+                    isSelected: isSelected,
+                    onTap: () {
+                      onItemSelected?.call(index);
 
-  if (index == 0) {
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomeScreen(),
-      ),
-    );
-
-  } else if (index == 2) {
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AlertsScreen(),
-      ),
-    );
-
-  } else if (index == 3) {
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ProfileScreen(),
-      ),
-    );
-  }
-},
-                );
-              }),
+                      if (index == 0) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => HomeScreen(),
+                          ),
+                        );
+                      } else if (index == 2) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NotificationScreen(),
+                          ),
+                        );
+                      } else if (index == 3) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ProfileScreen(),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -114,6 +113,26 @@ class _BottomNavButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onTap;
 
+  Widget buildNavIcon(Color color) {
+    if (item.label == 'Alerts') {
+      return Badge(
+        label: const Text('2'),
+        child: Icon(
+          item.icon,
+          color: color,
+          size: 22,
+        ),
+      );
+    }
+
+    return Icon(
+      item.icon,
+      color: color,
+      size: 22,
+      fill: item.filled ? 1.0 : 0.0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isSelected) {
@@ -122,7 +141,10 @@ class _BottomNavButton extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 22,
+            vertical: 6,
+          ),
           decoration: BoxDecoration(
             color: SmartNavColors.primaryContainer,
             borderRadius: BorderRadius.circular(999),
@@ -131,11 +153,8 @@ class _BottomNavButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                item.icon,
-                color: SmartNavColors.onPrimaryContainer,
-                size: 22,
-                fill: item.filled ? 1.0 : 0.0,
+              buildNavIcon(
+                SmartNavColors.onPrimaryContainer,
               ),
               const SizedBox(height: 2),
               Text(
@@ -155,15 +174,16 @@ class _BottomNavButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 6,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              item.icon,
-              color: SmartNavColors.onSurfaceVariant,
-              size: 22,
+            buildNavIcon(
+              SmartNavColors.onSurfaceVariant,
             ),
             const SizedBox(height: 2),
             Text(

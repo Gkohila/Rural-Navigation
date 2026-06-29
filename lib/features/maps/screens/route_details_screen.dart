@@ -10,10 +10,43 @@ import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
 import 'package:smartnav/features/maps/widgets/arrival_alert_dialog.dart';
 import 'package:smartnav/screens/navigation/last_mile_screen.dart';
 import 'package:smartnav/features/maps/widgets/start_trip_dialog.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+
+import 'package:smartnav/models/route_progress_model.dart';
+import 'package:smartnav/services/route_progress_service.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
 
-  const RouteDetailsScreen({super.key});
+  final String vehicleNumber;
+  final String busName;
+  final String source;
+  final String destination;
+  final String status;
+  final String departureTime;
+  final String arrivalTime;
+  final int duration;
+  final int fare;
+  final int transferCount;
+  final int walkingDistance;
+  final String transportMode;
+
+  const RouteDetailsScreen({
+    super.key,
+    required this.vehicleNumber,
+    required this.busName,
+    required this.source,
+    required this.destination,
+    required this.status,
+    required this.departureTime,
+    required this.arrivalTime,
+    required this.duration,
+    required this.fare,
+    required this.transferCount,
+    required this.walkingDistance,
+    required this.transportMode,
+  });
 
   @override
   State<RouteDetailsScreen> createState() =>
@@ -33,15 +66,79 @@ class _RouteDetailsScreenState
   /// COLORS
   /// ===============================================================
 
-  static const Color green =
-  Color(0xFF008000);
+  static const Color green = Color(0xFF008000);
+  static const Color googleMapRed = Color(0xFFE94235);
+  
+  List<dynamic> stops = [];
+  bool isLoadingStops = true;
 
-  static const Color googleMapRed =
-  Color(0xFFE94235);
+  Timer? timer;
+
+  int currentStopIndex = -1;
+
+  bool arrivalAlertShown = false;
+
+  bool destinationReached = false;
+
+  int remainingMinutes = 15;
+  RouteProgressModel? progress;
+
+  final RouteProgressService routeProgressService = RouteProgressService();
+
+  bool isLoadingProgress = true;
+
+  @override
+  void initState() {
+    super.initState();
+    print("INIT STATE CALLED");
+    loadStops();
+    loadProgress();
+  }
+
+  Future<void> loadStops() async {
+
+    print("LOAD STOPS CALLED");
+    final response = await http.get(
+
+      Uri.parse(
+        "http://127.0.0.1:8081/api/bus-stops/${widget.vehicleNumber}"
+      ),
+
+    );
+
+    print("STATUS = ${response.statusCode}");
+    print("BODY = ${response.body}");
+
+    if (response.statusCode == 200) {
+
+      setState(() {
+
+        stops = jsonDecode(response.body);
+        isLoadingStops = false;
+
+      });
+
+    }
+  }
+
+  Future<void> loadProgress() async {
+
+    progress = await routeProgressService.getProgress(widget.vehicleNumber);
+    print("ETA = ${progress?.etaMinutes}");
+    print("Current Stop = ${progress?.currentStop}");
+    print("Remaining Stops = ${progress?.stopsRemaining}");
+    if (!mounted) return;
+
+    setState(() {
+
+      isLoadingProgress = false;
+
+    });
+  } 
 
   @override
   Widget build(BuildContext context) {
-
+    print(widget.vehicleNumber);
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -51,9 +148,11 @@ class _RouteDetailsScreenState
           /// =====================================================
           /// MAP BACKGROUND
           /// =====================================================
-const Positioned.fill(
-  child: TripMapPreview(),
-),
+        Positioned.fill(
+          child: TripMapPreview(
+            vehicleNumber: widget.vehicleNumber,
+          ),
+        ),
 
           /// =====================================================
           /// TOP BAR
@@ -122,7 +221,7 @@ const Positioned.fill(
                         const SizedBox(width: 8),
 
                         Text(
-                          "147C",
+                          widget.vehicleNumber,
 
                           style: GoogleFonts.inter(
                             fontSize: 15,
@@ -218,7 +317,7 @@ const Positioned.fill(
                       dottedLine(40),
 
                       child: routeTitle(
-                        "Tenkasi Junction",
+                        widget.source,
                         "Tamil Nadu, India",
                         "5:24 pm",
                       ),
@@ -254,7 +353,7 @@ const Positioned.fill(
                         children: [
 
                           routeHeader(
-                            "New Bus Stand",
+                            widget.busName,
                             "5:25 pm",
                           ),
 
@@ -279,7 +378,7 @@ const Positioned.fill(
                                 ),
 
                                 child: Text(
-                                  "147C",
+                                  widget.vehicleNumber,
 
                                   style:
                                   GoogleFonts.inter(
@@ -293,7 +392,7 @@ const Positioned.fill(
                               const SizedBox(width: 10),
 
                               Text(
-                                "To Shencottah",
+                                "To ${widget.destination}",
 
                                 style:
                                 GoogleFonts.inter(
@@ -308,7 +407,7 @@ const Positioned.fill(
                           const SizedBox(height: 14),
 
                           Text(
-                            "Scheduled",
+                            widget.status,
 
                             style: GoogleFonts.inter(
                               fontSize: 14,
@@ -342,61 +441,36 @@ const Positioned.fill(
                     /// =====================================================
                     /// STOPS
                     /// =====================================================
-                    timelineRow(
-                      icon: stopDot(),
+                    if (isLoadingStops)
+  const Center(
+    child: CircularProgressIndicator(),
+  )
+else
+  ...stops.asMap().entries.map((entry) {
 
-                      lineAfter:
-                      greenLine(36),
+    int index = entry.key;
+    var stop = entry.value;
 
-                      child: stopTile(
-                        "Anna Bus Stop",
-                        "5:27 pm",
-                      ),
-                    ),
+    return timelineRow(
 
-                    timelineRow(
-                      icon: stopDot(),
+      icon:
+        index < currentStopIndex
+          ? completedStopNode()
+          : index == currentStopIndex
+            ? busNode()
+            : stopDot(),
 
-                      lineAfter:
-                      greenLine(36),
+      lineAfter: greenLine(36),
 
-                      child: stopTile(
-                        "Market Stop",
-                        "5:31 pm",
-                      ),
-                    ),
+      child: stopTile(
+        stop['stopName'],
+        stop['arrivalTime'],
+        index < currentStopIndex,
+      ),
 
-                    timelineRow(
-                      icon: stopDot(),
+    );
 
-                      lineAfter:
-                      dottedLine(34),
-
-                      child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-
-                        children: [
-
-                          stopTile(
-                            "Thirumalai Nagar Stop",
-                            "5:34 pm",
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          Text(
-                            "and 9 more stops",
-
-                            style:
-                            GoogleFonts.inter(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+}).toList(),
 
                     /// =====================================================
                     /// FINAL WALK
@@ -429,8 +503,8 @@ const Positioned.fill(
                       ),
 
                       child: routeTitle(
-                        "Thirumalai Kovil",
-                        "Tenkasi, Tamil Nadu",
+                        widget.destination,
+                         "Tamil Nadu, India",
                         "5:40 pm",
                       ),
                     ),
@@ -477,6 +551,156 @@ const Positioned.fill(
     );
   }
 
+  void startJourney() {
+
+  timer = Timer.periodic(
+    const Duration(seconds: 5),
+    (_) {
+
+      if (currentStopIndex < stops.length - 1) {
+
+        setState(() {
+          currentStopIndex++;
+          remainingMinutes = ((stops.length-1)-currentStopIndex)*3;
+        });
+
+        /// Final stop-ku munnaadi alert
+        if(remainingMinutes <= 5 && !arrivalAlertShown){
+
+          arrivalAlertShown = true;
+
+          showArrivalAlertDialog(context);
+
+        }
+
+      }
+
+      else {
+
+  timer?.cancel();
+
+  if (!destinationReached) {
+
+    destinationReached = true;
+
+    Future.delayed(
+      const Duration(seconds: 2),
+      () {
+
+        if (!mounted) return;
+
+        showDialog(
+  context: context,
+  barrierDismissible: false,
+  builder: (_) => Dialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(28),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(28),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+
+          const Text(
+            "🎉",
+            style: TextStyle(fontSize: 42),
+          ),
+
+          const SizedBox(height: 18),
+
+          Text(
+            "You have arrived at",
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              color: Colors.grey.shade700,
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          Text(
+            widget.destination,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.inter(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+
+          const SizedBox(height: 30),
+
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () {
+
+                Navigator.pop(context);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const LastMileScreen(),
+                  ),
+                );
+
+              },
+              child: Text(
+                "Continue",
+                style: GoogleFonts.inter(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    ),
+  ),
+);
+
+      },
+
+    );
+
+  }
+  else {
+
+  timer?.cancel();
+
+  setState(() {
+    isNavigationStarted = false;
+  });
+
+}
+
+}
+
+    },
+
+  );
+
+}
+
+  @override
+void dispose() {
+
+  timer?.cancel();
+
+  super.dispose();
+
+}
+
   /// ===============================================================
   /// ARRIVAL CARD
   /// ===============================================================
@@ -521,7 +745,7 @@ const Positioned.fill(
               children: [
 
                 Text(
-                  "31 min",
+                  "$remainingMinutes min",
 
                   style:
                   GoogleFonts.inter(
@@ -549,7 +773,8 @@ const Positioned.fill(
                       ),
 
                       TextSpan(
-                        text: "5:55 pm",
+                        text: remainingMinutes == 0 ? "Reached"
+                          : "${DateTime.now().hour}:${DateTime.now().minute}",
 
                         style:
                         GoogleFonts.inter(
@@ -582,34 +807,63 @@ const Positioned.fill(
 
     if (shouldStart == true) {
 
-      setState(() {
-        isNavigationStarted = true;
-      });
+  setState(() {
+    isNavigationStarted = true;
+  });
 
-      Future.delayed(
-        const Duration(seconds: 10),
-        () {
+  startJourney();
 
-          if (!mounted) return;
-
-          showArrivalAlertDialog(context);
-        },
-      );
-    }
+}
   }
 
   else {
-
+    timer?.cancel();
     setState(() {
       isNavigationStarted = false;
     });
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LastMileScreen(),
+    showDialog(
+
+  context: context,
+
+  builder: (_) => AlertDialog(
+
+    title: const Text(
+      "Destination Reached 🎉",
+    ),
+
+    content: Text(
+      "You have arrived at ${widget.destination}",
+    ),
+
+    actions: [
+
+      TextButton(
+
+        onPressed: () {
+
+          Navigator.pop(context);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LastMileScreen(),
+            ),
+          );
+
+        },
+
+        child: const Text(
+          "Continue",
+        ),
+
       ),
-    );
+
+    ],
+
+  ),
+
+);
   }
 },
 
@@ -855,6 +1109,25 @@ const Positioned.fill(
     );
   }
 
+  Widget completedStopNode() {
+
+  return Container(
+    width: 22,
+    height: 22,
+
+    decoration: const BoxDecoration(
+      color: green,
+      shape: BoxShape.circle,
+    ),
+
+    child: const Icon(
+      Icons.check,
+      size: 14,
+      color: Colors.white,
+    ),
+  );
+}
+
   Widget floatingButton(Widget child) {
 
     return Container(
@@ -1041,65 +1314,72 @@ const Positioned.fill(
   }
 
   Widget stopTile(
-      String title,
-      String time,
-      ) {
+  String title,
+  String time,
+  bool completed,
+) {
 
-    return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-      children: [
+    children: [
 
-        Text(
-          title,
+      Text(
+        title,
 
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight:
-            FontWeight.w500,
-          ),
+        style: GoogleFonts.inter(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+          color: completed
+              ? Colors.grey
+              : Colors.black,
         ),
+      ),
 
-        Text(
-          time,
+      Text(
+        time,
 
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+        style: GoogleFonts.inter(
+          fontSize: 12,
+          color: completed
+              ? Colors.grey
+              : Colors.black54,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 
   Widget rideTitle() {
 
-    return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+  return Row(
 
-      children: [
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-        Text(
-          "Ride 12 stops (15 min)",
+    children: [
 
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight:
-            FontWeight.w600,
-            color: green,
-          ),
+      Text(
+
+        destinationReached
+            ? "Destination reached"
+            : "${(stops.length - 1) - currentStopIndex} stops left • $remainingMinutes min",
+
+        style: GoogleFonts.inter(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFF188038),
         ),
+      ),
 
-        const Icon(
-          Icons.keyboard_arrow_up,
-          size: 18,
-          color: Colors.grey,
-        ),
-      ],
-    );
-  }
+      const Icon(
+        Icons.keyboard_arrow_up,
+        size: 18,
+        color: Colors.grey,
+      ),
+
+    ],
+  );
+}
 
   Widget floatingCrowdCard() {
 

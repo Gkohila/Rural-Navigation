@@ -3,7 +3,8 @@ import 'package:intl/intl.dart';
 
 class DepartureTimeDialog extends StatefulWidget {
   final DateTime initialTime;
-  final Function(DateTime time) onTimeSelected;
+  
+  final Function(DateTime time, bool isArrive) onTimeSelected;
 
   const DepartureTimeDialog({
     super.key,
@@ -418,6 +419,7 @@ class _DepartureTimeDialogState
 
                           widget.onTimeSelected(
                             selectedTime,
+                            !isLeaveSelected,
                           );
 
                           Navigator.pop(
@@ -702,12 +704,12 @@ class _DepartureTimeDialogState
     );
   }
 }
-Future<DateTime?> showDepartureTimeDialog(
+Future<Map<String,dynamic>?> showDepartureTimeDialog(
   BuildContext context,
   DateTime selectedTime,
 ) async {
 
-  DateTime? result;
+  Map<String,dynamic>? result;
 
   await showDialog(
 
@@ -719,10 +721,14 @@ Future<DateTime?> showDepartureTimeDialog(
 
         initialTime: selectedTime,
 
-        onTimeSelected: (time) {
+        onTimeSelected: (time, isArrive) {
 
-          result = time;
-        },
+  result = {
+    "time": time,
+    "isArrive": isArrive,
+  };
+
+},
       );
     },
   );

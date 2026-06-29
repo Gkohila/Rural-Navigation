@@ -46,6 +46,7 @@ abstract final class StaticRouteData {
       timeRange: '10:34 am – 11:05 am',
       scheduleInfo: 'Scheduled at 10:35 am from Panagal Park',
       price: '₹9',
+      routeName: 'Tenkasi → Shencottah',
       busBadges: ['47D', '147C'],
     ),
     RouteCardData(
@@ -54,6 +55,7 @@ abstract final class StaticRouteData {
       timeRange: '10:40 am – 11:11 am',
       scheduleInfo: 'Scheduled at 10:48 am from Thiyagaraya Nagar',
       price: '₹8',
+      routeName: 'Tenkasi → Courtallam',
       walkMinutes: '8',
       busBadges: ['47C'],
     ),
@@ -63,6 +65,7 @@ abstract final class StaticRouteData {
       timeRange: '10:55 am – 11:23 am',
       scheduleInfo: 'Platform 2 • On time',
       price: '₹30',
+      routeName: 'Tenkasi → Madurai',
       trainCode: 'TEN-MS',
     ),
   ];

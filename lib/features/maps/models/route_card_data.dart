@@ -11,6 +11,7 @@ class RouteCardData {
     required this.timeRange,
     required this.scheduleInfo,
     required this.price,
+    this.routeName = "",
     this.busBadges = const [],
     this.walkMinutes,
     this.trainCode,
@@ -24,6 +25,7 @@ class RouteCardData {
   final List<String> busBadges;
   final String? walkMinutes;
   final String? trainCode;
+  final String routeName;
 }
 
 /// Transport mode chip data for the horizontal selector.

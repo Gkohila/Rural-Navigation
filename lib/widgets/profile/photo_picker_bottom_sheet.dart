@@ -434,5 +434,5 @@ void dispose() {
   nameController.dispose();
   bioController.dispose();
   super.dispose();
-}
+}  
 }
