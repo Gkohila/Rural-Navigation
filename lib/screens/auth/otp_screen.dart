@@ -212,25 +212,40 @@ Text(
                   child: ElevatedButton(
                     onPressed: () async {
 
-  print("OTP ENTERED = ${otpController.text}");
+                     print("OTP ENTERED = ${otpController.text}");
+                     print("MOBILE = ${widget.mobile}");
 
-  final response = await http.post(
-    Uri.parse("http://127.0.0.1:8081/api/auth/verify-otp"),
-    headers: {
-      "Content-Type": "application/json",
-    },
-   body: jsonEncode({
-  "mobile": widget.mobile,
-  "otp": otpController.text,
-}),
-  );
+                       final response = await http.post(
+                          Uri.parse("http://127.0.0.1:8081/api/auth/verify-otp"),
+                          headers: {
+                             "Content-Type": "application/json",
+                          },
+                           body: jsonEncode({
+                           "mobile": widget.mobile,
+                           "otp": otpController.text,
+                          }),
+                         );
 
   print("RESPONSE = ${response.body}");
 
- if (response.body == "Login Success") {
+final data = jsonDecode(response.body);
+  print("FULL DATA = $data");
+  print("USER ID = ${data["userId"]}");
+
+if (data["message"] == "Login Success") {
 
   SharedPreferences prefs =
       await SharedPreferences.getInstance();
+
+
+  await prefs.setInt(
+    "user_id",
+    data["userId"],
+  );
+
+  print(
+    "SAVED USER ID = ${prefs.getInt("user_id")}",
+  );
 
   bool saved =
       await prefs.setBool("isLoggedIn", true);
@@ -245,6 +260,15 @@ Text(
     "mobile",
     widget.mobile,
   );
+  if (data["userId"] != null) {
+  await prefs.setInt(
+    "userId",
+    data["userId"],
+  );
+   print(
+    "SAVED USER ID = ${prefs.getInt("user_id")}",
+  );
+}
 
   Navigator.pushReplacement(
     context,

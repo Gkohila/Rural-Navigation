@@ -4,13 +4,175 @@ import 'package:provider/provider.dart';
 
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
-class RecentSearchScreen extends StatelessWidget {
+class RecentSearchScreen extends StatefulWidget {
   const RecentSearchScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<RecentSearchScreen> createState() =>
+      _RecentSearchScreenState();
+}
 
+class _RecentSearchScreenState
+    extends State<RecentSearchScreen> {
+
+  List<dynamic> history = [];
+  List<dynamic> filteredHistory = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadHistory();
+  }
+
+Future<void> loadHistory() async {
+
+  final prefs =
+      await SharedPreferences.getInstance();
+
+  final userId =
+      prefs.getInt("user_id");
+
+  print("USER ID = $userId");
+
+  final response = await http.get(
+    Uri.parse(
+      "http://localhost:8081/api/history/user/$userId",
+    ),
+  );
+
+  print("STATUS = ${response.statusCode}");
+  print("BODY = ${response.body}");
+  
+
+ final List<dynamic> data =
+    jsonDecode(response.body);
+
+data.sort((a, b) {
+  return DateTime.parse(b["searchedAt"])
+      .compareTo(DateTime.parse(a["searchedAt"]));
+});
+
+setState(() {
+ history = data;
+ filteredHistory = data;
+
+
+});
+
+print(history);
+
+}
+String getSectionTitle(DateTime date) {
+
+  final now = DateTime.now();
+
+  final today =
+      DateTime(now.year, now.month, now.day);
+
+  final itemDate =
+      DateTime(date.year, date.month, date.day);
+
+  if (itemDate == today) {
+    return "Today";
+  }
+
+  if (itemDate ==
+      today.subtract(const Duration(days: 1))) {
+    return "Yesterday";
+  }
+
+  return DateFormat("dd MMM yyyy").format(date);
+}
+
+List<Widget> buildHistoryList() {
+  if (history.isEmpty) {
+ return [
+  const SizedBox(height: 80),
+
+  Center(
+    child: Column(
+      children: [
+        Icon(
+          Icons.history,
+          size: 70,
+          color: Colors.grey.shade400,
+        ),
+
+        const SizedBox(height: 20),
+
+        Text(
+          "No Recent Searches",
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF0B5D1E),
+          ),
+        ),
+
+        const SizedBox(height: 10),
+
+        Text(
+          "Your recent searches will appear here.",
+          textAlign: TextAlign.center,
+          style: GoogleFonts.poppins(
+            fontSize: 14,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    ),
+  ),
+];
+}
+
+  List<Widget> widgets = [];
+  String lastSection = "";
+
+  for (final item in  filteredHistory) {
+
+    final date = DateTime.parse(item["searchedAt"]);
+    final time = DateFormat("hh:mm a").format(date);
+
+    final section = getSectionTitle(date);
+
+    if (section != lastSection) {
+
+      widgets.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 16),
+          child: Text(
+            section,
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF0B5D1E),
+              fontSize: 18,
+            ),
+          ),
+        ),
+      );
+
+      lastSection = section;
+    }
+
+    widgets.add(
+      historyCard(
+        Icons.directions_bus,
+        "${item["source"]} -> ${item["destination"]}",
+        "${item["transportType"]} • $time",
+      ),
+    );
+  }
+
+  return widgets;
+}
+
+  @override
+  Widget build(BuildContext context) {
     final languageCode =
     context.watch<LanguageProvider>().languageCode;
 
@@ -57,7 +219,95 @@ class RecentSearchScreen extends StatelessWidget {
 
             child: IconButton(
 
-              onPressed: () {},
+onPressed: () async {
+
+  final result = await showDialog<bool>(
+    context: context,
+    builder: (context) {
+
+      return AlertDialog(
+  backgroundColor: Colors.white,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20),
+  ),
+title: Text(
+  "Clear History",
+  style: GoogleFonts.poppins(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFF0B5D1E),
+  ),
+),
+        content: Text(
+  "Are you sure you want to clear your search history?",
+  style: GoogleFonts.poppins(
+    fontSize: 15,
+    color: Colors.black54,
+  ),
+),
+
+        actions: [
+
+         TextButton(
+  style: TextButton.styleFrom(
+    foregroundColor: const Color(0xFF0B5D1E),
+  ),
+  onPressed: () {
+    Navigator.pop(context, false);
+  },
+  child: const Text("Cancel"),
+),
+
+ElevatedButton(
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFF0B5D1E),
+    foregroundColor: Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+      
+    ),
+  ),            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            child: Padding(
+  padding: const EdgeInsets.symmetric(
+    horizontal: 12,
+    vertical: 4,
+  ),
+  child: Text(
+    "Clear",
+    style: GoogleFonts.poppins(
+      fontWeight: FontWeight.w600,
+      color: Colors.white,
+    ),
+  ),
+),
+          ),
+
+        ],
+      );
+    },
+  );
+
+  if (result != true) return;
+  final prefs = await SharedPreferences.getInstance();
+
+final userId = prefs.getInt("user_id");
+
+final response = await http.delete(
+  Uri.parse(
+    "http://localhost:8081/api/history/user/$userId",
+  ),
+);
+
+print("DELETE STATUS = ${response.statusCode}");
+print("DELETE BODY = ${response.body}");
+
+await loadHistory();
+
+  // 👇 Next step la delete API call poduvom.
+
+},
 
               icon: const Icon(
                 Icons.delete_outline,
@@ -118,6 +368,24 @@ class RecentSearchScreen extends StatelessWidget {
 
                       Expanded(
                         child: TextField(
+                           onChanged: (value) {
+
+    setState(() {
+
+      filteredHistory = history.where((item) {
+
+        final route =
+            "${item["source"]} ${item["destination"]}"
+                .toLowerCase();
+
+        return route.contains(
+            value.toLowerCase());
+
+      }).toList();
+
+    });
+
+  },
                           decoration: InputDecoration(
                             border: InputBorder.none,
 
@@ -138,114 +406,13 @@ class RecentSearchScreen extends StatelessWidget {
 
                 const SizedBox(height: 28),
 
-                /// TODAY
-                Text(
-                  lang.text('today'),
-
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700,
-                    color:
-                        const Color(0xFF0B5D1E),
-                    fontSize: 18,
-                  ),
-                ),
-
+                
+               
                 const SizedBox(height: 16),
+...buildHistoryList(),
 
-                historyCard(
-                  Icons.directions_bus,
-                  "Tenkasi  →  Chennai",
-                  "${lang.text('bus')} • 8:30 AM",
-                ),
 
-                historyCard(
-                  Icons.train,
-                  "Courtallam  →  Madurai",
-                  "${lang.text('train')} • 7:15 AM",
-                ),
-
-                historyCard(
-                  Icons.location_on,
-                  "Tirunelveli Bus Stand",
-                  "${lang.text('location')} • 6:45 AM",
-                ),
-
-                const SizedBox(height: 20),
-
-                /// YESTERDAY
-                Text(
-                  lang.text('yesterday'),
-
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700,
-                    color:
-                        const Color(0xFF0B5D1E),
-                    fontSize: 18,
-                  ),
-                ),
-
-                const SizedBox(height: 16),
-
-                historyCard(
-                  Icons.directions_bus,
-                  "Tenkasi  →  Coimbatore",
-                  "${lang.text('bus')} • 9:10 PM",
-                ),
-
-                historyCard(
-                  Icons.location_on,
-                  "Madurai Railway Station",
-                  "${lang.text('location')} • 8:05 PM",
-                ),
-
-                historyCard(
-                  Icons.train,
-                  "Sengottai  →  Chennai Egmore",
-                  "${lang.text('train')} • 5:40 PM",
-                ),
-
-                const SizedBox(height: 30),
-
-                /// CLEAR BUTTON
-                Container(
-                  width: double.infinity,
-                  height: 58,
-
-                  decoration: BoxDecoration(
-                    color:
-                        const Color(0xFFEAF7EA),
-
-                    borderRadius:
-                        BorderRadius.circular(18),
-                  ),
-
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
-
-                    children: [
-
-                      const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
-
-                      const SizedBox(width: 8),
-
-                      Text(
-                        lang.text('clearAllHistory'),
-
-                        style:
-                            GoogleFonts.poppins(
-                          color: Colors.red,
-                          fontWeight:
-                              FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                
 
                 const SizedBox(height: 24),
               ],
