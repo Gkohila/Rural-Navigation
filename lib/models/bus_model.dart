@@ -1,4 +1,4 @@
-import 'package:smartnav/features/maps/data/route_card_data.dart';
+import 'package:smartnav/features/maps/models/route_card_data.dart';
 
 class BusModel {
 

@@ -1,1006 +1,1006 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 
-import 'package:smartnav/features/maps/data/static_route_data.dart';
+  import 'package:smartnav/features/maps/data/static_route_data.dart';
 
-import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
+  import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
 
-import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
+  import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
 
-import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
+  import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
 
-import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
+  import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
 
-import 'package:smartnav/features/maps/widgets/route_card.dart';
+  import 'package:smartnav/features/maps/widgets/route_card.dart';
 
-import 'package:smartnav/features/maps/models/route_card_data.dart';
+  import 'package:smartnav/features/maps/models/route_card_data.dart';
 
-import 'package:smartnav/features/maps/widgets/transport_button.dart';
+  import 'package:smartnav/features/maps/widgets/transport_button.dart';
 
-import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
+  import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
 
-import 'package:smartnav/features/maps/screens/route_details_screen.dart';
+  import 'package:smartnav/features/maps/screens/route_details_screen.dart';
 
-import 'package:smartnav/theme/smart_nav_theme.dart';
+  import 'package:smartnav/theme/smart_nav_theme.dart';
 
-import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
+  import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
 
-import 'package:smartnav/features/maps/widgets/direction_preview_card.dart';
+  import 'package:smartnav/features/maps/widgets/direction_preview_card.dart';
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:smartnav/features/maps/services/osrm_service.dart';
-import 'package:smartnav/features/maps/models/direction_data.dart';
+  import 'dart:convert';
+  import 'package:http/http.dart' as http;
+  import 'package:intl/intl.dart';
+  import 'package:smartnav/features/maps/services/osrm_service.dart';
+  import 'package:smartnav/features/maps/models/direction_data.dart';
 
-class RouteSearchScreen extends StatefulWidget {
-  const RouteSearchScreen({super.key});
+  class RouteSearchScreen extends StatefulWidget {
+    const RouteSearchScreen({super.key});
 
-  @override
-  State<RouteSearchScreen> createState() =>
-      _RouteSearchScreenState();
-}
-
-class _RouteSearchScreenState
-    extends State<RouteSearchScreen> {
-
-  int _bottomNavIndex = 1;
-
-  /// 0 = Car
-  /// 1 = Bike
-  /// 2 = Bus
-  /// 3 = Walk
-  int _selectedTransportIndex = 2;
-  String selectedFilter = "Best route";
-  List<String> selectedModes = [];
-
-  List<dynamic> buses = [];
-  bool isLoading = true;
-  String selectedLeaveTime = "4:50 PM";
-  bool isArriveSelected = false;
-  String sourceLocation = "Tenkasi";
-  String destinationLocation = "Tirunelveli";
-  DirectionData? directionData;
-  bool isLoadingRoute = false;
-
-  @override
-  void initState() {
-    super.initState();
-    loadBuses();
-    loadDirection();
+    @override
+    State<RouteSearchScreen> createState() =>
+        _RouteSearchScreenState();
   }
 
-  Future<void> loadBuses() async {
+  class _RouteSearchScreenState
+      extends State<RouteSearchScreen> {
 
-    final response = await http.get(
-      Uri.parse('http://127.0.0.1:8081/api/buses'),
-    );
+    int _bottomNavIndex = 1;
 
-    print("STATUS CODE = ${response.statusCode}");
-    print("BODY = ${response.body}");
+    /// 0 = Car
+    /// 1 = Bike
+    /// 2 = Bus
+    /// 3 = Walk
+    int _selectedTransportIndex = 2;
+    String selectedFilter = "Best route";
+    List<String> selectedModes = [];
 
-    if (response.statusCode == 200) {
+    List<dynamic> buses = [];
+    bool isLoading = true;
+    String selectedLeaveTime = "4:50 PM";
+    bool isArriveSelected = false;
+    String sourceLocation = "Tenkasi";
+    String destinationLocation = "Tirunelveli";
+    DirectionData? directionData;
+    bool isLoadingRoute = false;
 
-      setState(() {
+    @override
+    void initState() {
+      super.initState();
+      loadBuses();
+      loadDirection();
+    }
 
-        buses = jsonDecode(response.body);
-        print("TOTAL BUSES = ${buses.length}");
-        isLoading = false;
+    Future<void> loadBuses() async {
 
-      });
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8081/api/buses'),
+      );
+
+      print("STATUS CODE = ${response.statusCode}");
+      print("BODY = ${response.body}");
+
+      if (response.statusCode == 200) {
+
+        setState(() {
+
+          buses = jsonDecode(response.body);
+          print("TOTAL BUSES = ${buses.length}");
+          isLoading = false;
+
+        });
+
+      }
 
     }
 
+    Future<void> loadDirection() async {
+
+    setState(() {
+
+      isLoadingRoute = true;
+
+    });
+
+    try {
+
+      directionData =
+          await OsrmService().getRoute(
+
+        8.9598,
+        77.3152,
+
+        8.7139,
+        77.7567,
+
+      );
+
+    } catch (e, stackTrace) {
+      print("OSRM ERROR: $e");
+      print(stackTrace);
+    }
+
+    setState(() {
+
+      isLoadingRoute = false;
+
+    });
+
   }
 
-  Future<void> loadDirection() async {
+    /// DYNAMIC ROUTE CARDS
+    List<Widget> _buildRouteCards() {
 
-  setState(() {
+  //     /// CAR / BIKE / WALK
+  if (_selectedTransportIndex != 2 && isLoadingRoute) {
 
-    isLoadingRoute = true;
+    return const [
 
-  });
-
-  try {
-
-    directionData =
-        await OsrmService().getRoute(
-
-      8.9598,
-      77.3152,
-
-      8.7139,
-      77.7567,
-
-    );
-
-  } catch (e, stackTrace) {
-    print("OSRM ERROR: $e");
-    print(stackTrace);
-  }
-
-  setState(() {
-
-    isLoadingRoute = false;
-
-  });
-
-}
-
-  /// DYNAMIC ROUTE CARDS
-  List<Widget> _buildRouteCards() {
-
-//     /// CAR / BIKE / WALK
-if (_selectedTransportIndex != 2 && isLoadingRoute) {
-
-  return const [
-
-    Center(
-      child: Padding(
-        padding: EdgeInsets.all(30),
-        child: CircularProgressIndicator(),
+      Center(
+        child: Padding(
+          padding: EdgeInsets.all(30),
+          child: CircularProgressIndicator(),
+        ),
       ),
-    ),
 
-  ];
+    ];
 
-}
+  }
 
-/// CAR
-if (_selectedTransportIndex == 0) {
+  /// CAR
+  if (_selectedTransportIndex == 0) {
 
-  return [
+    return [
 
-    DirectionPreviewCard(
-      transportIndex: 0,
-      source: sourceLocation,
-      destination: destinationLocation,
-      directionData: directionData,
-    ),
+      DirectionPreviewCard(
+        transportIndex: 0,
+        source: sourceLocation,
+        destination: destinationLocation,
+        directionData: directionData,
+      ),
 
-  ];
+    ];
 
-}
+  }
 
-/// BIKE
-if (_selectedTransportIndex == 1) {
+  /// BIKE
+  if (_selectedTransportIndex == 1) {
 
-  return [
+    return [
 
-    DirectionPreviewCard(
-      transportIndex: 1,
-      source: sourceLocation,
-      destination: destinationLocation,
-      directionData: directionData,
-    ),
+      DirectionPreviewCard(
+        transportIndex: 1,
+        source: sourceLocation,
+        destination: destinationLocation,
+        directionData: directionData,
+      ),
 
-  ];
+    ];
 
-}
+  }
 
-    
-    /// BUS
-if (_selectedTransportIndex == 2) {
+      
+      /// BUS
+  if (_selectedTransportIndex == 2) {
 
-  print(buses);
-  print("SELECTED FILTER = $selectedFilter");
+    print(buses);
+    print("SELECTED FILTER = $selectedFilter");
 
-  List<dynamic> filteredBuses = [...buses];
+    List<dynamic> filteredBuses = [...buses];
 
-/// Preferred modes filter
-if (selectedModes.isNotEmpty) {
+  /// Preferred modes filter
+  if (selectedModes.isNotEmpty) {
 
+    filteredBuses = filteredBuses.where((bus) {
+
+      String mode = bus['transportMode'] ?? "Bus";
+
+      return selectedModes.contains(mode);
+
+    }).toList();
+
+  }
+
+  /// Leave time filter
   filteredBuses = filteredBuses.where((bus) {
 
-    String mode = bus['transportMode'] ?? "Bus";
-
-    return selectedModes.contains(mode);
-
-  }).toList();
-
-}
-
-/// Leave time filter
-filteredBuses = filteredBuses.where((bus) {
-
-  final busTime = DateFormat(
-  "hh:mm a",
-).parse(
-
-  isArriveSelected
-      ? bus['arrivalTime']
-      : bus['departureTime'],
-
-);
-
-  final selectedTime = DateFormat(
+    final busTime = DateFormat(
     "hh:mm a",
   ).parse(
-    selectedLeaveTime,
+
+    isArriveSelected
+        ? bus['arrivalTime']
+        : bus['departureTime'],
+
   );
 
-  return !busTime.isBefore(
-    selectedTime,
-  );
+    final selectedTime = DateFormat(
+      "hh:mm a",
+    ).parse(
+      selectedLeaveTime,
+    );
 
-}).toList();
-
-  // Best route
-  if (selectedFilter == "Best route") {
-    print("BEST ROUTE");
-
-  filteredBuses.sort(
-    (a, b) =>
-        (a['duration'] ?? 0)
-            .compareTo(
-              b['duration'] ?? 0,
-            ),
-  );
-
-}
-
-  // Fewer transfers
-  if (selectedFilter == "Fewer transfers") {
-    print("FEWER TRANSFERS");
-    //filteredBuses = filteredBuses.reversed.toList();
-
-  filteredBuses.sort(
-    (a, b) =>
-        (a['transferCount'] ?? 0)
-            .compareTo(
-              b['transferCount'] ?? 0,
-            ),
-  );
-
-}
-
-  // Less walking
-if (selectedFilter == "Less walking") {
-  print("LESS WALKING");
-  //filteredBuses.shuffle();
-
-  filteredBuses.sort(
-    (a, b) =>
-        (a['walkingDistance'] ?? 0)
-            .compareTo(
-              b['walkingDistance'] ?? 0,
-            ),
-  );
-
-}
-
-  return filteredBuses.map<Widget>((bus) {
-
-    return Column(
-      children: [
-
-        RouteCard(
-          data: RouteCardData(
-            type: RouteCardType.busOnly,
-
-            busBadges: [
-              bus['busNumber'],
-            ],
-
-            routeName: bus['busName'],
-
-            duration: "${bus['duration']} min",
-
-            timeRange: "${bus['departureTime']} - ${bus['arrivalTime']}",
-
-            scheduleInfo:
-                "${bus['source']} → ${bus['destination']}",
-
-            price: "₹${bus['fare']}",
-          ),
-          onTap: () {
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RouteDetailsScreen(
-                  vehicleNumber: bus['busNumber'],
-                  busName: bus['busName'],
-                  source: bus['source'],
-                  destination: bus['destination'],
-                  status: bus['status'],
-                   departureTime: bus['departureTime'],
-                  arrivalTime: bus['arrivalTime'],
-                  duration: bus['duration'],
-                  fare: bus['fare'],
-                  transferCount: bus['transferCount'],
-                  walkingDistance: bus['walkingDistance'],
-                  transportMode: bus['transportMode'],
-                ),
-              ),
-            );
-
-          },
-        ),
-
-        const SizedBox(height: 18),
-
-      ],
+    return !busTime.isBefore(
+      selectedTime,
     );
 
   }).toList();
-}
 
-/// WALK
-if (_selectedTransportIndex == 3) {
+    // Best route
+    if (selectedFilter == "Best route") {
+      print("BEST ROUTE");
 
-  return [
+    filteredBuses.sort(
+      (a, b) =>
+          (a['duration'] ?? 0)
+              .compareTo(
+                b['duration'] ?? 0,
+              ),
+    );
 
-    DirectionPreviewCard(
-      transportIndex: 3,
-      source: sourceLocation,
-      destination: destinationLocation,
-      directionData: directionData,
-    ),
-
-  ];
-
-}
-    return [];
   }
 
-  @override
-  Widget build(BuildContext context) {
+    // Fewer transfers
+    if (selectedFilter == "Fewer transfers") {
+      print("FEWER TRANSFERS");
+      //filteredBuses = filteredBuses.reversed.toList();
 
-    return Theme(
+    filteredBuses.sort(
+      (a, b) =>
+          (a['transferCount'] ?? 0)
+              .compareTo(
+                b['transferCount'] ?? 0,
+              ),
+    );
 
-      data: SmartNavTheme.light,
+  }
 
-      child: Scaffold(
-        
+    // Less walking
+  if (selectedFilter == "Less walking") {
+    print("LESS WALKING");
+    //filteredBuses.shuffle();
 
-        backgroundColor:
-            SmartNavColors.background,
+    filteredBuses.sort(
+      (a, b) =>
+          (a['walkingDistance'] ?? 0)
+              .compareTo(
+                b['walkingDistance'] ?? 0,
+              ),
+    );
 
-        
-        body: Stack(
+  }
 
-          fit: StackFit.expand,
+    return filteredBuses.map<Widget>((bus) {
 
-          children: [
+      return Column(
+        children: [
 
-            /// MAP
+          RouteCard(
+            data: RouteCardData(
+              type: RouteCardType.busOnly,
 
-Positioned.fill(
-          child: TripMapPreview(
-            vehicleNumber: "147",
-          ),
-        ),
+              busBadges: [
+                bus['busNumber'],
+              ],
 
-/// SEARCH BAR
-            
-            /// SEARCH BAR
-            Positioned(
+              routeName: bus['busName'],
 
-              top:
-                  MediaQuery.of(context)
-                          .padding
-                          .top +
-                      12,
+              duration: "${bus['duration']} min",
 
-              left: 14,
-              right: 14,
+              timeRange: "${bus['departureTime']} - ${bus['arrivalTime']}",
 
-              child:
-                  const FloatingRouteSearchBar(),
+              scheduleInfo:
+                  "${bus['source']} → ${bus['destination']}",
+
+              price: "₹${bus['fare']}",
             ),
+            onTap: () {
 
-            /// DRAGGABLE SHEET
-            DraggableScrollableSheet(
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RouteDetailsScreen(
+                    vehicleNumber: bus['busNumber'],
+                    busName: bus['busName'],
+                    source: bus['source'],
+                    destination: bus['destination'],
+                    status: bus['status'],
+                    departureTime: bus['departureTime'],
+                    arrivalTime: bus['arrivalTime'],
+                    duration: bus['duration'],
+                    fare: bus['fare'],
+                    transferCount: bus['transferCount'],
+                    walkingDistance: bus['walkingDistance'],
+                    transportMode: bus['transportMode'],
+                  ),
+                ),
+              );
 
-              initialChildSize: 0.36,
+            },
+          ),
 
-              minChildSize: 0.27,
+          const SizedBox(height: 18),
 
-              maxChildSize: 0.78,
+        ],
+      );
 
-              expand: true,
-              snap: true,
-              snapSizes: const [0.45, 0.78],
+    }).toList();
+  }
 
+  /// WALK
+  if (_selectedTransportIndex == 3) {
+
+    return [
+
+      DirectionPreviewCard(
+        transportIndex: 3,
+        source: sourceLocation,
+        destination: destinationLocation,
+        directionData: directionData,
+      ),
+
+    ];
+
+  }
+      return [];
+    }
+
+    @override
+    Widget build(BuildContext context) {
+
+      return Theme(
+
+        data: SmartNavTheme.light,
+
+        child: Scaffold(
           
 
-              shouldCloseOnMinExtent:
-                  false,
+          backgroundColor:
+              SmartNavColors.background,
 
-              builder:
-                  (context, scrollController) {
+          
+          body: Stack(
 
-                return Container(
+            fit: StackFit.expand,
 
-                  decoration:
-                      BoxDecoration(
+            children: [
 
-                    color:
-                        SmartNavColors.surface,
+              /// MAP
 
-                    borderRadius:
-                        const BorderRadius.vertical(
-                      top: Radius.circular(28),
-                    ),
+  Positioned.fill(
+            child: TripMapPreview(
+              vehicleNumber: "147",
+            ),
+          ),
 
-                    boxShadow: [
+  /// SEARCH BAR
+              
+              /// SEARCH BAR
+              Positioned(
 
-  BoxShadow(
+                top:
+                    MediaQuery.of(context)
+                            .padding
+                            .top +
+                        12,
 
-    color:
-        Colors.black.withOpacity(
-      0.05,
+                left: 14,
+                right: 14,
+
+                child:
+                    const FloatingRouteSearchBar(),
+              ),
+
+              /// DRAGGABLE SHEET
+              DraggableScrollableSheet(
+
+                initialChildSize: 0.36,
+
+                minChildSize: 0.27,
+
+                maxChildSize: 0.78,
+
+                expand: true,
+                snap: true,
+                snapSizes: const [0.45, 0.78],
+
+            
+
+                shouldCloseOnMinExtent:
+                    false,
+
+                builder:
+                    (context, scrollController) {
+
+                  return Container(
+
+                    decoration:
+                        BoxDecoration(
+
+                      color:
+                          SmartNavColors.surface,
+
+                      borderRadius:
+                          const BorderRadius.vertical(
+                        top: Radius.circular(28),
+                      ),
+
+                      boxShadow: [
+
+    BoxShadow(
+
+      color:
+          Colors.black.withOpacity(
+        0.05,
+      ),
+
+      blurRadius: 10,
+
+      offset:
+          const Offset(0, 4),
     ),
-
-    blurRadius: 10,
-
-    offset:
-        const Offset(0, 4),
-  ),
-],
-                      ),
-                  child:
-                      CustomScrollView(
-                        keyboardDismissBehavior:
-    ScrollViewKeyboardDismissBehavior.onDrag,
-
-                    controller:
-                        scrollController,
-physics:
-    const ClampingScrollPhysics(),                 
-     slivers: [
-
-                      /// HANDLE
-                      SliverToBoxAdapter(
-
-                        child: Column(
-
-                          children: [
-
-                            const SizedBox(
-                              height: 8,
-                            ),
-
-                            Center(
-                              child: Container(
-
-                                width: 42,
-                                height: 5,
-
-                                decoration:
-                                    BoxDecoration(
-                                  color: Colors.grey.shade300,
-
-                                  borderRadius:
-                                      BorderRadius.circular(
-                                    999,
-                                  ),
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(
-                              height: 12,
-                            ),
-                          ],
+  ],
                         ),
-                      ),
+                    child:
+                        CustomScrollView(
+                          keyboardDismissBehavior:
+      ScrollViewKeyboardDismissBehavior.onDrag,
 
-                      /// HEADER
-                      SliverToBoxAdapter(
+                      controller:
+                          scrollController,
+  physics:
+      const ClampingScrollPhysics(),                 
+      slivers: [
 
-                        child: Padding(
+                        /// HANDLE
+                        SliverToBoxAdapter(
 
-                          padding:
-                              const EdgeInsets.symmetric(
-                            horizontal: 20,
-                          ),
-
-                          child: Row(
-
-                            mainAxisAlignment:
-                                MainAxisAlignment
-                                    .spaceBetween,
+                          child: Column(
 
                             children: [
 
-                              Text(
-
-                                'Public transport',
-
-                                style:
-                                    SmartNavTextStyles
-                                        .headlineMd,
+                              const SizedBox(
+                                height: 8,
                               ),
 
-                              Row(
+                              Center(
+                                child: Container(
 
-                                children: [
+                                  width: 42,
+                                  height: 5,
 
-                                  /// SHARE
-                                  _SheetIconButton(
+                                  decoration:
+                                      BoxDecoration(
+                                    color: Colors.grey.shade300,
 
-                                    icon:
-                                        Icons.share,
-
-                                    onTap: () {
-
-                                      ScaffoldMessenger.of(
-                                              context)
-                                          .showSnackBar(
-
-                                        const SnackBar(
-                                          content: Text(
-                                            'Share clicked',
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                    borderRadius:
+                                        BorderRadius.circular(
+                                      999,
+                                    ),
                                   ),
+                                ),
+                              ),
 
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-
-                                  /// CLOSE
-                                  _SheetIconButton(
-
-                                    icon:
-                                        Icons.close,
-
-                                    onTap: () {
-
-                                      if (Navigator.canPop(
-                                          context)) {
-
-                                        Navigator.pop(
-                                            context);
-                                      }
-                                    },
-                                  ),
-                                ],
+                              const SizedBox(
+                                height: 12,
                               ),
                             ],
                           ),
                         ),
-                      ),
 
-                      const SliverToBoxAdapter(
+                        /// HEADER
+                        SliverToBoxAdapter(
 
-                        child: SizedBox(
-                          height: 14,
-                        ),
-                      ),
+                          child: Padding(
 
-                      /// STICKY HEADER
-                      SliverPersistentHeader(
+                            padding:
+                                const EdgeInsets.symmetric(
+                              horizontal: 20,
+                            ),
 
-                        pinned: true,
+                            child: Row(
 
-                        delegate:
-                            _StickyHeaderDelegate(
-
-                          child: Container(
-
-                            color:
-                                SmartNavColors
-                                    .surface,
-
-                            child: Column(
+                              mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
 
                               children: [
 
-                                /// TRANSPORT BUTTONS
-                                SizedBox(
+                                Text(
 
-                                  height: 86,
+                                  'Public transport',
 
-                                  child:
-                                      ListView.separated(
-
-                                    padding:
-                                        const EdgeInsets.symmetric(
-                                      horizontal:
-                                          20,
-                                    ),
-
-                                    scrollDirection:
-                                        Axis.horizontal,
-
-                                    itemCount:
-                                        StaticRouteData
-                                            .transportModes
-                                            .length,
-
-                                    separatorBuilder:
-                                        (_, __) =>
-                                            const SizedBox(
-                                      width: 14,
-                                    ),
-
-                                    itemBuilder:
-                                        (context, i) {
-
-                                      return TransportButton(
-
-                                        icon:
-                                            StaticRouteData
-                                                .transportModes[i]
-                                                .icon,
-
-                                        label:
-                                            StaticRouteData
-                                                .transportModes[i]
-                                                .label,
-
-                                        isSelected:
-                                            i ==
-                                                _selectedTransportIndex,
-
-                                        iconFilled:
-                                            StaticRouteData
-                                                .transportModes[i]
-                                                .iconFilled,
-
-                                        onTap: () {
-
-                                          setState(() {
-
-                                            _selectedTransportIndex = i;
-
-                                          });
-
-                                        },
-                                      );
-                                    },
-                                  ),
+                                  style:
+                                      SmartNavTextStyles
+                                          .headlineMd,
                                 ),
 
-                                const SizedBox(
-                                  height: 8,
-                                ),
+                                Row(
 
-                                /// FILTER CHIPS
-                                if (_selectedTransportIndex == 2)
-                                Padding(
+                                  children: [
 
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                  ),
+                                    /// SHARE
+                                    _SheetIconButton(
 
-                                  child: SingleChildScrollView(
+                                      icon:
+                                          Icons.share,
 
-                                    scrollDirection: Axis.horizontal,
+                                      onTap: () {
 
-                                    child: Row(
+                                        ScaffoldMessenger.of(
+                                                context)
+                                            .showSnackBar(
 
-                                      children: [
-                                        _InteractiveFilterChip(
-  label: isArriveSelected
-    ? 'Arrive $selectedLeaveTime'
-    : 'Leave $selectedLeaveTime',
-  onTap: () async {
-
-    final result = await showDepartureTimeDialog(
-      context,
-      DateTime.now(),
-    );
-
-    if (result != null) {
-
-      setState(() {
-
-        selectedLeaveTime = DateFormat(
-          "hh:mm a",
-        ).format(
-          result["time"],
-        );
-
-        isArriveSelected =
-            result["isArrive"];
-
-      });
-
-    }
-
-  },
-),
-
-const SizedBox(
-  width: 10,
-),
-
-_InteractiveFilterChip(
-  label: selectedModes.isEmpty
-    ? 'Preferred modes'
-    : selectedModes.join(", "),
-
-  onTap: () async {
-
-    final result =
-        await showTransportPreferencesDialog(
-      context,
-      selectedModes,
-    );
-
-    if (result != null) {
-
-      setState(() {
-
-        selectedModes = result;
-
-      });
-
-    }
-
-  },
-),
-
-const SizedBox(
-  width: 10,
-),
-
-_InteractiveFilterChip(
-  label: selectedFilter,
-
-  onTap: () async {
-
-    final result =
-        await showFilterOptionsDialog(
-      context,
-    );
-
-    if (result != null) {
-
-      setState(() {
-
-        selectedFilter = result;
-
-      });
-
-    }
-
-  },
-),
-                                      ],
+                                          const SnackBar(
+                                            content: Text(
+                                              'Share clicked',
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  ),
-                                ),
 
-                                const SizedBox(
-                                  height: 14,
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+
+                                    /// CLOSE
+                                    _SheetIconButton(
+
+                                      icon:
+                                          Icons.close,
+
+                                      onTap: () {
+
+                                        if (Navigator.canPop(
+                                            context)) {
+
+                                          Navigator.pop(
+                                              context);
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
                           ),
                         ),
-                      ),
 
-                      /// ROUTE LIST
-                      SliverPadding(
+                        const SliverToBoxAdapter(
 
-                        padding:
-                            const EdgeInsets.fromLTRB(
-                          20,
-                          16,
-                          20,
-                          140,
-                        ),
-
-                        sliver:
-                            SliverList(
-
-                          delegate:
-                              SliverChildListDelegate(
-                            _buildRouteCards(),
+                          child: SizedBox(
+                            height: 14,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
 
-            /// BOTTOM NAV
-            Positioned(
+                        /// STICKY HEADER
+                        SliverPersistentHeader(
 
-              left: 0,
-              right: 0,
+                          pinned: true,
 
-              bottom:
-                  MediaQuery.of(context)
-                      .padding
-                      .bottom,
+                          delegate:
+                              _StickyHeaderDelegate(
 
-              child:
-                  SmartNavBottomBar(
+                            child: Container(
 
-                selectedIndex:
-                    _bottomNavIndex,
+                              color:
+                                  SmartNavColors
+                                      .surface,
 
-                onItemSelected:
-                    (index) {
+                              child: Column(
 
-                  setState(() {
+                                children: [
 
-                    _bottomNavIndex =
-                        index;
-                  });
+                                  /// TRANSPORT BUTTONS
+                                  SizedBox(
+
+                                    height: 86,
+
+                                    child:
+                                        ListView.separated(
+
+                                      padding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal:
+                                            20,
+                                      ),
+
+                                      scrollDirection:
+                                          Axis.horizontal,
+
+                                      itemCount:
+                                          StaticRouteData
+                                              .transportModes
+                                              .length,
+
+                                      separatorBuilder:
+                                          (_, __) =>
+                                              const SizedBox(
+                                        width: 14,
+                                      ),
+
+                                      itemBuilder:
+                                          (context, i) {
+
+                                        return TransportButton(
+
+                                          icon:
+                                              StaticRouteData
+                                                  .transportModes[i]
+                                                  .icon,
+
+                                          label:
+                                              StaticRouteData
+                                                  .transportModes[i]
+                                                  .label,
+
+                                          isSelected:
+                                              i ==
+                                                  _selectedTransportIndex,
+
+                                          iconFilled:
+                                              StaticRouteData
+                                                  .transportModes[i]
+                                                  .iconFilled,
+
+                                          onTap: () {
+
+                                            setState(() {
+
+                                              _selectedTransportIndex = i;
+
+                                            });
+
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+
+                                  /// FILTER CHIPS
+                                  if (_selectedTransportIndex == 2)
+                                  Padding(
+
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                    ),
+
+                                    child: SingleChildScrollView(
+
+                                      scrollDirection: Axis.horizontal,
+
+                                      child: Row(
+
+                                        children: [
+                                          _InteractiveFilterChip(
+    label: isArriveSelected
+      ? 'Arrive $selectedLeaveTime'
+      : 'Leave $selectedLeaveTime',
+    onTap: () async {
+
+      final result = await showDepartureTimeDialog(
+        context,
+        DateTime.now(),
+      );
+
+      if (result != null) {
+
+        setState(() {
+
+          selectedLeaveTime = DateFormat(
+            "hh:mm a",
+          ).format(
+            result["time"],
+          );
+
+          isArriveSelected =
+              result["isArrive"];
+
+        });
+
+      }
+
+    },
+  ),
+
+  const SizedBox(
+    width: 10,
+  ),
+
+  _InteractiveFilterChip(
+    label: selectedModes.isEmpty
+      ? 'Preferred modes'
+      : selectedModes.join(", "),
+
+    onTap: () async {
+
+      final result =
+          await showTransportPreferencesDialog(
+        context,
+        selectedModes,
+      );
+
+      if (result != null) {
+
+        setState(() {
+
+          selectedModes = result;
+
+        });
+
+      }
+
+    },
+  ),
+
+  const SizedBox(
+    width: 10,
+  ),
+
+  _InteractiveFilterChip(
+    label: selectedFilter,
+
+    onTap: () async {
+
+      final result =
+          await showFilterOptionsDialog(
+        context,
+      );
+
+      if (result != null) {
+
+        setState(() {
+
+          selectedFilter = result;
+
+        });
+
+      }
+
+    },
+  ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+
+                                  const SizedBox(
+                                    height: 14,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        /// ROUTE LIST
+                        SliverPadding(
+
+                          padding:
+                              const EdgeInsets.fromLTRB(
+                            20,
+                            16,
+                            20,
+                            140,
+                          ),
+
+                          sliver:
+                              SliverList(
+
+                            delegate:
+                                SliverChildListDelegate(
+                              _buildRouteCards(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
                 },
               ),
-            ),
-          ],
-        ),
-      ),
-      
-    );
-  }
-}
 
-/// STICKY HEADER
-class _StickyHeaderDelegate
-    extends SliverPersistentHeaderDelegate {
+              /// BOTTOM NAV
+              Positioned(
 
-  final Widget child;
+                left: 0,
+                right: 0,
 
-  _StickyHeaderDelegate({
-    required this.child,
-  });
+                bottom:
+                    MediaQuery.of(context)
+                        .padding
+                        .bottom,
 
-  @override
-  double get minExtent => 145;
+                child:
+                    SmartNavBottomBar(
 
-  @override
-  double get maxExtent => 145;
+                  selectedIndex:
+                      _bottomNavIndex,
 
-  @override
-  Widget build(
+                  onItemSelected:
+                      (index) {
 
-    BuildContext context,
+                    setState(() {
 
-    double shrinkOffset,
-
-    bool overlapsContent,
-  ) {
-
-    return child;
-  }
-
-  @override
-  bool shouldRebuild(
-    covariant
-    SliverPersistentHeaderDelegate
-        oldDelegate,
-  ) {
-
-    return true;
-  }
-}
-
-/// FILTER CHIP
-class _InteractiveFilterChip extends StatelessWidget {
-
-  const _InteractiveFilterChip({
-    required this.label,
-    required this.onTap,
-    super.key,
-  });
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Material(
-
-      color: Colors.transparent,
-
-      child: InkWell(
-
-        borderRadius: BorderRadius.circular(12),
-
-        onTap: onTap,
-
-        child: Container(
-
-          padding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 7,
-          ),
-
-          decoration: BoxDecoration(
-
-            color: SmartNavColors.surfaceContainer,
-
-            borderRadius: BorderRadius.circular(
-              12,
-            ),
-
-            border: Border.all(
-              color: SmartNavColors.outlineVariant,
-            ),
-          ),
-
-          child: Row(
-
-            mainAxisSize: MainAxisSize.min,
-
-            children: [
-
-              Text(
-
-                label,
-
-                style: SmartNavTextStyles.labelLg.copyWith(
-                  fontSize: 12,
+                      _bottomNavIndex =
+                          index;
+                    });
+                  },
                 ),
-              ),
-
-              const SizedBox(
-                width: 2,
-              ),
-
-              const Icon(
-                Icons.arrow_drop_down,
-                size: 17,
               ),
             ],
           ),
         ),
-      ),
-    );
+        
+      );
+    }
   }
-}
 
-/// ICON BUTTON
-class _SheetIconButton extends StatelessWidget {
+  /// STICKY HEADER
+  class _StickyHeaderDelegate
+      extends SliverPersistentHeaderDelegate {
 
-  final IconData icon;
+    final Widget child;
 
-  final VoidCallback onTap;
+    _StickyHeaderDelegate({
+      required this.child,
+    });
 
-  const _SheetIconButton({
+    @override
+    double get minExtent => 145;
 
-    required this.icon,
+    @override
+    double get maxExtent => 145;
 
-    required this.onTap,
+    @override
+    Widget build(
 
-    super.key,
-  });
+      BuildContext context,
 
-  @override
-  Widget build(BuildContext context) {
+      double shrinkOffset,
 
-    return Material(
+      bool overlapsContent,
+    ) {
 
-      color: SmartNavColors.surfaceContainer,
+      return child;
+    }
 
-      shape: const CircleBorder(),
+    @override
+    bool shouldRebuild(
+      covariant
+      SliverPersistentHeaderDelegate
+          oldDelegate,
+    ) {
 
-      child: InkWell(
+      return true;
+    }
+  }
 
-        customBorder: const CircleBorder(),
+  /// FILTER CHIP
+  class _InteractiveFilterChip extends StatelessWidget {
 
-        onTap: onTap,
+    const _InteractiveFilterChip({
+      required this.label,
+      required this.onTap,
+      super.key,
+    });
 
-        child: SizedBox(
+    final String label;
+    final VoidCallback onTap;
 
-          width: 38,
-          height: 38,
+    @override
+    Widget build(BuildContext context) {
 
-          child: Icon(
+      return Material(
 
-            icon,
+        color: Colors.transparent,
 
-            size: 22,
+        child: InkWell(
 
-            color: SmartNavColors.onSurfaceVariant,
+          borderRadius: BorderRadius.circular(12),
 
+          onTap: onTap,
+
+          child: Container(
+
+            padding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 7,
+            ),
+
+            decoration: BoxDecoration(
+
+              color: SmartNavColors.surfaceContainer,
+
+              borderRadius: BorderRadius.circular(
+                12,
+              ),
+
+              border: Border.all(
+                color: SmartNavColors.outlineVariant,
+              ),
+            ),
+
+            child: Row(
+
+              mainAxisSize: MainAxisSize.min,
+
+              children: [
+
+                Text(
+
+                  label,
+
+                  style: SmartNavTextStyles.labelLg.copyWith(
+                    fontSize: 12,
+                  ),
+                ),
+
+                const SizedBox(
+                  width: 2,
+                ),
+
+                const Icon(
+                  Icons.arrow_drop_down,
+                  size: 17,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
-}
+
+  /// ICON BUTTON
+  class _SheetIconButton extends StatelessWidget {
+
+    final IconData icon;
+
+    final VoidCallback onTap;
+
+    const _SheetIconButton({
+
+      required this.icon,
+
+      required this.onTap,
+
+      super.key,
+    });
+
+    @override
+    Widget build(BuildContext context) {
+
+      return Material(
+
+        color: SmartNavColors.surfaceContainer,
+
+        shape: const CircleBorder(),
+
+        child: InkWell(
+
+          customBorder: const CircleBorder(),
+
+          onTap: onTap,
+
+          child: SizedBox(
+
+            width: 38,
+            height: 38,
+
+            child: Icon(
+
+              icon,
+
+              size: 22,
+
+              color: SmartNavColors.onSurfaceVariant,
+
+            ),
+          ),
+        ),
+      );
+    }
+  }

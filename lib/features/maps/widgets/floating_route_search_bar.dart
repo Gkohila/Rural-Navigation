@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:speech_to_text/speech_to_text.dart';
+import '../services/osrm_service.dart';
+import '../../../services/geocoding_service.dart';
 
 class FloatingRouteSearchBar extends StatefulWidget {
   const FloatingRouteSearchBar({super.key});
@@ -18,6 +21,17 @@ class _FloatingRouteSearchBarState
 
   final TextEditingController destinationController =
       TextEditingController();
+
+  SpeechToText speech = SpeechToText();
+
+  bool isListening = false;
+  Map<String, double>? sourceLocation;
+Map<String, double>? destinationLocation;
+
+double? sourceLat;
+double? sourceLng;
+double? destinationLat;
+double? destinationLng;
       
      @override
   void dispose() {
@@ -241,6 +255,28 @@ class _FloatingRouteSearchBarState
   onSubmitted: (value) async {
     print("SOURCE = ${sourceController.text}");
     print("DESTINATION = ${destinationController.text}");
+    sourceLocation = await GeocodingService.getCoordinates(
+  sourceController.text,
+);
+
+destinationLocation = await GeocodingService.getCoordinates(
+  destinationController.text,
+);
+
+if (sourceLocation != null && destinationLocation != null) {
+
+  sourceLat = sourceLocation!["lat"];
+  sourceLng = sourceLocation!["lng"];
+
+  destinationLat = destinationLocation!["lat"];
+  destinationLng = destinationLocation!["lng"];
+
+  print("SOURCE LAT = $sourceLat");
+  print("SOURCE LNG = $sourceLng");
+
+  print("DEST LAT = $destinationLat");
+  print("DEST LNG = $destinationLng");
+}
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt("user_id");
 
@@ -332,60 +368,95 @@ print("HISTORY READ = $history");
                   const SizedBox(height: 4),
 
                   /// SWAP ICON
-                  Container(
+GestureDetector(
+  onTap: () {
+    setState(() {
+      final temp = sourceController.text;
+      sourceController.text = destinationController.text;
+      destinationController.text = temp;
+    });
+  },
 
-                    width: 40,
-                    height: 40,
+  child: Container(
+    width: 40,
+    height: 40,
 
-                    decoration:
-                        BoxDecoration(
+    decoration: BoxDecoration(
+      color: Colors.grey.shade100,
+      shape: BoxShape.circle,
+    ),
 
-                      color:
-                          Colors.grey.shade100,
-
-                      shape:
-                          BoxShape.circle,
-                    ),
-
-                    child: const Icon(
-
-                      Icons.swap_vert_rounded,
-
-                      size: 22,
-
-                      color:
-                          Colors.black87,
-                    ),
-                  ),
+    child: const Icon(
+      Icons.swap_vert_rounded,
+      size: 22,
+      color: Colors.black87,
+    ),
+  ),
+),
 
                   const SizedBox(height: 12),
 
                   /// MIC ICON
-                  Container(
+                 GestureDetector(
+  onTap: () async {
 
-                    width: 40,
-                    height: 40,
+    bool available = await speech.initialize();
 
-                    decoration:
-                        BoxDecoration(
+    if (available) {
 
-                      color:
-                          Colors.grey.shade100,
+      setState(() {
+        isListening = true;
+      });
 
-                      shape:
-                          BoxShape.circle,
-                    ),
+      speech.listen(
+        onResult: (result) {
 
-                    child: const Icon(
+          String text = result.recognizedWords;
 
-                      Icons.mic_none_rounded,
+          print("VOICE = $text");
+          if (text.toLowerCase().contains("to")) {
 
-                      size: 22,
+  List<String> places = text.split("to");
 
-                      color:
-                          Colors.black87,
-                    ),
-                  ),
+  if (places.length == 2) {
+
+    setState(() {
+
+      sourceController.text = places[0].trim();
+
+      destinationController.text = places[1].trim();
+
+    });
+
+  }
+
+}
+
+        },
+      );
+
+    }
+
+  },
+
+  child: Container(
+    width: 40,
+    height: 40,
+
+    decoration: BoxDecoration(
+      color: Colors.grey.shade100,
+      shape: BoxShape.circle,
+    ),
+
+    child: Icon(
+      isListening
+          ? Icons.mic
+          : Icons.mic_none_rounded,
+      size: 22,
+      color: Colors.black87,
+    ),
+  ),
+),
                 ],
               ),
             ],
