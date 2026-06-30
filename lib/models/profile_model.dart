@@ -1,11 +1,13 @@
+import 'dart:typed_data';
+
 class ProfileModel {
   String name;
   String bio;
-  String? imagePath;
+  Uint8List? imageBytes;
 
   ProfileModel({
     required this.name,
     required this.bio,
-    this.imagePath,
+    this.imageBytes,
   });
 }

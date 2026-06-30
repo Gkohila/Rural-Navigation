@@ -10,7 +10,8 @@ import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
 
 import '../../providers/profile_provider.dart';
-import 'dart:io';
+import '../../screens/profile/full_screen_image.dart';
+import 'saved_routes_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -145,32 +146,50 @@ final localizations =
                   Stack(
 
                     children: [
-CircleAvatar(
-  radius: 52,
-  backgroundColor: Colors.white,
+GestureDetector(
+  onTap: () {
+    if (profileProvider.profile.imageBytes == null) {
+      return;
+    }
 
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FullScreenImage(
+          imageBytes:
+              profileProvider.profile.imageBytes!,
+        ),
+      ),
+    );
+  },
   child: CircleAvatar(
-    radius: 46,
+    radius: 52,
+    backgroundColor: Colors.white,
 
-    backgroundColor: const Color(0xFFE9F4EC),
+    child: CircleAvatar(
+      radius: 46,
+      backgroundColor:
+          const Color(0xFFE9F4EC),
 
-    backgroundImage:
-        profileProvider.profile.imagePath != null
-            ? FileImage(
-                File(
-                  profileProvider.profile.imagePath!,
-                ),
-              )
-            : null,
+      backgroundImage:
+          profileProvider.profile.imageBytes != null
+              ? MemoryImage(
+                  profileProvider
+                      .profile
+                      .imageBytes!,
+                )
+              : null,
 
-    child:
-        profileProvider.profile.imagePath == null
-            ? Icon(
-                Icons.person,
-                size: 60,
-                color: Colors.green.shade800,
-              )
-            : null,
+      child:
+          profileProvider.profile.imageBytes == null
+              ? Icon(
+                  Icons.person,
+                  size: 60,
+                  color:
+                      Colors.green.shade800,
+                )
+              : null,
+    ),
   ),
 ),
 
@@ -230,20 +249,20 @@ CircleAvatar(
 
                   const SizedBox(height: 18),
 
-                  Text(
-
-                     profileProvider.profile.name,
-
-                    style: GoogleFonts.poppins(
-
-                      fontSize: 28,
-
-                      fontWeight: FontWeight.w700,
-
-                      color:
-                          const Color(0xFF0B5D1E),
-                    ),
-                  ),
+                  SizedBox(
+  width: double.infinity,
+  child: Text(
+    profileProvider.profile.name,
+    textAlign: TextAlign.center,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: GoogleFonts.poppins(
+      fontSize: 28,
+      fontWeight: FontWeight.w700,
+      color: const Color(0xFF0B5D1E),
+    ),
+  ),
+),
 
                   const SizedBox(height: 6),
 
@@ -262,20 +281,19 @@ CircleAvatar(
 
                       const SizedBox(width: 6),
 
-                      Text(
-
-                         profileProvider.profile.bio,
-
-                        style: GoogleFonts.poppins(
-
-                          fontSize: 14,
-
-                          color: Colors.black54,
-
-                          fontWeight:
-                              FontWeight.w500,
-                        ),
-                      ),
+                     Flexible(
+  child: Text(
+    profileProvider.profile.bio,
+    textAlign: TextAlign.center,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: GoogleFonts.poppins(
+      fontSize: 14,
+      color: Colors.black54,
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+),
                     ],
                   ),
                 ],
@@ -306,28 +324,37 @@ CircleAvatar(
               children: [
 
                 quickCard(
-                  Icons.route,
-                   localizations.text('savedRoutes'),
-                  Colors.blue,
-                ),
+  Icons.route,
+  localizations.text('savedRoutes'),
+  Colors.blue,
+  () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const SavedRoutesScreen(),
+      ),
+    );
+  },
+),
 
                 quickCard(
-                  Icons.favorite,
-                  localizations.text('favorites'),
-                  Colors.green,
-                ),
-
+  Icons.favorite,
+  localizations.text('favorites'),
+  Colors.green,
+  () {},
+),
+               quickCard(
+  Icons.download,
+  localizations.text('offlineMaps'),
+  Colors.brown,
+  () {},
+),
                 quickCard(
-                  Icons.download,
-                  localizations.text('offlineMaps'),
-                  Colors.brown,
-                ),
-
-                quickCard(
-                  Icons.history,
-                  localizations.text('travelHistory'),
-                  Colors.lightBlue,
-                ),
+  Icons.history,
+  localizations.text('travelHistory'),
+  Colors.lightBlue,
+  () {},
+),
               ],
             ),
 
@@ -337,7 +364,7 @@ CircleAvatar(
 Container(
   width: double.infinity,
 
-  padding: const EdgeInsets.all(20),
+  padding: const EdgeInsets.all(14),
 
   decoration: BoxDecoration(
     color: Colors.white,
@@ -357,11 +384,11 @@ Container(
 
       const Icon(
         Icons.navigation,
-        size: 35,
+        size: 28,
         color: Color(0xFF0B5D1E),
       ),
 
-      const SizedBox(height: 12),
+      const SizedBox(height: 6),
 
       Text(
          localizations.text('tenkasiSmartNav'),
@@ -372,19 +399,19 @@ Container(
         ),
       ),
 
-      const SizedBox(height: 8),
+      const SizedBox(height: 4),
 
       Text(
          localizations.text('appDescription'),
         textAlign: TextAlign.center,
         style: GoogleFonts.poppins(
-          fontSize: 13,
+          fontSize: 12,
           color: Colors.black54,
-          height: 1.5,
+          height: 1.3,
         ),
       ),
 
-      const SizedBox(height: 12),
+      const SizedBox(height: 6),
 
       Text(
         localizations.text('version'),
@@ -397,7 +424,7 @@ Container(
   ),
 ),
 
-const SizedBox(height: 20),
+const SizedBox(height: 10),
 
 Center(
   child: Text(
@@ -409,7 +436,7 @@ Center(
   ),
 ),
 
-const SizedBox(height: 10),
+const SizedBox(height: 2),
             
           ],
         ),
@@ -439,12 +466,15 @@ const SizedBox(height: 10),
 
   /// QUICK CARD
   Widget quickCard(
-    IconData icon,
-    String title,
-    Color color,
-  ) {
+  IconData icon,
+  String title,
+  Color color,
+  VoidCallback onTap,
+) {
 
-    return Container(
+    return GestureDetector(
+  onTap: onTap,
+  child: Container(
 
       padding: const EdgeInsets.all(18),
 
@@ -515,6 +545,7 @@ const SizedBox(height: 10),
 )
         ],
       ),
+  ),
     );
   }
 }

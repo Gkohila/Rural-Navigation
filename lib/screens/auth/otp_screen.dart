@@ -5,6 +5,11 @@ import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import 'package:pinput/pinput.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
+import '../../providers/profile_provider.dart';
+import '../../localization/app_localizations.dart';
+import '../../localization/language_provider.dart';
 
 class OtpScreen extends StatefulWidget {
 
@@ -52,6 +57,13 @@ class _OtpScreenState extends State<OtpScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    final languageProvider =
+     Provider.of<LanguageProvider>(context);
+
+    final localizations =
+     AppLocalizations(
+      languageProvider.languageCode,
+    );
     return Scaffold(
       backgroundColor: const Color(0xFFF3F3F3),
 
@@ -65,7 +77,6 @@ class _OtpScreenState extends State<OtpScreen> {
 
                 // TOP ROW
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
                   children: [
 
@@ -77,40 +88,6 @@ class _OtpScreenState extends State<OtpScreen> {
                       icon: const Icon(
                         Icons.arrow_back,
                         size: 26,
-                      ),
-                    ),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black26),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-
-                      child: const Row(
-                        children: [
-
-                          Icon(
-                            Icons.language,
-                            color: Colors.green,
-                            size: 18,
-                          ),
-
-                          SizedBox(width: 5),
-
-                          Text(
-                            "EN/தமிழ்",
-
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
                       ),
                     ),
                   ],
@@ -137,8 +114,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
                 const SizedBox(height: 28),
 
-                const Text(
-                  "Verify OTP",
+                Text(
+                  localizations.text('verifyOtp'),
 
                   style: TextStyle(
                     fontSize: 28,
@@ -149,8 +126,8 @@ class _OtpScreenState extends State<OtpScreen> {
 
                 const SizedBox(height: 12),
 
-                const Text(
-                  "Enter the 4-digit code sent to",
+                Text(
+  localizations.text('enterOtpMessage'),
 
                   textAlign: TextAlign.center,
 
@@ -194,7 +171,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
                     SizedBox(width: 6),
 Text(
-  "OTP expires in ${seconds}s",
+  "${localizations.text('otpExpiresIn')} ${seconds}s",
 
   style: const TextStyle(
     fontSize: 15,
@@ -225,18 +202,33 @@ Text(
                            "otp": otpController.text,
                           }),
                          );
+  final String baseUrl = kIsWeb
+      ? "http://localhost:8081"
+      : "http://10.0.2.2:8081";
 
-  print("RESPONSE = ${response.body}");
+  final response = await http.post(
+    Uri.parse("$baseUrl/api/auth/verify-otp"),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: jsonEncode({
+      "mobile": widget.mobile,
+      "otp": otpController.text,
+    }),
+  );
+
+  print("VERIFY STATUS = ${response.statusCode}");
+print("VERIFY BODY = ${response.body}");
 
 final data = jsonDecode(response.body);
   print("FULL DATA = $data");
   print("USER ID = ${data["userId"]}");
 
+
 if (data["message"] == "Login Success") {
 
   SharedPreferences prefs =
       await SharedPreferences.getInstance();
-
 
   await prefs.setInt(
     "user_id",
@@ -255,6 +247,7 @@ if (data["message"] == "Login Success") {
   print(
     "READ AFTER SAVE = ${prefs.getBool("isLoggedIn")}",
   );
+  await prefs.setBool("isLoggedIn", true);
 
   await prefs.setString(
     "mobile",
@@ -270,20 +263,37 @@ if (data["message"] == "Login Success") {
   );
 }
 
+  await prefs.setInt(
+    "userId",
+    data["userId"],
+  );
+
+  final profileProvider =
+      Provider.of<ProfileProvider>(
+    context,
+    listen: false,
+  );
+
+  await profileProvider.loadProfile();
+
   Navigator.pushReplacement(
     context,
     MaterialPageRoute(
       builder: (context) => const HomeScreen(),
     ),
   );
-}else {
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Invalid OTP"),
+} else {
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        localizations.text('invalidOtp'),
       ),
-    );
-  }
+    ),
+  );
+
+}
 },
                    
 
@@ -299,13 +309,13 @@ if (data["message"] == "Login Success") {
                       ),
                     ),
 
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
 
                       children: [
 
                         Text(
-                          "Verify OTP",
+  localizations.text('verifyOtp'),
 
                           style: TextStyle(
                             fontSize: 17,
@@ -330,10 +340,14 @@ if (data["message"] == "Login Success") {
 
                 // RESEND BUTTON
                 OutlinedButton.icon(
-                  onPressed: () async {
+onPressed: () async {
+
+  final String baseUrl = kIsWeb
+      ? "http://localhost:8081"
+      : "http://10.0.2.2:8081";
 
   final response = await http.post(
-    Uri.parse("http://127.0.0.1:8081/api/auth/send-otp"),
+    Uri.parse("$baseUrl/api/auth/send-otp"),
     headers: {
       "Content-Type": "application/json",
     },
@@ -342,11 +356,14 @@ if (data["message"] == "Login Success") {
     }),
   );
 
-  print(response.body);
+  print("RESEND STATUS = ${response.statusCode}");
+  print("RESEND BODY = ${response.body}");
 
   ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(
-      content: Text("OTP Sent Again"),
+    SnackBar(
+      content: Text(
+  localizations.text('otpSentAgain'),
+),
     ),
   );
 
@@ -369,8 +386,8 @@ if (data["message"] == "Login Success") {
                     size: 20,
                   ),
 
-                  label: const Text(
-                    "Resend OTP",
+                  label: Text(
+  localizations.text('resendOtp'),
 
                     style: TextStyle(
                       color: Colors.green,

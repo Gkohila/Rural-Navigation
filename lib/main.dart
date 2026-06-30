@@ -3,10 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'theme/app_theme.dart';
-import 'screens/auth/splash_screen.dart';
-
-import 'localization/language_provider.dart';
+import 'screens/auth/welcome_screen.dart';
 import 'providers/profile_provider.dart';
+import 'localization/language_provider.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,11 +41,14 @@ class SmartNavApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Tenkasi SmartNav',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      home: const SplashScreen(),
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          home: const WelcomeScreen(),
+        );
+      },
     );
   }
 }

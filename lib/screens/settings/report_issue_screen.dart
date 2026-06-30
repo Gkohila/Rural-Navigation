@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
+import '../../services/issue_api_service.dart';
 
 class ReportIssueScreen extends StatefulWidget {
   const ReportIssueScreen({super.key});
@@ -264,67 +265,63 @@ SizedBox(
       ),
     ),
 
-    onPressed: () {
+    onPressed: () async {
 
-      if (titleController.text.isEmpty ||
-          descriptionController.text.isEmpty) {
+  if (titleController.text.trim().isEmpty ||
+      descriptionController.text.trim().isEmpty) {
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              localizations.text(
-                'fillAllFields',
-              ),
-            ),
-          ),
-        );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          localizations.text('fillAllFields'),
+        ),
+      ),
+    );
 
-        return;
-      }
+    return;
+  }
 
-      showDialog(
-        context: context,
+  final success =
+      await IssueApiService.submitIssue(
+    issueTitle:
+        titleController.text.trim(),
+    category: selectedCategory,
+    description:
+        descriptionController.text.trim(),
+  );
 
-        builder: (context) {
-          return AlertDialog(
+  if (success) {
 
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        backgroundColor: Color(0xFF0B5D1E),
+        content: Text(
+          "Issue Submitted Successfully",
+        ),
+      ),
+    );
 
-            title: Text(
-              localizations.text(
-                'reportSubmitted',
-              ),
-            ),
+    titleController.clear();
+    descriptionController.clear();
 
-            content: Text(
-              localizations.text(
-                'reportSubmittedMessage',
-              ),
-            ),
+    Future.delayed(
+      const Duration(seconds: 1),
+      () {
+        Navigator.pop(context);
+      },
+    );
 
-            actions: [
+  } else {
 
-              TextButton(
-                onPressed: () {
-
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-
-                },
-
-                child: Text(
-                  localizations.text(
-                    'ok',
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    },
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Failed to Submit Issue",
+        ),
+      ),
+    );
+  }
+},
 
     child: Text(
       localizations.text(
