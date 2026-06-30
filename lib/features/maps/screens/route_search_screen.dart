@@ -180,6 +180,36 @@ if (_selectedTransportIndex == 2) {
   print("SELECTED FILTER = $selectedFilter");
 
   List<dynamic> filteredBuses = [...buses];
+  /// Saved Route filter
+if (widget.fromSavedRoute &&
+    sourceLocation.isNotEmpty &&
+    destinationLocation.isNotEmpty) {
+
+  filteredBuses = filteredBuses.where((bus) {
+
+    final busSource =
+        (bus['source'] ?? "")
+            .toString()
+            .trim()
+            .toLowerCase();
+
+    final busDestination =
+        (bus['destination'] ?? "")
+            .toString()
+            .trim()
+            .toLowerCase();
+
+    return busSource ==
+            sourceLocation
+                .trim()
+                .toLowerCase() &&
+        busDestination ==
+            destinationLocation
+                .trim()
+                .toLowerCase();
+
+  }).toList();
+}
  
 
 /// Preferred modes filter
@@ -313,7 +343,7 @@ if (selectedFilter == "Less walking") {
   walkingDistance: bus['walkingDistance'] ?? 0,
   transportMode: bus['transportMode'],
 
-  isFromSavedRoute: widget.fromSavedRoute,
+  isFromSavedRoute: false,
 ),
   ),
 );

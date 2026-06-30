@@ -14,8 +14,11 @@ class SavedRouteApiService {
     SavedRouteModel route,
   ) async {
     // Check already saved
-    bool alreadySaved =
-        await isRouteSaved(route.vehicleNumber);
+    bool alreadySaved = await isRouteSaved(
+      route.source,
+      route.destination,
+      route.transportMode,
+    );
 
     if (alreadySaved) {
       return false;
@@ -40,8 +43,6 @@ class SavedRouteApiService {
         await SharedPreferences.getInstance();
 
     final userId = prefs.getInt("userId");
-
-    print("USER ID FROM PREF = $userId");
 
     if (userId == null) {
       return [];
@@ -69,7 +70,9 @@ class SavedRouteApiService {
 
   /// CHECK ROUTE ALREADY SAVED
   static Future<bool> isRouteSaved(
-    String vehicleNumber,
+    String source,
+    String destination,
+    String transportMode,
   ) async {
     final prefs =
         await SharedPreferences.getInstance();
@@ -83,7 +86,11 @@ class SavedRouteApiService {
 
     final response = await http.get(
       Uri.parse(
-        "$baseUrl/api/saved-routes/exists?userId=$userId&vehicleNumber=$vehicleNumber",
+        "$baseUrl/api/saved-routes/exists"
+        "?userId=$userId"
+        "&source=${Uri.encodeComponent(source)}"
+        "&destination=${Uri.encodeComponent(destination)}"
+        "&transportMode=${Uri.encodeComponent(transportMode)}",
       ),
     );
 
@@ -105,13 +112,17 @@ class SavedRouteApiService {
     );
 
     return response.statusCode == 200 ||
-        response.statusCode == 201;
+        response.statusCode == 204;
   }
-    /// DELETE ALL ROUTES OF USER
-  static Future<bool> deleteAllRoutes() async {
-    final prefs = await SharedPreferences.getInstance();
 
-    final userId = prefs.getInt("userId");
+  /// DELETE ALL ROUTES
+  static Future<bool> deleteAllRoutes() async {
+    
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final userId =
+        prefs.getInt("userId");
 
     if (userId == null) {
       return false;

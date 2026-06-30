@@ -101,11 +101,7 @@ void initState() {
   loadStops();
   loadProgress();
 
-  if (widget.isFromSavedRoute) {
-    isSaved = true;
-  } else {
-    isSaved = false;
-  }
+  isSaved = false;
 }
   Future<void> loadStops() async {
 
@@ -149,16 +145,6 @@ void initState() {
     });
   } 
 
-  Future<void> checkIfRouteSaved() async {
-
-  isSaved = await SavedRouteApiService.isRouteSaved(
-    widget.vehicleNumber,
-  );
-
-  if (!mounted) return;
-
-  setState(() {});
-}
 
   @override
   Widget build(BuildContext context) {
@@ -542,84 +528,119 @@ else
 
                     const SizedBox(height: 14),
 
-                    /// =====================================================
-                    /// SAVE SHARE
-                    /// =====================================================
-                    Row(
+/// =====================================================
+/// SAVE SHARE
+/// =====================================================
+Row(
   children: [
 
-    if (!widget.isFromSavedRoute)
-      Expanded(
-        child: bottomButton(
-          isSaved
-              ? Icons.bookmark
-              : Icons.bookmark_border,
-          isSaved
-              ? "Saved"
-              : "Save",
-          () async {
+    Expanded(
+      child: bottomButton(
+        isSaved
+            ? Icons.bookmark
+            : Icons.bookmark_border,
+        isSaved
+            ? "Saved"
+            : "Save",
+        () async {
 
-            final prefs =
-                await SharedPreferences.getInstance();
+          final prefs =
+              await SharedPreferences.getInstance();
 
-            final userId =
-                prefs.getInt("userId");
+          final userId =
+              prefs.getInt("userId");
 
-            if (userId == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("User not found"),
-                ),
-              );
-              return;
-            }
-
-            final route = SavedRouteModel(
-              userId: userId,
-              vehicleNumber: widget.vehicleNumber,
-              busName: widget.busName,
-              source: widget.source,
-              destination: widget.destination,
-              departureTime: widget.departureTime,
-              arrivalTime: widget.arrivalTime,
-              duration: widget.duration,
-              fare: widget.fare,
-              transportMode: widget.transportMode,
-            );
-
-            if (isSaved) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text("Already saved"),
-                ),
-              );
-              return;
-            }
-
-            final success =
-                await SavedRouteApiService.saveRoute(route);
-
-            if (success) {
-              setState(() {
-                isSaved = true;
-              });
-            }
-
+          if (userId == null) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
+                backgroundColor: Color(0xFF0B5D1E),
                 content: Text(
-                  success
-                      ? "Saved to Saved Routes"
-                      : "Failed to Save Route",
+                  "User not found",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             );
-          },
-        ),
-      ),
+            return;
+          }
 
-    if (!widget.isFromSavedRoute)
-      const SizedBox(width: 12),
+          final route = SavedRouteModel(
+            userId: userId,
+            vehicleNumber: widget.vehicleNumber,
+            busName: widget.busName,
+            source: widget.source,
+            destination: widget.destination,
+            departureTime: widget.departureTime,
+            arrivalTime: widget.arrivalTime,
+            duration: widget.duration,
+            fare: widget.fare,
+            transportMode: widget.transportMode,
+          );
+
+          final success =
+              await SavedRouteApiService.saveRoute(route);
+
+          if (success) {
+
+  setState(() {
+    isSaved = true;
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    backgroundColor: const Color(0xFF0B5D1E),
+    behavior: SnackBarBehavior.floating,
+    margin: const EdgeInsets.all(16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    content: const Row(
+      children: [
+        Icon(
+          Icons.check_circle,
+          color: Colors.white,
+        ),
+        SizedBox(width: 10),
+        Text(
+          "Route saved successfully",
+          style: TextStyle(color: Colors.white),
+        ),
+      ],
+    ),
+  ),
+);
+
+          } else {
+
+            ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    backgroundColor: Colors.orange.shade700,
+    behavior: SnackBarBehavior.floating,
+    margin: const EdgeInsets.all(16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+    content: const Row(
+      children: [
+        Icon(
+          Icons.info_outline,
+          color: Colors.white,
+        ),
+        SizedBox(width: 10),
+        Text(
+          "Route already exists",
+          style: TextStyle(color: Colors.white),
+        ),
+      ],
+    ),
+  ),
+);
+
+          }
+        },
+      ),
+    ),
+
+    const SizedBox(width: 12),
 
     Expanded(
       child: bottomButton(
@@ -628,7 +649,11 @@ else
         () {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Share Clicked"),
+              backgroundColor: Color(0xFF0B5D1E),
+              content: Text(
+                "Share Clicked",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           );
         },

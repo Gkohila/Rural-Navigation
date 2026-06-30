@@ -15,21 +15,23 @@ class SavedRoutesScreen extends StatefulWidget {
 
 class _SavedRoutesScreenState
     extends State<SavedRoutesScreen> {
+
   late Future<List<SavedRouteModel>> routesFuture;
+
   IconData getTransportIcon(String mode) {
-  switch (mode.toLowerCase()) {
-    case "bus":
-      return Icons.directions_bus_rounded;
-    case "train":
-      return Icons.train_rounded;
-    case "auto":
-      return Icons.electric_rickshaw_rounded;
-    case "walking":
-      return Icons.directions_walk_rounded;
-    default:
-      return Icons.route_rounded;
+    switch (mode.toLowerCase()) {
+      case "bus":
+        return Icons.directions_bus_rounded;
+      case "train":
+        return Icons.train_rounded;
+      case "auto":
+        return Icons.electric_rickshaw_rounded;
+      case "walking":
+        return Icons.directions_walk_rounded;
+      default:
+        return Icons.route_rounded;
+    }
   }
-}
 
   @override
   void initState() {
@@ -43,158 +45,440 @@ class _SavedRoutesScreenState
   }
 
   Future<void> deleteAllRoutes() async {
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Remove All Routes"),
-      content: const Text(
-        "Do you want to remove all saved routes?",
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: const Text("Cancel"),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: const Text("Remove All"),
-        ),
-      ],
-    ),
-  );
 
-  if (confirm != true) return;
+    final routes = await routesFuture;
 
-  final success =
-      await SavedRouteApiService.deleteAllRoutes();
+    if (routes.isEmpty) {
 
-  if (success) {
-    setState(() {
-      loadRoutes();
-    });
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("All routes removed"),
-      ),
-    );
-  }
-}
-
-  Future<void> deleteRoute(int id) async {
-    
-
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text("Remove Route"),
-        content: const Text(
-          "Do you want to remove this saved route?",
-        ),
-        actions: [
-
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-            child: const Text("Cancel"),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: SmartNavColors.primary,
+          margin: const EdgeInsets.all(16),
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(16),
           ),
+          content: const Row(
+            children: [
 
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            child: const Text("Remove"),
+              Icon(
+                Icons.info_outline_rounded,
+                color: Colors.white,
+              ),
+
+              SizedBox(width: 10),
+
+              Expanded(
+                child: Text(
+                  "No saved routes to remove.",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+
+            ],
           ),
-
-        ],
+        ),
       );
-    },
-  );
 
-  if (confirm != true) return;
+      return;
+    }
 
-  final success =
-      await SavedRouteApiService.deleteRoute(id);
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
 
-  if (success) {
+        return Dialog(
 
-    setState(() {
-      loadRoutes();
-    });
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(24),
+          ),
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Route removed"),
-      ),
+          child: Padding(
+            padding:
+                const EdgeInsets.all(24),
+
+            child: Column(
+              mainAxisSize:
+                  MainAxisSize.min,
+
+              children: [
+
+                CircleAvatar(
+                  radius: 32,
+                  backgroundColor:
+                      SmartNavColors.primary
+                          .withOpacity(.10),
+
+                  child: const Icon(
+                    Icons.delete_sweep_rounded,
+                    color:
+                        SmartNavColors.primary,
+                    size: 32,
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                Text(
+  "Delete All Saved Routes",
+                  textAlign:
+                      TextAlign.center,
+                  style:
+                      SmartNavTextStyles
+                          .headlineMdBold,
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  "This action will permanently remove all your saved routes.\nThis cannot be undone.",
+                  textAlign:
+                      TextAlign.center,
+                  style:
+                      SmartNavTextStyles
+                          .bodyMd
+                          .copyWith(
+                    color: Colors.black54,
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                Row(
+                  children: [
+
+                    Expanded(
+                      child:
+                          OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(
+                              context,
+                              false);
+                        },
+
+                        style:
+                            OutlinedButton
+                                .styleFrom(
+                          side: BorderSide(
+                            color:
+                                SmartNavColors
+                                    .primary,
+                          ),
+
+                          shape:
+                              RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius
+                                    .circular(
+                                        14),
+                          ),
+
+                          padding:
+                              const EdgeInsets
+                                  .symmetric(
+                            vertical: 14,
+                          ),
+                        ),
+
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color:
+                                SmartNavColors
+                                    .primary,
+                            fontWeight:
+                                FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child:
+                          ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(
+                              context,
+                              true);
+                        },
+
+                        icon: const Icon(
+                          Icons
+                              .delete_outline_rounded,
+                          size: 20,
+                        ),
+
+                        label: const Text(
+  "Delete All",
+  style: TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+  ),
+),
+
+                       style: ElevatedButton.styleFrom(
+  backgroundColor: Colors.red.shade700,
+  foregroundColor: Colors.white,
+  elevation: 0,
+
+  minimumSize: const Size(double.infinity, 52),
+
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(16),
+  ),
+
+  padding: const EdgeInsets.symmetric(
+    vertical: 16,
+    horizontal: 12,
+  ),
+),
+                      ),
+                    ),
+
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
+
+    if (confirm != true) return;
+
+    final success =
+        await SavedRouteApiService
+            .deleteAllRoutes();
+
+    if (!mounted) return;
+
+    if (success) {
+
+      setState(() {
+        loadRoutes();
+      });
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        SnackBar(
+          behavior:
+              SnackBarBehavior.floating,
+          backgroundColor:
+              SmartNavColors.primary,
+          margin:
+              const EdgeInsets.all(16),
+          shape:
+              RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(16),
+          ),
+          content: const Row(
+            children: [
+
+              Icon(
+                Icons.delete_sweep_rounded,
+                color: Colors.white,
+              ),
+
+              SizedBox(width: 10),
+
+              Expanded(
+                child: Text(
+                  "All saved routes removed successfully.",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+
+            ],
+          ),
+        ),
+      );
+    }
   }
-}
+    Future<void> deleteRoute(int id) async {
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(20),
+          ),
+          title: const Text(
+            "Remove Route",
+          ),
+          content: const Text(
+            "Do you want to remove this saved route?",
+          ),
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  false,
+                );
+              },
+              child: const Text(
+                "Cancel",
+              ),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  true,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    SmartNavColors.primary,
+                foregroundColor:
+                    Colors.white,
+              ),
+              child: const Text(
+                "Remove",
+              ),
+            ),
+
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+
+    final success =
+        await SavedRouteApiService
+            .deleteRoute(id);
+
+    if (success) {
+
+      setState(() {
+        loadRoutes();
+      });
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+        SnackBar(
+          behavior:
+              SnackBarBehavior.floating,
+          backgroundColor:
+              SmartNavColors.primary,
+          margin:
+              const EdgeInsets.all(16),
+          shape:
+              RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(16),
+          ),
+          content: const Row(
+            children: [
+
+              Icon(
+                Icons.check_circle_rounded,
+                color: Colors.white,
+              ),
+
+              SizedBox(width: 10),
+
+              Expanded(
+                child: Text(
+                  "Route removed successfully.",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+
+            ],
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: SmartNavColors.background,
+      backgroundColor:
+          SmartNavColors.background,
 
       appBar: AppBar(
-  elevation: 0,
+  elevation: 1,
+  surfaceTintColor: Colors.transparent,
   backgroundColor: SmartNavColors.surface,
 
-  title: Text(
-    "Saved Routes",
-    style: SmartNavTextStyles.headlineMdBold.copyWith(
-      color: const Color(0xFF0B5D1E),
+        title: Text(
+          "Saved Routes",
+          style: SmartNavTextStyles
+              .headlineMdBold
+              .copyWith(
+            color:
+                const Color(0xFF0B5D1E),
+          ),
+        ),
+
+        actions: [
+
+  Padding(
+    padding: const EdgeInsets.only(right: 8),
+    child: IconButton(
+      tooltip: "Delete All",
+      onPressed: deleteAllRoutes,
+
+      icon: Container(
+        padding: const EdgeInsets.all(10),
+
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(.12),
+          borderRadius:
+              BorderRadius.circular(12),
+        ),
+
+        child: const Icon(
+          Icons.delete_sweep_rounded,
+          color: Colors.red,
+          size: 20,
+        ),
+      ),
     ),
   ),
 
-  actions: [
+],
+      ),
 
-    PopupMenuButton<String>(
-
-      onSelected: (value) {
-
-        if (value == "delete_all") {
-
-          deleteAllRoutes();
-
-        }
-
-      },
-
-      itemBuilder: (context) => [
-
-        const PopupMenuItem(
-
-          value: "delete_all",
-
-          child: Text("Delete All"),
-
-        ),
-
-      ],
-
-    ),
-
-  ],
-),
-
-      body: FutureBuilder<List<SavedRouteModel>>(
+      body:
+          FutureBuilder<List<SavedRouteModel>>(
         future: routesFuture,
-
-        builder: (context, snapshot) {
+        builder:
+            (context, snapshot) {
 
           if (snapshot.connectionState ==
               ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child:
+                  CircularProgressIndicator(),
             );
           }
 
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                snapshot.error.toString(),
+                snapshot.error
+                    .toString(),
               ),
             );
           }
@@ -204,160 +488,206 @@ class _SavedRoutesScreenState
             return Center(
               child: Column(
                 mainAxisAlignment:
-                    MainAxisAlignment.center,
+                    MainAxisAlignment
+                        .center,
                 children: [
 
-                  Icon(
-  Icons.bookmark_border_rounded,
-  size: 70,
-  color: const Color(0xFF0B5D1E),
-),
+                  const Icon(
+                    Icons
+                        .bookmark_border_rounded,
+                    size: 70,
+                    color: Color(
+                        0xFF0B5D1E),
+                  ),
 
-                  const SizedBox(height: 16),
-
-                  Text(
-  "No Saved Routes",
-  style: SmartNavTextStyles.headlineMd.copyWith(
-    color: const Color(0xFF0B5D1E),
-    fontWeight: FontWeight.w700,
-  ),
-),
-
-                  const SizedBox(height: 6),
+                  const SizedBox(
+                      height: 16),
 
                   Text(
-  "Save your favourite routes\nfor quick access.",
-  textAlign: TextAlign.center,
-  style: SmartNavTextStyles.bodyMd.copyWith(
-    color: Colors.black54,
-  ),
-),
+                    "No Saved Routes",
+                    style:
+                        SmartNavTextStyles
+                            .headlineMd
+                            .copyWith(
+                      color:
+                          const Color(
+                              0xFF0B5D1E),
+                      fontWeight:
+                          FontWeight
+                              .w700,
+                    ),
+                  ),
+
+                  const SizedBox(
+                      height: 6),
+
+                  Text(
+                    "Save your favourite routes\nfor quick access.",
+                    textAlign:
+                        TextAlign.center,
+                    style:
+                        SmartNavTextStyles
+                            .bodyMd
+                            .copyWith(
+                      color:
+                          Colors.black54,
+                    ),
+                  ),
 
                 ],
               ),
             );
           }
 
-          final routes = snapshot.data!;
+          final routes =
+              snapshot.data!;
 
           return ListView.builder(
             padding:
-                const EdgeInsets.symmetric(
+                const EdgeInsets
+                    .symmetric(
               horizontal: 16,
               vertical: 12,
             ),
+            itemCount:
+                routes.length,
+            itemBuilder:
+                (context, index) {
 
-            itemCount: routes.length,
+              final route =
+                  routes[index];
 
-            itemBuilder: (context, index) {
-
-              final route = routes[index];
               return Container(
-  margin: const EdgeInsets.only(bottom: 12),
+                margin:
+                    const EdgeInsets
+                        .only(
+                            bottom:
+                                12),
+                decoration:
+                    BoxDecoration(
+                  color:
+                      Colors.white,
+                  borderRadius:
+                      BorderRadius
+                          .circular(
+                              14),
+                  border:
+                      Border.all(
+                    color:
+                        SmartNavColors
+                            .outlineVariant,
+                  ),
+                  boxShadow:
+                      SmartNavElevation
+                          .card,
+                ),
 
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(14),
-    border: Border.all(
-      color: SmartNavColors.outlineVariant,
+                child: Material(
+                  color: Colors
+                      .transparent,
+
+                  child: InkWell(
+                    borderRadius:
+                        BorderRadius
+                            .circular(
+                                14),
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) =>
+                                  RouteSearchScreen(
+                            initialSource:
+                                route
+                                    .source,
+                            initialDestination:
+                                route
+                                    .destination,
+                            initialTransportMode:
+                                route
+                                    .transportMode,
+                            fromSavedRoute:
+                                true,
+                          ),
+                        ),
+                      );
+                    },
+
+                    child: Padding(
+                      padding:
+                          const EdgeInsets
+                              .symmetric(
+                        horizontal:
+                            14,
+                        vertical:
+                            12,
+                      ),
+
+                      child: Row(
+                        children: [
+
+                          Container(
+                            width: 40,
+                            height:
+                                40,
+                            decoration:
+                                BoxDecoration(
+                              color:
+                                  SmartNavColors
+                                      .primary
+                                      .withOpacity(
+                                          .08),
+                              borderRadius:
+                                  BorderRadius.circular(
+                                      10),
+                            ),
+                            child:
+                                Icon(
+                              getTransportIcon(
+                                  route.transportMode),
+                              color:
+                                  SmartNavColors.primary,
+                            ),
+                          ),
+
+                          const SizedBox(
+                              width:
+                                  12),
+
+                          Expanded(
+                            child:
+                                Text(
+                              "${route.source} → ${route.destination}",
+                              style:
+                                  SmartNavTextStyles.bodyLg.copyWith(
+                                fontWeight:
+                                    FontWeight.w700,
+                              ),
+                            ),
+                          ),
+
+                          Padding(
+  padding: const EdgeInsets.only(right: 4),
+  child: IconButton(
+    onPressed: () {
+      deleteRoute(route.id!);
+    },
+    icon: Icon(
+      Icons.delete_outline_rounded,
+      color: Colors.red.shade600,
+      size: 22,
     ),
-    boxShadow: SmartNavElevation.card,
-  ),
-
-  child: Material(
-    color: Colors.transparent,
-
-    child: InkWell(
-      borderRadius: BorderRadius.circular(14),
-
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-           builder: (_) => RouteSearchScreen(
-  initialSource: route.source,
-  initialDestination: route.destination,
-  initialTransportMode: route.transportMode,
-   fromSavedRoute: true,
-),
-          ),
-        );
-      },
-
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 12,
-        ),
-
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-
-          children: [
-
-            Container(
-              width: 40,
-              height: 40,
-
-              decoration: BoxDecoration(
-                color: SmartNavColors.primary.withOpacity(.08),
-                borderRadius: BorderRadius.circular(10),
-              ),
-
-              child: Icon(
-  getTransportIcon(route.transportMode),
-  size: 20,
-  color: SmartNavColors.primary,
-),
-            ),
-
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
-                children: [
-
-                  
-
-                  Text(
-  "${route.source}  →  ${route.destination}",
-  style: SmartNavTextStyles.bodyLg.copyWith(
-    fontWeight: FontWeight.w700,
   ),
 ),
 
-
-
-                ],
-              ),
-            ),
-
-           Column(
-  children: [
-
-    IconButton(
-      icon: const Icon(
-        Icons.delete_outline_rounded,
-        color: Colors.red,
-      ),
-      onPressed: () {
-        deleteRoute(route.id!);
-      },
-    ),
-
-   
-
-  ],
-),
-          ],
-        ),
-      ),
-    ),
-  ),
-);
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
             },
           );
         },
