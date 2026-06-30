@@ -7,7 +7,9 @@ import 'privacy_policy_screen.dart';
 import 'terms_screen.dart';
 import 'help_support_screen.dart';
 import '../../localization/app_localizations.dart';
-
+import '../../providers/profile_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../auth/login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -18,15 +20,18 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
 
-  bool voiceNavigation = true;
-  bool pushNotifications = true;
+  bool voiceNavigation = false;
+  bool pushNotifications = false;
   String voiceLanguage = 'en';
 String alertVolume = 'Medium';
 
   @override
   Widget build(BuildContext context) {
+      final profileProvider =
+      Provider.of<ProfileProvider>(context);
     final languageProvider =
     Provider.of<LanguageProvider>(context);
+
 
 final localizations =
     AppLocalizations(
@@ -118,16 +123,27 @@ final localizations =
                     backgroundColor: Colors.green.shade100,
 
                     child: CircleAvatar(
-                      radius: 34,
+  radius: 34,
+  backgroundColor: Colors.white,
 
-                      backgroundColor: Colors.white,
+  backgroundImage:
+      profileProvider.profile.imageBytes != null
+          ? MemoryImage(
+              profileProvider
+                  .profile
+                  .imageBytes!,
+            )
+          : null,
 
-                      child: Icon(
-                        Icons.person,
-                        size: 42,
-                        color: Colors.green.shade800,
-                      ),
-                    ),
+  child:
+      profileProvider.profile.imageBytes == null
+          ? Icon(
+              Icons.person,
+              size: 42,
+              color: Colors.green.shade800,
+            )
+          : null,
+),
                   ),
 
                   const SizedBox(width: 16),
@@ -138,20 +154,18 @@ final localizations =
                           CrossAxisAlignment.start,
 
                       children: [
-
-                        Text(
-                          "Guest User",
-
-                          style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+Text(
+  profileProvider.profile.name,
+  style: GoogleFonts.poppins(
+    fontSize: 22,
+    fontWeight: FontWeight.w700,
+  ),
+),
 
                         const SizedBox(height: 8),
 
 Text(
-   "Add your bio",
+  profileProvider.profile.bio,
   style: GoogleFonts.poppins(
     color: Colors.black54,
     fontSize: 14,
@@ -601,19 +615,27 @@ SizedBox(
           ),
 
           ElevatedButton(
-            onPressed: () {
+  onPressed: () async {
 
-              Navigator.pop(context);
+    final prefs =
+        await SharedPreferences.getInstance();
 
-              // Logout Logic Here
+    await prefs.clear();
 
-            },
-            child: Text(
-  localizations.text(
-    'logout',
+    if (!context.mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const LoginScreen(),
+      ),
+      (route) => false,
+    );
+  },
+  child: Text(
+    localizations.text('logout'),
   ),
-),
-          ),
+)
         ],
       );
     },

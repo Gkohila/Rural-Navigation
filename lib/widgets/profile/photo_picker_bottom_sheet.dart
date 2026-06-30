@@ -1,12 +1,20 @@
+import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../localization/app_localizations.dart';
 import '../../localization/language_provider.dart';
-
 import '../../providers/profile_provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
+import '../../screens/profile/camera_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/profile_api_service.dart';
+
 
 class PhotoPickerBottomSheet extends StatefulWidget {
   const PhotoPickerBottomSheet({super.key});
@@ -19,19 +27,40 @@ class PhotoPickerBottomSheet extends StatefulWidget {
 class _PhotoPickerBottomSheetState
     extends State<PhotoPickerBottomSheet> {
 
+  final ImagePicker picker = ImagePicker();
+
   final TextEditingController nameController =
       TextEditingController();
 
   final TextEditingController bioController =
       TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
+  Uint8List? selectedImage;
 
-    nameController.text = "Guest User";
-    bioController.text = "Add your bio";
-  }
+ @override
+void initState() {
+  super.initState();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final profileProvider =
+        Provider.of<ProfileProvider>(
+          context,
+          listen: false,
+        );
+
+    if (profileProvider.profile.name != "Guest User") {
+      nameController.text =
+          profileProvider.profile.name;
+    }
+
+    if (profileProvider.profile.bio != "Add your bio") {
+      bioController.text =
+          profileProvider.profile.bio;
+    }
+    selectedImage =
+    profileProvider.profile.imageBytes;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +171,7 @@ final localizations =
   controller: nameController,
   decoration: InputDecoration(
     labelText: localizations.text('name'),
+    hintText: "Enter your name",
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
     ),
@@ -156,6 +186,7 @@ TextField(
   maxLength: 60,
   decoration: InputDecoration(
     labelText: localizations.text('about'),
+    hintText: "Tell us about yourself",
     contentPadding: const EdgeInsets.symmetric(
       horizontal: 16,
       vertical: 14,
@@ -169,117 +200,173 @@ TextField(
 const SizedBox(height: 24),
 
                     /// CAMERA
-                    _optionTile(
-                      icon:
-                          Icons.camera_alt_outlined,
+GestureDetector(
+  onTap: () async {
 
-                      title: localizations.text('takePhoto'),
+    final imageBytes = await Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => const CameraScreen(),
+  ),
+);
 
-                      iconBg:
-                          const Color(0xFFE8F7EA),
+if (imageBytes != null) {
 
-                      iconColor:
-                          const Color(0xFF0B5D1E),
-                    ),
+  setState(() {
+    selectedImage = imageBytes;
+  });
+
+  
+}
+  },
+
+  child: _optionTile(
+    icon: Icons.camera_alt_outlined,
+    title: localizations.text('takePhoto'),
+    iconBg: const Color(0xFFE8F7EA),
+    iconColor: const Color(0xFF0B5D1E),
+  ),
+),
 
                     const SizedBox(height: 14),
 
                     /// GALLERY
-                    _optionTile(
-                      icon: Icons.image_outlined,
+                    GestureDetector(
+  onTap: () async {
 
-                      title:
-                          localizations.text('chooseGallery'),
+    await pickImage();
 
-                      iconBg:
-                          const Color(0xFFEAF2FF),
+  },
 
-                      iconColor:
-                          const Color(0xFF1565C0),
-                    ),
+  child: _optionTile(
+  icon: Icons.image_outlined,
+  title: selectedImage == null
+      ? localizations.text('chooseGallery')
+      : "Photo Selected ✓",
+  iconBg: const Color(0xFFEAF2FF),
+  iconColor: const Color(0xFF1565C0),
+),
+),
 
                     const SizedBox(height: 14),
 
 
-                    /// REMOVE PHOTO
-                    Container(
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
+/// REMOVE PHOTO
+GestureDetector(
+  onTap: () async {
 
-                      decoration: BoxDecoration(
-                        color:
-                            const Color(0xFFFFF4F4),
+    final confirm =
+        await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Remove Photo"),
+          content: const Text(
+            "Delete profile photo?",
+          ),
+          actions: [
 
-                        borderRadius:
-                            BorderRadius.circular(24),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  false,
+                );
+              },
+              child: const Text("Cancel"),
+            ),
 
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black
-                                .withOpacity(0.03),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  true,
+                );
+              },
+              child: const Text("Remove"),
+            ),
+          ],
+        );
+      },
+    );
 
-                            blurRadius: 12,
+  if (confirm == true) {
 
-                            offset:
-                                const Offset(0, 4),
-                          ),
-                        ],
-                      ),
+  setState(() {
+    selectedImage = null;
+  });
 
-                      child: Row(
-                        children: [
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text("Photo Removed"),
+    ),
+  );
+}
+  },
 
-                          Container(
-                            width: 50,
-                            height: 50,
+  child: Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 14,
+    ),
 
-                            decoration:
-                                const BoxDecoration(
-                              color:
-                                  Color(0xFFFFE2E2),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFF4F4),
+      borderRadius:
+          BorderRadius.circular(24),
 
-                              shape: BoxShape.circle,
-                            ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.03),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
 
-                            child: const Icon(
-                              Icons.delete_outline,
+    child: Row(
+      children: [
 
-                              color: Colors.red,
-                              size: 28,
-                            ),
-                          ),
+        Container(
+          width: 50,
+          height: 50,
+          decoration: const BoxDecoration(
+            color: Color(0xFFFFE2E2),
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(
+            Icons.delete_outline,
+            color: Colors.red,
+            size: 28,
+          ),
+        ),
 
-                          const SizedBox(width: 16),
+        const SizedBox(width: 16),
 
-                          Expanded(
-                            child: Text(
-                              localizations.text('removeCurrentPhoto'),
+        Expanded(
+          child: Text(
+            localizations.text(
+              'removeCurrentPhoto',
+            ),
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.red,
+            ),
+          ),
+        ),
 
-                              style:
-                                  GoogleFonts.poppins(
-                                fontSize: 14,
+        const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.redAccent,
+        ),
+      ],
+    ),
+  ),
+),
 
-                                fontWeight:
-                                    FontWeight.w600,
-
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: Colors.redAccent,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
+const SizedBox(height: 20),
 
 Row(
   children: [
@@ -316,7 +403,32 @@ Row(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        onPressed: () {
+        onPressed: () async {
+
+  final prefs =
+      await SharedPreferences.getInstance();
+
+  final mobile =
+      prefs.getString("mobile");
+
+  if (mobile == null) {
+    return;
+  }
+
+  String imageString = "";
+
+if (selectedImage != null) {
+  imageString =
+      base64Encode(selectedImage!);
+}
+
+await ProfileApiService.updateProfile(
+  mobile: mobile,
+  name: nameController.text.trim(),
+  bio: bioController.text.trim(),
+  profileImage: imageString,
+);
+
 
   final profileProvider =
       Provider.of<ProfileProvider>(
@@ -324,12 +436,40 @@ Row(
         listen: false,
       );
 
-  profileProvider.updateProfile(
+await profileProvider.updateProfile(
   name: nameController.text.trim(),
   bio: bioController.text.trim(),
 );
 
-  Navigator.pop(context);
+if (selectedImage != null) {
+  await profileProvider.updatePhoto(
+    selectedImage!,
+  );
+}
+
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    backgroundColor: const Color(0xFF0A5B1D),
+    behavior: SnackBarBehavior.floating,
+    content: const Row(
+      children: [
+        Icon(
+          Icons.check_circle,
+          color: Colors.white,
+        ),
+        SizedBox(width: 10),
+        Text(
+          "Profile Updated Successfully",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ],
+    ),
+  ),
+);
+
+Navigator.pop(context);
 },
         child: Text(
           localizations.text('save'),
@@ -429,6 +569,31 @@ Row(
       ),
     );
   }
+
+Future<void> pickImage() async {
+
+  print("PICK IMAGE CLICKED");
+
+  final XFile? image = await picker.pickImage(
+    source: ImageSource.gallery,
+  );
+
+  if (image == null) {
+    print("NO IMAGE SELECTED");
+    return;
+  }
+
+  print("IMAGE SELECTED");
+
+  final bytes = await image.readAsBytes();
+
+  setState(() {
+    selectedImage = bytes;
+  });
+
+  
+}
+
   @override
 void dispose() {
   nameController.dispose();

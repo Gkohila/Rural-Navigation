@@ -274,49 +274,38 @@ final isTamil =
             SizedBox(
               width: double.infinity,
 
-              child: ElevatedButton.icon(
+            child: ElevatedButton.icon(
 
-                icon: const Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                ),
+  icon: const Icon(
+    Icons.settings,
+    color: Colors.white,
+  ),
 
-                label: Text(
-                  localizations.text(
-  'openDeviceSettings',
+  label: Text(
+    localizations.text('openDeviceSettings'),
+    style: GoogleFonts.poppins(
+      fontWeight: FontWeight.w600,
+      fontSize: 15,
+    ),
+  ),
+
+  style: ElevatedButton.styleFrom(
+    backgroundColor: const Color(0xFF0B5D1E),
+    foregroundColor: Colors.white,
+    minimumSize: const Size(
+      double.infinity,
+      56,
+    ),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(18),
+    ),
+  ),
+
+  onPressed: () async {
+    await openAppSettings();
+  },
 ),
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(0xFF0B5D1E),
-
-                  foregroundColor: Colors.white,
-
-                  minimumSize:
-                      const Size(double.infinity, 56),
-
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(18),
-                  ),
-                ),
-
-                onPressed: () async {
-
-                  await openAppSettings();
-
-                  WidgetsBinding.instance
-    .addPostFrameCallback((_) {
-  checkPermission(context);
-});
-                },
-              ),
-            ),
+   ),             
           ],
         ),
       ),

@@ -387,6 +387,33 @@ class AppStrings {
 'medium': 'Medium',
 'high': 'High',
 
+'welcomeHome': 'Welcome Home',
+
+'welcomeSubtitle':
+    'Connecting you to the heart of Tenkasi.',
+
+'mobileHint':
+    'Enter 10 digit number',
+
+'otpInfo':
+    'We will send a 4-digit OTP for verification.',
+
+'or': 'OR',
+
+'footerLine1':
+    '©2024 Tenkasi District Administration.',
+
+'footerLine2':
+    'Designed for the citizens of Western Ghats.',
+
+    'enterOtpMessage': 'Enter the 4-digit code sent to',
+
+'otpExpiresIn': 'OTP expires in',
+
+'invalidOtp': 'Invalid OTP',
+
+'otpSentAgain': 'OTP Sent Again',
+
     },
 
     'ta': {
@@ -831,6 +858,33 @@ class AppStrings {
 'low': 'குறைவு',
 'medium': 'நடுத்தரம்',
 'high': 'அதிகம்',
+
+'welcomeHome': 'வரவேற்கிறோம்',
+
+'welcomeSubtitle':
+    'தென்காசியின் இதயத்துடன் உங்களை இணைக்கிறது.',
+
+'mobileHint':
+    '10 இலக்க எண்ணை உள்ளிடவும்',
+
+'otpInfo':
+    'சரிபார்ப்புக்காக 4 இலக்க OTP அனுப்பப்படும்.',
+
+'or': 'அல்லது',
+
+'footerLine1':
+    '©2024 தென்காசி மாவட்ட நிர்வாகம்.',
+
+'footerLine2':
+    'மேற்கு தொடர்ச்சி மலை மக்களுக்காக வடிவமைக்கப்பட்டது.',
+
+    'enterOtpMessage': 'அனுப்பப்பட்ட 4 இலக்க OTP ஐ உள்ளிடவும்',
+
+'otpExpiresIn': 'OTP காலாவதியாகும் நேரம்',
+
+'invalidOtp': 'தவறான OTP',
+
+'otpSentAgain': 'OTP மீண்டும் அனுப்பப்பட்டது',
     },
   };
 }

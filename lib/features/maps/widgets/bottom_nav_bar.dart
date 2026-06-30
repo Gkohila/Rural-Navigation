@@ -3,6 +3,7 @@ import 'package:smartnav/theme/smart_nav_theme.dart';
 import '../../../screens/home/home_screen.dart';
 import '../../../screens/profile/profile_screen.dart';
 import 'package:smartnav/screens/notification/notification_screen.dart';
+import 'package:smartnav/services/alert_service.dart';
 
 /// Fixed bottom navigation matching the HTML nav bar.
 class SmartNavBottomBar extends StatelessWidget {
@@ -102,7 +103,8 @@ class _NavItem {
   final bool filled;
 }
 
-class _BottomNavButton extends StatelessWidget {
+class _BottomNavButton extends StatefulWidget {
+
   const _BottomNavButton({
     required this.item,
     required this.isSelected,
@@ -113,31 +115,68 @@ class _BottomNavButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback? onTap;
 
+  @override
+  State<_BottomNavButton> createState() =>
+      _BottomNavButtonState();
+}
+
+class _BottomNavButtonState
+    extends State<_BottomNavButton> {
+
+  final AlertService alertService =
+      AlertService();
+
+  int unreadCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUnreadCount();
+  }
+
+  Future<void> loadUnreadCount() async {
+
+    unreadCount =
+        await alertService.getUnreadCount(
+      "147C",
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   Widget buildNavIcon(Color color) {
-    if (item.label == 'Alerts') {
+    if (widget.item.label == 'Alerts') {
       return Badge(
-        label: const Text('2'),
-        child: Icon(
-          item.icon,
-          color: color,
-          size: 22,
-        ),
+
+      isLabelVisible: unreadCount > 0,
+
+      label: Text(
+        unreadCount.toString(),
+      ),
+
+      child: Icon(
+        widget.item.icon,
+        color: color,
+        size: 22,
+      ),
       );
     }
 
     return Icon(
-      item.icon,
+      widget.item.icon,
       color: color,
       size: 22,
-      fill: item.filled ? 1.0 : 0.0,
+      fill: widget.item.filled ? 1.0 : 0.0,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isSelected) {
-      return GestureDetector(
-        onTap: onTap,
+if (widget.isSelected) {
+        return GestureDetector(
+          onTap: widget.onTap, 
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
@@ -158,7 +197,7 @@ class _BottomNavButton extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                item.label,
+                widget.item.label,
                 style: SmartNavTextStyles.labelSm.copyWith(
                   fontWeight: FontWeight.w700,
                   color: SmartNavColors.onPrimaryContainer,
@@ -172,12 +211,11 @@ class _BottomNavButton extends StatelessWidget {
     }
 
     return GestureDetector(
-      onTap: onTap,
-      child: Padding(
+        onTap: widget.onTap,        child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 12,
           vertical: 6,
-        ),
+        ), 
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +225,7 @@ class _BottomNavButton extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              item.label,
+              widget.item.label,
               style: SmartNavTextStyles.labelSm.copyWith(
                 color: SmartNavColors.onSurfaceVariant,
                 fontSize: 10,

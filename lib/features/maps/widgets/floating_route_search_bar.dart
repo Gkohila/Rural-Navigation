@@ -8,6 +8,16 @@ import '../../../services/geocoding_service.dart';
 
 class FloatingRouteSearchBar extends StatefulWidget {
   const FloatingRouteSearchBar({super.key});
+class FloatingRouteSearchBar extends StatelessWidget {
+
+  final String source;
+  final String destination;
+
+  const FloatingRouteSearchBar({
+    super.key,
+    required this.source,
+    required this.destination,
+  });
 
   @override
   State<FloatingRouteSearchBar> createState() =>
@@ -206,6 +216,14 @@ double? destinationLng;
       fontWeight: FontWeight.w500,
       color: Color(0xFF0B5D1E),
     ),
+                      child: Align(
+  alignment: Alignment.centerLeft,
+  child: TextField(
+    controller: TextEditingController(
+      text: source,
+    ),
+    decoration: const InputDecoration(
+      hintText: 'Your location',
 
     border: InputBorder.none,
 
@@ -332,6 +350,14 @@ print("HISTORY READ = $history");
 
   decoration: InputDecoration(
     hintText: 'Choose destination',
+                      child: Align(
+  alignment: Alignment.centerLeft,
+  child: TextField(
+    controller: TextEditingController(
+      text: destination,
+    ),
+    decoration: const InputDecoration(
+      hintText: 'Choose destination',
 
                             hintStyle:
                                 TextStyle(

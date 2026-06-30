@@ -6,10 +6,76 @@ import 'package:smartnav/widgets/home/bottom_navbar.dart';
 import 'package:smartnav/screens/profile/profile_screen.dart';
 
 import 'package:smartnav/features/maps/screens/route_search_screen.dart';
-
-
-class AlertsScreen extends StatelessWidget {
+import 'package:smartnav/models/alert_model.dart';
+import 'package:smartnav/services/alert_service.dart';
+class AlertsScreen extends StatefulWidget {
   const AlertsScreen({super.key});
+
+  @override
+  State<AlertsScreen> createState() =>
+      _AlertsScreenState();
+}
+
+class _AlertsScreenState
+    extends State<AlertsScreen> {
+
+  final AlertService alertService =
+      AlertService();
+
+  List<AlertModel> alerts = [];
+
+  int unreadCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    loadAlerts();
+  }
+
+  Future<void> loadAlerts() async {
+
+  final result = await alertService.getAlerts("TN72 N145");
+
+  print(result);
+
+  print("Length = ${result.length}");
+
+  setState(() {
+    alerts = result;
+  });
+
+  unreadCount =
+      await alertService.getUnreadCount("TN72 N145");
+
+  print("Unread = $unreadCount");
+}
+
+Future<void> deleteAllAlerts() async {
+  try {
+    await alertService.deleteAllAlerts("TN72 N145");
+
+    setState(() {
+      alerts.clear();
+      unreadCount = 0;
+    });
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("All alerts deleted successfully."),
+      ),
+    );
+  } catch (e) {
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Error: $e"),
+      ),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -62,390 +128,155 @@ class AlertsScreen extends StatelessWidget {
 ),
 
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(18),
+        
+  child: Column(
+    children: [
 
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      /// HEADER
+      Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
+        child: Row(
+          children: [
 
+            IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back_ios_new),
+            ),
+
+            const Expanded(
+              child: Center(
+                child: Text(
+                  "Alerts",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF0B5D1E),
+                  ),
+                ),
+              ),
+            ),
+
+            Stack(
               children: [
 
-                /// TOP BAR
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-
-                  children: [
-
-                    Row(
-                      children: [
-
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundImage:
-                              NetworkImage(
-                             "https://i.imgur.com/QCNbOAo.png",
-                          ),
-                        ),
-
-                        const SizedBox(width: 12),
-
-                        const Text(
-                          "Tenkasi SmartNav",
-
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF0B5D1E),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-
-                        const Text(
-                          "EN/தமிழ்",
-
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                        const SizedBox(width: 16),
-
-                        Stack(
-                          children: [
-
-                            const Icon(
-                              Icons.notifications_none,
-                              size: 30,
-                              color: Color(0xFF0B5D1E),
-                            ),
-
-                            Positioned(
-                              right: 0,
-
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.all(4),
-
-                                decoration:
-                                    const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-
-                                child: const Text(
-                                  "3",
-
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                const Icon(
+                  Icons.notifications_none,
+                  color: Color(0xFF0B5D1E),
+                  size: 30,
                 ),
 
-                const SizedBox(height: 28),
-
-                const Text(
-                  "Alerts & Notifications",
-
-                  style: TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                const Text(
-                  "Real-time updates on buses, routes, traffic & weather",
-
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 15,
-                  ),
-                ),
-
-                const SizedBox(height: 26),
-
-                /// LIVE MONITORING
-                Container(
-                  padding: const EdgeInsets.all(18),
-
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-
-                    borderRadius:
-                        BorderRadius.circular(22),
-                  ),
-
-                  child: Row(
-                    children: [
-
-                      Container(
-                        height: 54,
-                        width: 54,
-
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEAF7EA),
-                          shape: BoxShape.circle,
-                        ),
-
-                        child: const Icon(
-                          Icons.wifi,
-                          color: Color(0xFF0B5D1E),
+                if (unreadCount > 0)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        unreadCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
                         ),
                       ),
-
-                      const SizedBox(width: 14),
-
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
-                          children: [
-
-                            Text(
-                              "Live monitoring active",
-
-                              style: TextStyle(
-                                fontWeight:
-                                    FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-
-                            SizedBox(height: 4),
-
-                            Text(
-                              "We’ll notify you instantly about any changes",
-
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      Switch(
-                        value: true,
-                        onChanged: (value) {},
-                        activeColor:
-                            const Color(0xFF0B5D1E),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                /// CATEGORY BUTTONS
-                Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-
-                  children: [
-
-                    categoryChip(
-                      "All",
-                      "12",
-                      const Color(0xFF0B5D1E),
-                    ),
-
-                    categoryChip(
-                      "Bus",
-                      "4",
-                      Colors.deepPurple,
-                    ),
-
-                    categoryChip(
-                      "Traffic",
-                      "3",
-                      Colors.orange,
-                    ),
-
-                    categoryChip(
-                      "Weather",
-                      "2",
-                      Colors.blue,
-                    ),
-
-                    categoryChip(
-                      "Info",
-                      "3",
-                      Colors.green,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                /// SMART ALERT
-                Container(
-                  padding: const EdgeInsets.all(20),
-
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF8EA),
-
-                    borderRadius:
-                        BorderRadius.circular(24),
-
-                    border: Border.all(
-                      color: Colors.orange.shade100,
                     ),
                   ),
-
-                  child: Row(
-                    children: [
-
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
-                          children: [
-
-                            Row(
-                              children: [
-
-                                Text(
-                                  "Smart Auto Alerts",
-
-                                  style: TextStyle(
-                                    fontWeight:
-                                        FontWeight.bold,
-                                    fontSize: 18,
-                                  ),
-                                ),
-
-                                SizedBox(width: 8),
-
-                                Chip(
-                                  label: Text("AI"),
-                                ),
-                              ],
-                            ),
-
-                            SizedBox(height: 10),
-
-                            Text(
-                              "Alerts are generated automatically using live bus GPS, traffic and weather data.",
-
-                              style: TextStyle(
-                                color: Colors.black87,
-                                height: 1.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const Icon(
-                        Icons.memory,
-                        size: 48,
-                        color: Colors.green,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                const Text(
-                  "Today",
-
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 18),
-
-                /// ALERT CARD
-                GestureDetector(
-                  onTap: () {
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            const AlertDetailsScreen(),
-                      ),
-                    );
-                  },
-
-                  child: alertCard(
-                    color: Colors.deepPurple,
-                    title:
-                        "Bus Halted for Ticket Checking",
-
-                    subtitle:
-                        "Tenkasi → Courtallam bus is stopped near Shenkottai Check Post.",
-
-                    delay:
-                        "Expected delay: 10–15 mins",
-
-                    location:
-                        "Shenkottai Check Post",
-
-                    priority: "High",
-                  ),
-                ),
-
-                const SizedBox(height: 18),
-
-                alertCard(
-                  color: Colors.orange,
-                  title:
-                      "Heavy Traffic near Five Falls",
-
-                  subtitle:
-                      "Traffic is moving slower than usual.",
-
-                  delay:
-                      "Expect delays up to 15 mins.",
-
-                  location:
-                      "Five Falls, Courtallam",
-
-                  priority: "Medium",
-                ),
-
-                const SizedBox(height: 18),
-
-                alertCard(
-                  color: Colors.blue,
-                  title: "Rain expected at 6 PM",
-
-                  subtitle:
-                      "Moderate to heavy rain expected in Courtallam by 6:00 PM.",
-
-                  delay: "",
-
-                  location: "Courtallam",
-
-                  priority: "Low",
-                ),
               ],
+            ),
+
+            const SizedBox(width: 10),
+          ],
+        ),
+      ),
+
+      /// ALERT LIST / EMPTY STATE
+      Expanded(
+        child: alerts.isEmpty
+            ? buildEmptyState()
+            : ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                ),
+                itemCount: alerts.length,
+                itemBuilder: (context, index) {
+
+                  final alert = alerts[index];
+
+                  Color color = Colors.green;
+
+                  if (alert.priority == "HIGH") {
+                    color = Colors.red;
+                  } else if (alert.priority == "MEDIUM") {
+                    color = Colors.orange;
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 18),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                const AlertDetailsScreen(),
+                          ),
+                        );
+                      },
+                      child: alertCard(
+                        color: color,
+                        title: alert.alertType,
+                        subtitle: alert.message,
+                        delay: alert.vehicleNumber,
+                        location: alert.createdTime,
+                        priority: alert.priority,
+                      ),
+                    ),
+                  );
+                },
+              ),
+      ),
+
+      /// DELETE BUTTON
+      Padding(
+        padding: const EdgeInsets.fromLTRB(
+          18,
+          10,
+          18,
+          18,
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: 58,
+          child: ElevatedButton.icon(
+            onPressed: deleteAllAlerts,
+            icon: const Icon(Icons.delete),
+            label: const Text(
+              "Delete All Alerts",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
             ),
           ),
         ),
       ),
+    ],
+  ),
+),
     );
   }
 
@@ -685,4 +516,47 @@ class AlertsScreen extends StatelessWidget {
       ),
     );
   }
+  Widget buildEmptyState() {
+
+  return Center(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 24,
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+
+          Icon(
+            Icons.notifications_none_outlined,
+            size: 110,
+            color: Colors.grey.shade400,
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            "No Alerts Found",
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0B5D1E),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Text(
+            "You don't have any alerts at the moment.",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 }

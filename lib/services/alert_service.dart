@@ -11,15 +11,23 @@ class AlertService {
   Future<List<AlertModel>> getAlerts(
       String vehicleNumber) async {
 
-    final response = await http.get(
-      Uri.parse(
-        "$baseUrl/$vehicleNumber",
-      ),
+    final uri = Uri.parse(
+      "$baseUrl/${Uri.encodeComponent(vehicleNumber)}",
     );
+
+    print("REQUEST URL = $uri");
+
+    final response = await http.get(uri);
+
+    print("STATUS = ${response.statusCode}");
+    print("BODY = ${response.body}");
 
     if (response.statusCode == 200) {
 
-      List data = jsonDecode(response.body);
+      final List<dynamic> data =
+          jsonDecode(response.body);
+
+      print("TOTAL ALERTS = ${data.length}");
 
       return data
           .map(
@@ -34,17 +42,17 @@ class AlertService {
   Future<int> getUnreadCount(
       String vehicleNumber) async {
 
-    final response = await http.get(
-      Uri.parse(
-        "$baseUrl/$vehicleNumber/unread-count",
-      ),
+    final uri = Uri.parse(
+      "$baseUrl/${Uri.encodeComponent(vehicleNumber)}/unread-count",
     );
 
-    if (response.statusCode == 200) {
+    final response = await http.get(uri);
 
-      return int.parse(
-        response.body,
-      );
+    print("UNREAD STATUS = ${response.statusCode}");
+    print("UNREAD BODY = ${response.body}");
+
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
     }
 
     return 0;
@@ -54,9 +62,26 @@ class AlertService {
       int id) async {
 
     await http.put(
-      Uri.parse(
-        "$baseUrl/$id/read",
-      ),
+      Uri.parse("$baseUrl/$id/read"),
     );
   }
+
+ Future<void> deleteAllAlerts(String vehicleNumber) async {
+  final uri = Uri.parse(
+    "$baseUrl/${Uri.encodeComponent(vehicleNumber)}",
+  );
+
+  print("DELETE URL: $uri");
+
+  final response = await http.delete(uri);
+
+  print("DELETE STATUS: ${response.statusCode}");
+  print("DELETE BODY: ${response.body}");
+
+  if (response.statusCode != 200) {
+    throw Exception(
+      "Delete failed: ${response.statusCode} ${response.body}",
+    );
+  }
+}
 }
