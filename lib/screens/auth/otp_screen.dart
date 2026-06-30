@@ -192,16 +192,7 @@ Text(
                      print("OTP ENTERED = ${otpController.text}");
                      print("MOBILE = ${widget.mobile}");
 
-                       final response = await http.post(
-                          Uri.parse("http://127.0.0.1:8081/api/auth/verify-otp"),
-                          headers: {
-                             "Content-Type": "application/json",
-                          },
-                           body: jsonEncode({
-                           "mobile": widget.mobile,
-                           "otp": otpController.text,
-                          }),
-                         );
+                      
   final String baseUrl = kIsWeb
       ? "http://localhost:8081"
       : "http://10.0.2.2:8081";
@@ -231,13 +222,13 @@ if (data["message"] == "Login Success") {
       await SharedPreferences.getInstance();
 
   await prefs.setInt(
-    "user_id",
-    data["userId"],
-  );
+  "userId",
+  data["userId"],
+);
 
-  print(
-    "SAVED USER ID = ${prefs.getInt("user_id")}",
-  );
+print(
+  "SAVED USER ID = ${prefs.getInt("userId")}",
+);
 
   bool saved =
       await prefs.setBool("isLoggedIn", true);
@@ -259,14 +250,11 @@ if (data["message"] == "Login Success") {
     data["userId"],
   );
    print(
-    "SAVED USER ID = ${prefs.getInt("user_id")}",
-  );
+  "SAVED USER ID = ${prefs.getInt("userId")}",
+);
 }
 
-  await prefs.setInt(
-    "userId",
-    data["userId"],
-  );
+  
 
   final profileProvider =
       Provider.of<ProfileProvider>(

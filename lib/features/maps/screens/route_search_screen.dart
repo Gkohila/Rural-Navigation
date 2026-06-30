@@ -75,47 +75,27 @@ class _RouteSearchScreenState
   DirectionData? directionData;
   bool isLoadingRoute = false;
 
-  @override
-  void initState() {
-    super.initState();
-    loadBuses();
-    loadDirection();
-  }
-
-  String sourceLocation = "";
-String destinationLocation = "";
-
-  @override
+ @override
 void initState() {
   super.initState();
 
   if (widget.fromSavedRoute) {
+    sourceLocation = widget.initialSource ?? "";
+    destinationLocation = widget.initialDestination ?? "";
+  }
 
-  sourceLocation =
-      widget.initialSource ?? "";
-
-  destinationLocation =
-      widget.initialDestination ?? "";
-
-} else {
-
-  sourceLocation = "";
-  destinationLocation = "";
-
-}
-
-  selectedLeaveTime = DateFormat(
-    "hh:mm a",
-  ).format(
-    DateTime.now(),
-  );
+  selectedLeaveTime =
+      DateFormat("hh:mm a").format(DateTime.now());
 
   selectedModes = [
-  widget.initialTransportMode ?? "Bus",
-];
+    widget.initialTransportMode ?? "Bus",
+  ];
 
   loadBuses();
+  loadDirection();
 }
+
+ 
 
   Future<void> loadBuses() async {
 
