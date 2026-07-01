@@ -70,17 +70,17 @@ class _RouteSearchScreenState
   String selectedLeaveTime = "4:50 PM";
   bool isArriveSelected = false;
 
-  String sourceLocation = "Tenkasi";
-  String destinationLocation = "Tirunelveli";
+  // String sourceLocation = "Tenkasi";
+  // String destinationLocation = "Tirunelveli";
   DirectionData? directionData;
   bool isLoadingRoute = false;
 
-  @override
-  void initState() {
-    super.initState();
-    loadBuses();
-    loadDirection();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   loadBuses();
+  //   loadDirection();
+  // }
 
   String sourceLocation = "";
 String destinationLocation = "";
@@ -115,14 +115,20 @@ void initState() {
 ];
 
   loadBuses();
+  loadDirection();
 }
 
   Future<void> loadBuses() async {
 
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8081/api/buses'),
+      Uri.parse(
+  "http://127.0.0.1:8081/api/routes/search"
+  "?source=${Uri.encodeComponent(sourceLocation)}"
+  "&destination=${Uri.encodeComponent(destinationLocation)}",
+)
     );
-
+    print("SOURCE = $sourceLocation");
+    print("DESTINATION = $destinationLocation");
     print("STATUS CODE = ${response.statusCode}");
     print("BODY = ${response.body}");
 
@@ -166,11 +172,11 @@ void initState() {
     print(stackTrace);
   }
 
-  setState(() {
+  if (!mounted) return;
 
-    isLoadingRoute = false;
-
-  });
+setState(() {
+  isLoadingRoute = false;
+});
 
 }
 
@@ -454,12 +460,10 @@ if (_selectedTransportIndex == 3) {
 
 Positioned.fill(
           child: TripMapPreview(
-            vehicleNumber: "147",
+            vehicleNumber: "147C",
           ),
         ),
 
-/// SEARCH BAR
-            
             /// SEARCH BAR
             Positioned(
 
@@ -475,6 +479,22 @@ Positioned.fill(
               child: FloatingRouteSearchBar(
   source: sourceLocation,
   destination: destinationLocation,
+
+  onSearch: (source, destination) {
+
+    setState(() {
+
+      sourceLocation = source;
+
+      destinationLocation = destination;
+
+    });
+
+    loadDirection();
+
+    loadBuses();
+
+  },
 ),
             ),
 

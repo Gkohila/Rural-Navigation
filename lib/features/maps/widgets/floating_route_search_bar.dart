@@ -1,19 +1,20 @@
-import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class FloatingRouteSearchBar extends StatefulWidget {
-  const FloatingRouteSearchBar({super.key});
-class FloatingRouteSearchBar extends StatelessWidget {
-
   final String source;
   final String destination;
+  final Function(String source, String destination)? onSearch;
 
   const FloatingRouteSearchBar({
     super.key,
     required this.source,
     required this.destination,
+    this.onSearch,
   });
 
   @override
@@ -23,18 +24,165 @@ class FloatingRouteSearchBar extends StatelessWidget {
 
 class _FloatingRouteSearchBarState
     extends State<FloatingRouteSearchBar> {
-       final TextEditingController sourceController =
-      TextEditingController();
 
-  final TextEditingController destinationController =
-      TextEditingController();
-      
-     @override
+  late TextEditingController sourceController;
+
+  late TextEditingController destinationController;
+  late stt.SpeechToText speech;
+
+  bool isListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    speech = stt.SpeechToText();
+    sourceController = TextEditingController(
+      text: widget.source,
+    );
+
+    destinationController = TextEditingController(
+      text: widget.destination,
+    );
+  }
+
+  @override
   void dispose() {
     sourceController.dispose();
     destinationController.dispose();
     super.dispose();
   }
+
+  Future<void> saveSearchHistory() async {
+
+    final prefs =
+        await SharedPreferences.getInstance();
+
+    final userId =
+        prefs.getInt("user_id");
+
+    final now =
+        TimeOfDay.now();
+
+    final hour =
+        now.hourOfPeriod == 0
+            ? 12
+            : now.hourOfPeriod;
+
+    final period =
+        now.period == DayPeriod.am
+            ? "AM"
+            : "PM";
+
+    final time =
+        "$hour:${now.minute.toString().padLeft(2, '0')} $period";
+
+    final history =
+        prefs.getStringList(
+              "search_history",
+            ) ??
+            [];
+
+    history.insert(
+      0,
+      "${sourceController.text} -> ${destinationController.text}|$time",
+    );
+
+    await prefs.setStringList(
+      "search_history",
+      history,
+    );
+
+    await prefs.setString(
+      "last_search_time",
+      time,
+    );
+
+    if (userId != null) {
+
+      await http.post(
+
+        Uri.parse(
+          "http://localhost:8081/api/history",
+        ),
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: jsonEncode({
+
+          "userId": userId,
+
+          "source": sourceController.text,
+
+          "destination":
+              destinationController.text,
+
+          "transportType": "BUS",
+        }),
+      );
+    }
+
+    debugPrint(
+      "History Saved",
+    );
+  }
+
+  Future<void> startVoiceSearch() async {
+    print("MIC BUTTON PRESSED");
+
+  if (isListening) return;
+
+bool available = await speech.initialize();
+
+if (!available) return;
+
+  setState(() {
+    isListening = true;
+  });
+  
+
+  speech.listen(
+  onResult: (result) {
+
+    String text = result.recognizedWords
+        .toLowerCase()
+        .trim();
+
+    print("TEXT = '$text'");
+    print("FINAL = ${result.finalResult}");
+
+    if (!result.finalResult) {
+      return;
+    }
+
+    speech.stop();
+
+    setState(() {
+      isListening = false;
+    });
+
+    if (text.contains("to")) {
+        List<String> places = text.split(RegExp(r"\s+to\s+"));
+
+        if (places.length >= 2) {
+
+          sourceController.text = places[0].trim();
+
+          destinationController.text = places[1].trim();
+          print("SOURCE TEXT = ${sourceController.text}");
+          print("DEST TEXT = ${destinationController.text}");
+          widget.onSearch?.call(
+            sourceController.text,
+            destinationController.text,
+          );
+          print("CALLBACK SENT");
+          saveSearchHistory();
+        }
+      }
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +193,27 @@ class _FloatingRouteSearchBarState
 
       children: [
 
-        /// ================= MAIN SEARCH BOX =================
         Container(
 
-          /// 🔥 MORE GAP FOR FLOATING BACK BUTTON
           margin: const EdgeInsets.only(
             left: 58,
           ),
 
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 12,
-            top: 10,
-            bottom: 10,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
           ),
 
           decoration: BoxDecoration(
 
-            color:
-      Colors.white.withOpacity(0.88),
+            color: Colors.white.withOpacity(
+              0.9,
+            ),
 
             borderRadius:
-                BorderRadius.circular(22),
+                BorderRadius.circular(
+              22,
+            ),
 
             boxShadow: [
 
@@ -74,7 +221,7 @@ class _FloatingRouteSearchBarState
 
                 color:
                     Colors.black.withOpacity(
-                  0.06,
+                  .05,
                 ),
 
                 blurRadius: 18,
@@ -92,26 +239,29 @@ class _FloatingRouteSearchBarState
 
             children: [
 
-              /// ================= LEFT SIDE ICONS =================
+              /// LEFT ICONS
               Column(
 
                 children: [
 
-                  const SizedBox(height: 8),
+                  const SizedBox(
+                    height: 8,
+                  ),
 
-                  Icon(
+                  const Icon(
 
                     Icons.radio_button_checked,
 
-                    color:
-                        const Color(0xFF0B5D1E),
-
                     size: 15,
+
+                    color:
+                        Color(0xFF0B5D1E),
                   ),
 
                   Column(
 
                     children: List.generate(
+
                       5,
 
                       (_) => Container(
@@ -122,6 +272,7 @@ class _FloatingRouteSearchBarState
                         ),
 
                         width: 2,
+
                         height: 4,
 
                         decoration:
@@ -132,7 +283,7 @@ class _FloatingRouteSearchBarState
 
                           borderRadius:
                               BorderRadius.circular(
-                            10,
+                            20,
                           ),
                         ),
                       ),
@@ -146,27 +297,25 @@ class _FloatingRouteSearchBarState
                     color:
                         Colors.red.shade500,
 
-                    size: 21,
+                    size: 20,
                   ),
                 ],
               ),
 
               const SizedBox(width: 10),
 
-              /// ================= TEXT FIELDS =================
               Expanded(
 
                 child: Column(
 
                   children: [
+                                            /// SOURCE
 
-                    /// SOURCE
                     Container(
 
                       height: 44,
 
-                      padding:
-                          const EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                       ),
 
@@ -174,60 +323,52 @@ class _FloatingRouteSearchBarState
 
                         color: Colors.white,
 
-                        border:
-                            Border.all(
-                          color:
-                              Colors.grey.shade300,
+                        border: Border.all(
+                          color: Colors.grey.shade300,
                         ),
 
                         borderRadius:
-                            BorderRadius.circular(
-                          14,
-                        ),
+                            BorderRadius.circular(14),
                       ),
 
-                      child:  Align(
+                      child: Align(
 
-                        alignment:
-                            Alignment.centerLeft,
+                        alignment: Alignment.centerLeft,
 
                         child: TextField(
-  controller: sourceController,
 
-  decoration: InputDecoration(
-    hintText: 'Your location',
+                          controller: sourceController,
 
-    hintStyle: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      color: Color(0xFF0B5D1E),
-    ),
-                      child: Align(
-  alignment: Alignment.centerLeft,
-  child: TextField(
-    controller: TextEditingController(
-      text: source,
-    ),
-    decoration: const InputDecoration(
-      hintText: 'Your location',
+                          decoration: const InputDecoration(
 
-    border: InputBorder.none,
+                            hintText: "Your location",
 
-    isCollapsed: true,
-  ),
-),
+                            border: InputBorder.none,
+
+                            isCollapsed: true,
+
+                            hintStyle: TextStyle(
+
+                              fontSize: 16,
+
+                              fontWeight: FontWeight.w500,
+
+                              color: Color(0xFF0B5D1E),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
 
                     const SizedBox(height: 8),
 
                     /// DESTINATION
+
                     Container(
 
                       height: 44,
 
-                      padding:
-                          const EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                       ),
 
@@ -235,111 +376,44 @@ class _FloatingRouteSearchBarState
 
                         color: Colors.white,
 
-                        border:
-                            Border.all(
-                          color:
-                              Colors.grey.shade300,
+                        border: Border.all(
+                          color: Colors.grey.shade300,
                         ),
 
                         borderRadius:
-                            BorderRadius.circular(
-                          14,
-                        ),
+                            BorderRadius.circular(14),
                       ),
 
-                      child:  Align(
-
-                        alignment:
-                            Alignment.centerLeft,
-
-                       child: TextField(
-
-  controller: destinationController,
-
-  onSubmitted: (value) async {
-    print("SOURCE = ${sourceController.text}");
-    print("DESTINATION = ${destinationController.text}");
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt("user_id");
-
-print("USER ID = $userId");
-    final now = TimeOfDay.now();
-    final hour =
-    now.hourOfPeriod == 0
-        ? 12
-        : now.hourOfPeriod;
-
-final period =
-    now.period == DayPeriod.am
-        ? "AM"
-        : "PM";
-final time =
-"$hour:${now.minute.toString().padLeft(2, '0')} $period";
-
-final searches =
-    prefs.getStringList("search_history") ?? [];
-
-searches.insert(
-  0,
-  "${sourceController.text} -> ${destinationController.text}|$time",
-);
-
-await prefs.setStringList(
-  "search_history",
-  searches,
-);
-await http.post(
-  Uri.parse("http://localhost:8081/api/history"),
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: jsonEncode({
-    "userId": userId,
-    "source": sourceController.text,
-    "destination": destinationController.text,
-    "transportType": "BUS",
-  }),
-);
-
-print("HISTORY SAVED TO DATABASE");
-await prefs.setString(
-  "last_search_time",
-  time,
-);
-
-print("HISTORY SAVED");
-String? history = prefs.getString("last_search");
-print("HISTORY READ = $history");
-  },
-
-  decoration: InputDecoration(
-    hintText: 'Choose destination',
                       child: Align(
-  alignment: Alignment.centerLeft,
-  child: TextField(
-    controller: TextEditingController(
-      text: destination,
-    ),
-    decoration: const InputDecoration(
-      hintText: 'Choose destination',
 
-                            hintStyle:
-                                TextStyle(
+                        alignment: Alignment.centerLeft,
+
+                        child: TextField(
+
+                          controller: destinationController,
+
+                          onSubmitted: (_) async {
+
+                            await saveSearchHistory();
+
+                          },
+
+                          decoration: const InputDecoration(
+
+                            hintText: "Choose destination",
+
+                            border: InputBorder.none,
+
+                            isCollapsed: true,
+
+                            hintStyle: TextStyle(
 
                               fontSize: 16,
 
-                              fontWeight:
-                                  FontWeight.w500,
+                              fontWeight: FontWeight.w500,
 
-                              color:
-                                  Colors.black54,
+                              color: Colors.black54,
                             ),
-
-                            border:
-                                InputBorder.none,
-
-                            isCollapsed:
-                                true,
                           ),
                         ),
                       ),
@@ -350,91 +424,92 @@ print("HISTORY READ = $history");
 
               const SizedBox(width: 10),
 
-              /// ================= RIGHT SIDE ICONS =================
+              /// RIGHT SIDE
+
               Column(
 
                 children: [
 
                   const SizedBox(height: 4),
 
-                  /// SWAP ICON
-                  Container(
+                  GestureDetector(
+  onTap: () {
 
-                    width: 40,
-                    height: 40,
+    final temp = sourceController.text;
 
-                    decoration:
-                        BoxDecoration(
+    sourceController.text =
+        destinationController.text;
 
-                      color:
-                          Colors.grey.shade100,
+    destinationController.text = temp;
 
-                      shape:
-                          BoxShape.circle,
-                    ),
+    setState(() {});
 
-                    child: const Icon(
+  },
 
-                      Icons.swap_vert_rounded,
+  child: Container(
+    width: 40,
+    height: 40,
 
-                      size: 22,
+    decoration: BoxDecoration(
+      color: Colors.grey.shade100,
+      shape: BoxShape.circle,
+    ),
 
-                      color:
-                          Colors.black87,
-                    ),
-                  ),
+    child: const Icon(
+      Icons.swap_vert_rounded,
+      color: Colors.black87,
+      size: 22,
+    ),
+  ),
+),
 
                   const SizedBox(height: 12),
 
-                  /// MIC ICON
-                  Container(
+                  GestureDetector(
+  onTap: startVoiceSearch,
 
-                    width: 40,
-                    height: 40,
+  child: Container(
+    width: 40,
+    height: 40,
 
-                    decoration:
-                        BoxDecoration(
+    decoration: BoxDecoration(
+      color: Colors.grey.shade100,
+      shape: BoxShape.circle,
+    ),
 
-                      color:
-                          Colors.grey.shade100,
-
-                      shape:
-                          BoxShape.circle,
-                    ),
-
-                    child: const Icon(
-
-                      Icons.mic_none_rounded,
-
-                      size: 22,
-
-                      color:
-                          Colors.black87,
-                    ),
-                  ),
+    child: const Icon(
+      Icons.mic_none_rounded,
+      color: Colors.black87,
+      size: 22,
+    ),
+  ),
+),
                 ],
               ),
             ],
           ),
         ),
 
-        /// ================= FLOATING BACK BUTTON =================
+        /// BACK BUTTON
+
         Positioned(
 
           left: 0,
+
           top: 34,
 
           child: GestureDetector(
 
             onTap: () {
 
-              Navigator.of(context)
-                  .maybePop();
+              Navigator.of(context).maybePop();
+
             },
 
             child: Container(
 
               width: 42,
+
               height: 42,
 
               decoration: BoxDecoration(
@@ -442,23 +517,17 @@ print("HISTORY READ = $history");
                 color: Colors.white,
 
                 borderRadius:
-                    BorderRadius.circular(
-                  14,
-                ),
+                    BorderRadius.circular(14),
 
                 boxShadow: [
 
                   BoxShadow(
 
-                    color:
-                        Colors.black.withOpacity(
-                      0.06,
-                    ),
+                    color: Colors.black.withOpacity(.06),
 
                     blurRadius: 10,
 
-                    offset:
-                        const Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),

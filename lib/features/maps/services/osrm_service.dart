@@ -1,5 +1,4 @@
 import 'dart:convert';
-<<<<<<< HEAD
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -7,135 +6,82 @@ import 'package:http/http.dart' as http;
 import 'package:smartnav/features/maps/models/direction_data.dart';
 
 class OsrmService {
-
   Future<DirectionData> getRoute(
-
-=======
-import 'package:http/http.dart' as http;
-
-class OsrmService {
-  Future<Map<String, dynamic>> getRoute(
->>>>>>> origin/localization-feature
     double startLat,
     double startLng,
     double endLat,
     double endLng,
   ) async {
-    final url =
-        'https://router.project-osrm.org/route/v1/driving/'
-        '$startLng,$startLat;$endLng,$endLat'
-        '?overview=full&geometries=geojson';
-
     final url = Uri.parse(
-
       "https://router.project-osrm.org/route/v1/driving/"
       "$startLng,$startLat;"
       "$endLng,$endLat"
       "?overview=full"
       "&steps=true"
       "&geometries=geojson",
-
     );
 
     final response = await http.get(url);
 
     if (response.statusCode != 200) {
-
       throw Exception("Unable to fetch route");
-
     }
 
     final data = jsonDecode(response.body);
-    print("OSRM RESPONSE:");
-    print(jsonEncode(data));
 
     final route = data["routes"][0];
 
     final distanceKm =
-        (route["distance"] / 1000)
-            .toStringAsFixed(1);
+        ((route["distance"] as num) / 1000).toStringAsFixed(1);
 
     final durationMin =
-        (route["duration"] / 60)
-            .round();
+        ((route["duration"] as num) / 60).round();
 
-    final polyline =
-        route["geometry"]["coordinates"];
+    final polyline = route["geometry"]["coordinates"];
 
     List<Map<String, dynamic>> steps = [];
 
     for (var step in route["legs"][0]["steps"]) {
+      IconData icon = Icons.north;
 
-  IconData icon = Icons.north;
+      final maneuver = step["maneuver"]["type"] ?? "";
+      final modifier = step["maneuver"]["modifier"] ?? "";
 
-  final maneuver = step["maneuver"]["type"] ?? "";
-  final modifier = step["maneuver"]["modifier"] ?? "";
+      if (maneuver == "turn") {
+        if (modifier == "right") {
+          icon = Icons.turn_right;
+        } else if (modifier == "left") {
+          icon = Icons.turn_left;
+        }
+      } else if (maneuver == "depart") {
+        icon = Icons.navigation;
+      } else if (maneuver == "arrive") {
+        icon = Icons.location_on;
+      }
 
-  if (maneuver == "turn") {
-    if (modifier == "right") {
-      icon = Icons.turn_right;
-    } else if (modifier == "left") {
-      icon = Icons.turn_left;
+      final distance =
+          (step["distance"] as num).toDouble();
+
+      steps.add({
+        "icon": icon,
+        "title": step["name"] == ""
+            ? maneuver.toString().toUpperCase()
+            : "${maneuver.toString().toUpperCase()} on ${step["name"]}",
+        "distance": "${distance.toStringAsFixed(0)} m",
+      });
     }
-  } else if (maneuver == "depart") {
-    icon = Icons.navigation;
-  } else if (maneuver == "arrive") {
-    icon = Icons.location_on;
-  }
-
-  final distance =
-      (step["distance"] as num).toDouble();
-
-  steps.add({
-
-    "icon": icon,
-
-    "title": step["name"] == ""
-        ? maneuver.toString().toUpperCase()
-        : "${maneuver.toString().toUpperCase()} on ${step["name"]}",
-
-    "distance":
-        "${distance.toStringAsFixed(0)} m",
-
-  });
-
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    }
-
-    throw Exception('Failed to fetch route');
-  }
-}
 
     final arrivalTime = DateTime.now().add(
-
       Duration(minutes: durationMin),
-
     );
-    print("Duration: $durationMin min");
-    print("Distance: $distanceKm km");
-    print("Steps:");
-    print(steps);
 
     return DirectionData(
-
-      duration:
-          "$durationMin min",
-
-      distance:
-          "$distanceKm km",
-
+      duration: "$durationMin min",
+      distance: "$distanceKm km",
       arrivalTime:
           "${arrivalTime.hour.toString().padLeft(2, '0')}:${arrivalTime.minute.toString().padLeft(2, '0')}",
-
       directions: steps,
-
       polyline: polyline,
-
     );
-
   }
-
 }

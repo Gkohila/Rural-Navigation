@@ -6,38 +6,81 @@ import 'theme/app_theme.dart';
 import 'screens/auth/welcome_screen.dart';
 import 'providers/profile_provider.dart';
 import 'localization/language_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'screens/home/home_screen.dart';
 
 
 Future<void> main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
 
-  final languageProvider = LanguageProvider();
+  SharedPreferences prefs =
+      await SharedPreferences.getInstance();
+
+  bool isLoggedIn =
+      prefs.getBool("isLoggedIn") ?? false;
+
+  final languageProvider =
+      LanguageProvider();
+
   await languageProvider.loadLanguage();
 
   SystemChrome.setSystemUIOverlayStyle(
+
     const SystemUiOverlayStyle(
+
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
+
+      statusBarIconBrightness:
+          Brightness.dark,
+
     ),
+
   );
 
   runApp(
+
     MultiProvider(
+
       providers: [
+
         ChangeNotifierProvider.value(
+
           value: languageProvider,
+
         ),
+
         ChangeNotifierProvider(
+
           create: (_) => ProfileProvider(),
+
         ),
+
       ],
-      child: const SmartNavApp(),
+
+      child: SmartNavApp(
+
+        isLoggedIn: isLoggedIn,
+
+      ),
+
     ),
+
   );
+
 }
 
 class SmartNavApp extends StatelessWidget {
-  const SmartNavApp({super.key});
+
+  final bool isLoggedIn;
+
+  const SmartNavApp({
+
+    super.key,
+
+    required this.isLoggedIn,
+
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +89,9 @@ class SmartNavApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
-          home: const WelcomeScreen(),
+          home: isLoggedIn
+    ? const HomeScreen()
+    : const WelcomeScreen(),
         );
       },
     );

@@ -26,7 +26,7 @@ class _TripMapPreviewState extends State<TripMapPreview> {
   @override
 void initState() {
   super.initState();
-
+  print("Vehicle = ${widget.vehicleNumber}");
   loadBusLocation();
   timer = Timer.periodic(
     const Duration(seconds: 5),
@@ -39,40 +39,53 @@ void initState() {
 Future<void> loadBusLocation() async {
 
   final response = await http.get(
-
     Uri.parse(
       "http://localhost:8081/api/locations/latest/${widget.vehicleNumber}",
+    ),
+  );
+
+  print("LOCATION STATUS = ${response.statusCode}");
+  print("LOCATION BODY = ${response.body}");
+
+  if (response.statusCode != 200) {
+    return;
+  }
+
+  if (response.body.trim().isEmpty) {
+    print("No location data");
+    return;
+  }
+
+  final data = jsonDecode(response.body);
+
+  if (data == null) {
+    return;
+  }
+
+  if (!mounted) return;
+
+  setState(() {
+
+    busLocation = LatLng(
+      (data["latitude"] as num).toDouble(),
+      (data["longitude"] as num).toDouble(),
+    );
+
+  });
+
+  mapController?.animateCamera(
+
+    CameraUpdate.newCameraPosition(
+
+      CameraPosition(
+        target: busLocation,
+        zoom: 16,
+      ),
+
     ),
 
   );
 
-  print(response.body);
-
-  if (response.statusCode == 200) {
-    if (!mounted) return;
-
-    final data = jsonDecode(response.body);
-
-    setState(() {
-
-      busLocation = LatLng(
-        (data['latitude'] as num).toDouble(),
-        (data['longitude'] as num).toDouble(),
-      );
-    });
-    print(busLocation.latitude);
-    print(busLocation.longitude);
-    print(busLocation);
-
-    mapController?.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: busLocation,
-          zoom: 16,
-        ),
-      ),
-    );
-  }
 }
 
   @override
