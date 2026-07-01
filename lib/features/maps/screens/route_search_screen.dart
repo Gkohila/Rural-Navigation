@@ -385,9 +385,11 @@ class RouteSearchScreen extends StatefulWidget {
                 left: 14,
                 right: 14,
 
-              child:
-                  const FloatingRouteSearchBar(),
-            ),
+                child: FloatingRouteSearchBar(
+                  source: sourceLocation,
+                  destination: destinationLocation,
+                ),
+              ),
 
               /// DRAGGABLE SHEET
               DraggableScrollableSheet(

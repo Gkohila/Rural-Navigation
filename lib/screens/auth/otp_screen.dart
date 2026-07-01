@@ -192,16 +192,7 @@ Text(
                      print("OTP ENTERED = ${otpController.text}");
                      print("MOBILE = ${widget.mobile}");
 
-                       final response = await http.post(
-                          Uri.parse("http://127.0.0.1:8081/api/auth/verify-otp"),
-                          headers: {
-                             "Content-Type": "application/json",
-                          },
-                           body: jsonEncode({
-                           "mobile": widget.mobile,
-                           "otp": otpController.text,
-                          }),
-                         );
+                     
   final String baseUrl = kIsWeb
       ? "http://localhost:8081"
       : "http://10.0.2.2:8081";
@@ -355,6 +346,7 @@ onPressed: () async {
       "mobile": widget.mobile,
     }),
   );
+
 
   print("RESEND STATUS = ${response.statusCode}");
   print("RESEND BODY = ${response.body}");

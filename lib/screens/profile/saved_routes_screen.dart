@@ -590,108 +590,93 @@ class _SavedRoutesScreenState
                     borderRadius:
                         BorderRadius
                             .circular(
-                                14),
+                                  14),
 
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) =>
-                                  RouteSearchScreen(
-                            initialSource:
-                                route
-                                    .source,
-                            initialDestination:
-                                route
-                                    .destination,
-                            initialTransportMode:
-                                route
-                                    .transportMode,
-                            fromSavedRoute:
-                                true,
-                          ),
+                      onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const RouteSearchScreen(),
+    ),
+  );
+},
+                      child: Padding(
+                        padding:
+                            const EdgeInsets
+                                .symmetric(
+                          horizontal:
+                              14,
+                          vertical:
+                              12,
                         ),
-                      );
-                    },
 
-                    child: Padding(
-                      padding:
-                          const EdgeInsets
-                              .symmetric(
-                        horizontal:
-                            14,
-                        vertical:
-                            12,
-                      ),
+                        child: Row(
+                          children: [
 
-                      child: Row(
-                        children: [
-
-                          Container(
-                            width: 40,
-                            height:
-                                40,
-                            decoration:
-                                BoxDecoration(
-                              color:
-                                  SmartNavColors
-                                      .primary
-                                      .withOpacity(
-                                          .08),
-                              borderRadius:
-                                  BorderRadius.circular(
-                                      10),
-                            ),
-                            child:
-                                Icon(
-                              getTransportIcon(
-                                  route.transportMode),
-                              color:
-                                  SmartNavColors.primary,
-                            ),
-                          ),
-
-                          const SizedBox(
-                              width:
-                                  12),
-
-                          Expanded(
-                            child:
-                                Text(
-                              "${route.source} → ${route.destination}",
-                              style:
-                                  SmartNavTextStyles.bodyLg.copyWith(
-                                fontWeight:
-                                    FontWeight.w700,
+                            Container(
+                              width: 40,
+                              height:
+                                  40,
+                              decoration:
+                                  BoxDecoration(
+                                color:
+                                    SmartNavColors
+                                        .primary
+                                        .withOpacity(
+                                            .08),
+                                borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                              ),
+                              child:
+                                  Icon(
+                                getTransportIcon(
+                                    route.transportMode),
+                                color:
+                                    SmartNavColors.primary,
                               ),
                             ),
-                          ),
 
-                          Padding(
-  padding: const EdgeInsets.only(right: 4),
-  child: IconButton(
-    onPressed: () {
-      deleteRoute(route.id!);
-    },
-    icon: Icon(
-      Icons.delete_outline_rounded,
-      color: Colors.red.shade600,
-      size: 22,
+                            const SizedBox(
+                                width:
+                                    12),
+
+                            Expanded(
+                              child:
+                                  Text(
+                                "${route.source} → ${route.destination}",
+                                style:
+                                    SmartNavTextStyles.bodyLg.copyWith(
+                                  fontWeight:
+                                      FontWeight.w700,
+                                ),
+                              ),
+                            ),
+
+                            Padding(
+    padding: const EdgeInsets.only(right: 4),
+    child: IconButton(
+      onPressed: () {
+        deleteRoute(route.id!);
+      },
+      icon: Icon(
+        Icons.delete_outline_rounded,
+        color: Colors.red.shade600,
+        size: 22,
+      ),
     ),
   ),
-),
 
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
+                );
+              },
+            );
+          },
+        ),
+      );
+    }
   }
-}
