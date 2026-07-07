@@ -29,6 +29,10 @@ class OsrmService {
 
     final data = jsonDecode(response.body);
 
+    if (data["code"] != "Ok" || data["routes"].isEmpty) {
+      throw Exception("No route found");
+    }
+
     final route = data["routes"][0];
 
     final distanceKm =

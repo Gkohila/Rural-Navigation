@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:smartnav/config/api_config.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -39,9 +40,7 @@ void initState() {
 Future<void> loadBusLocation() async {
 
   final response = await http.get(
-    Uri.parse(
-      "http://localhost:8081/api/locations/latest/${widget.vehicleNumber}",
-    ),
+    Uri.parse("${ApiConfig.baseUrl}/api/locations/latest/${widget.vehicleNumber}",)
   );
 
   print("LOCATION STATUS = ${response.statusCode}");
@@ -73,18 +72,16 @@ Future<void> loadBusLocation() async {
 
   });
 
-  mapController?.animateCamera(
-
+if (mapController != null) {
+  mapController!.animateCamera(
     CameraUpdate.newCameraPosition(
-
       CameraPosition(
         target: busLocation,
         zoom: 16,
       ),
-
     ),
-
   );
+}
 
 }
 
@@ -110,18 +107,38 @@ Future<void> loadBusLocation() async {
         zoomControlsEnabled: false,
         mapToolbarEnabled: false,
 
-        markers: {
+markers: {
 
   Marker(
-    markerId: const MarkerId('bus'),
-    position: busLocation,
+    markerId: const MarkerId("source"),
+    position: const LatLng(
+      8.9598,
+      77.3152,
+    ),
+    infoWindow: const InfoWindow(
+      title: "Source",
+    ),
+  ),
 
+  Marker(
+    markerId: const MarkerId("bus"),
+    position: busLocation,
     icon: BitmapDescriptor.defaultMarkerWithHue(
       BitmapDescriptor.hueGreen,
     ),
-
     infoWindow: InfoWindow(
       title: widget.vehicleNumber,
+    ),
+  ),
+
+  Marker(
+    markerId: const MarkerId("destination"),
+    position: const LatLng(
+      8.7139,
+      77.7567,
+    ),
+    infoWindow: const InfoWindow(
+      title: "Destination",
     ),
   ),
 

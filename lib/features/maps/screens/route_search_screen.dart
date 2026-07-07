@@ -1,36 +1,28 @@
   import 'package:flutter/material.dart';
-
   import 'package:smartnav/features/maps/data/static_route_data.dart';
-
   import 'package:smartnav/features/maps/widgets/bottom_nav_bar.dart';
-
   import 'package:smartnav/features/maps/widgets/departure_time_dialog.dart';
-
   import 'package:smartnav/features/maps/widgets/filter_options_dialog.dart';
-
   import 'package:smartnav/features/maps/widgets/floating_route_search_bar.dart';
-
   import 'package:smartnav/features/maps/widgets/route_card.dart';
-
   import 'package:smartnav/features/maps/models/route_card_data.dart';
-
   import 'package:smartnav/features/maps/widgets/transport_button.dart';
-
   import 'package:smartnav/features/maps/widgets/transport_preferences_dialog.dart';
-
   import 'package:smartnav/features/maps/screens/route_details_screen.dart';
-
   import 'package:smartnav/theme/smart_nav_theme.dart';
-
   import 'package:smartnav/screens/routes/widgets/trip_map_preview.dart';
-
   import 'package:smartnav/features/maps/widgets/direction_preview_card.dart';
+  import 'package:smartnav/features/maps/services/osrm_service.dart';
+  import 'package:smartnav/features/maps/models/direction_data.dart';
+  import 'package:google_maps_flutter/google_maps_flutter.dart';
+  import 'package:smartnav/services/geocoding_service.dart';
+  import 'package:smartnav/services/local_geocoding_service.dart';
+  import '../widgets/route_map_widget.dart';
 
   import 'dart:convert';
   import 'package:http/http.dart' as http;
   import 'package:intl/intl.dart';
-  import 'package:smartnav/features/maps/services/osrm_service.dart';
-  import 'package:smartnav/features/maps/models/direction_data.dart';
+  
 
 class RouteSearchScreen extends StatefulWidget {
 
@@ -74,6 +66,8 @@ class RouteSearchScreen extends StatefulWidget {
   String sourceLocation = "";
   String destinationLocation = "";
   DirectionData? directionData;
+  LatLng? sourceLatLng;
+  LatLng? destinationLatLng;
   bool isLoadingRoute = false;
   bool hasSearched = false;
 
@@ -106,7 +100,12 @@ void initState() {
 }
 
   loadBuses();
+
+if (sourceLocation.isNotEmpty &&
+    destinationLocation.isNotEmpty) {
   loadDirection();
+}
+
 }
 
     Future<void> loadBuses() async {
@@ -133,7 +132,7 @@ void initState() {
     }
 
     Future<void> loadDirection() async {
-
+       print("loadDirection() STARTED");
     setState(() {
 
       isLoadingRoute = true;
@@ -142,16 +141,28 @@ void initState() {
 
     try {
 
-      directionData =
-          await OsrmService().getRoute(
+      final source = LocalGeocodingService.getCoordinates(sourceLocation);
 
-        8.9598,
-        77.3152,
+      final destination = LocalGeocodingService.getCoordinates(destinationLocation);
 
-        8.7139,
-        77.7567,
+if (source == null || destination == null) {
+  throw Exception("Unable to find location");
+}
 
-      );
+sourceLatLng = source;
+destinationLatLng = destination;
+
+directionData = await OsrmService().getRoute(
+  source.latitude,
+  source.longitude,
+  destination.latitude,
+  destination.longitude,
+);
+print("Polyline Count = ${directionData!.polyline.length}");
+
+if (directionData!.polyline.isNotEmpty) {
+  print("First Point = ${directionData!.polyline.first}");
+}
 
     } catch (e, stackTrace) {
       print("OSRM ERROR: $e");
@@ -165,6 +176,28 @@ void initState() {
   });
 
   }
+
+List<LatLng> getRoutePolyline() {
+
+  print("DirectionData = $directionData");
+
+  if (directionData == null) {
+    return [];
+  }
+
+  final points = directionData!.polyline
+      .map<LatLng>(
+        (p) => LatLng(
+          (p[1] as num).toDouble(),
+          (p[0] as num).toDouble(),
+        ),
+      )
+      .toList();
+
+  print("Map Polyline Points = ${points.length}");
+
+  return points;
+}
 
     /// DYNAMIC ROUTE CARDS
     List<Widget> _buildRouteCards() {
@@ -438,11 +471,20 @@ print(
               /// MAP
 
 Positioned.fill(
-          child: TripMapPreview(
-            vehicleNumber: "147",
-          ),
-        ),
-
+  child: RouteMapWidget(
+    source: sourceLatLng ?? 
+    const LatLng(
+      8.9598,
+      77.3152,
+    ),
+    destination: destinationLatLng ?? 
+    const LatLng(
+      8.7139,
+      77.7567,
+    ),
+    polylinePoints: getRoutePolyline(),
+  ),
+),
 /// SEARCH BAR
             
             /// SEARCH BAR
@@ -461,7 +503,7 @@ Positioned.fill(
   source: sourceLocation,
   destination: destinationLocation,
   onSearch: (source, destination) {
-
+    print("ROUTE SEARCH CALLBACK");
     setState(() {
 
       sourceLocation = source;

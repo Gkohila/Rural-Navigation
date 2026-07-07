@@ -445,6 +445,7 @@ if (places.length == 2) {
   }
 
   await saveSearchHistory();
+  print("SEARCH CLICKED");
   widget.onSearch?.call(
   sourceController.text.trim(),
   destinationController.text.trim(),
