@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import '../../../services/geocoding_service.dart';
 
 class FloatingRouteSearchBar extends StatefulWidget {
   final String source;
@@ -25,27 +26,37 @@ class FloatingRouteSearchBar extends StatefulWidget {
 class _FloatingRouteSearchBarState
     extends State<FloatingRouteSearchBar> {
 
-  late TextEditingController sourceController;
+late TextEditingController sourceController;
+late TextEditingController destinationController;
 
-  late TextEditingController destinationController;
-  late stt.SpeechToText speech;
+late stt.SpeechToText speech;
 
-  bool isListening = false;
+bool isListening = false;
 
-  @override
-  void initState() {
-    super.initState();
-    speech = stt.SpeechToText();
-    sourceController = TextEditingController(
-      text: widget.source,
-    );
+Map<String, double>? sourceLocation;
+Map<String, double>? destinationLocation;
 
-    destinationController = TextEditingController(
-      text: widget.destination,
-    );
-  }
+double? sourceLat;
+double? sourceLng;
+double? destinationLat;
+double? destinationLng;
 
-  @override
+@override
+void initState() {
+  super.initState();
+
+  speech = stt.SpeechToText();
+
+  sourceController = TextEditingController(
+    text: widget.source,
+  );
+
+  destinationController = TextEditingController(
+    text: widget.destination,
+  );
+}
+
+@override
   void dispose() {
     sourceController.dispose();
     destinationController.dispose();
@@ -133,16 +144,30 @@ class _FloatingRouteSearchBarState
 
   if (isListening) return;
 
-bool available = await speech.initialize();
+bool available = await speech.initialize(
+  onStatus: (status) {
+    print("SPEECH STATUS = $status");
+  },
+  onError: (error) {
+    print("SPEECH ERROR = $error");
+  },
+);
 
-if (!available) return;
+print("SPEECH AVAILABLE = $available");
+
+if (!available) {
+  print("Speech not available");
+  return;
+}
 
   setState(() {
     isListening = true;
   });
   
-
+  print("START LISTENING...");
   speech.listen(
+  listenFor: const Duration(seconds: 8),
+  pauseFor: const Duration(seconds: 2),
   onResult: (result) {
 
     String text = result.recognizedWords
@@ -151,35 +176,37 @@ if (!available) return;
 
     print("TEXT = '$text'");
     print("FINAL = ${result.finalResult}");
+    print("TEXT = ${result.recognizedWords}");
 
     if (!result.finalResult) {
-      return;
-    }
+  return;
+}
 
-    speech.stop();
+speech.stop();
 
-    setState(() {
-      isListening = false;
-    });
+setState(() {
+  isListening = false;
+});
 
-    if (text.contains("to")) {
-        List<String> places = text.split(RegExp(r"\s+to\s+"));
+    final places = text.split(RegExp(r"\s+to\s+"));
 
-        if (places.length >= 2) {
+if (places.length == 2) {
 
-          sourceController.text = places[0].trim();
+  sourceController.text = places[0].trim();
+  destinationController.text = places[1].trim();
+  print("SOURCE FILLED = ${sourceController.text}");
+  print("DESTINATION FILLED = ${destinationController.text}");
+  Future.delayed(const Duration(milliseconds: 300), () {
 
-          destinationController.text = places[1].trim();
-          print("SOURCE TEXT = ${sourceController.text}");
-          print("DEST TEXT = ${destinationController.text}");
-          widget.onSearch?.call(
-            sourceController.text,
-            destinationController.text,
-          );
-          print("CALLBACK SENT");
-          saveSearchHistory();
-        }
-      }
+  widget.onSearch?.call(
+    sourceController.text.trim(),
+    destinationController.text.trim(),
+  );
+
+  saveSearchHistory();
+
+});
+}
     },
   );
 }
@@ -394,9 +421,36 @@ if (!available) return;
 
                           onSubmitted: (_) async {
 
-                            await saveSearchHistory();
+  sourceLocation = await GeocodingService.getCoordinates(
+    sourceController.text,
+  );
 
-                          },
+  destinationLocation = await GeocodingService.getCoordinates(
+    destinationController.text,
+  );
+
+  if (sourceLocation != null &&
+      destinationLocation != null) {
+
+    sourceLat = sourceLocation!["lat"];
+    sourceLng = sourceLocation!["lng"];
+
+    destinationLat = destinationLocation!["lat"];
+    destinationLng = destinationLocation!["lng"];
+
+    print("SOURCE LAT = $sourceLat");
+    print("SOURCE LNG = $sourceLng");
+    print("DEST LAT = $destinationLat");
+    print("DEST LNG = $destinationLng");
+  }
+
+  await saveSearchHistory();
+  widget.onSearch?.call(
+  sourceController.text.trim(),
+  destinationController.text.trim(),
+);
+
+},
 
                           decoration: const InputDecoration(
 
@@ -431,30 +485,20 @@ if (!available) return;
                 children: [
 
                   const SizedBox(height: 4),
-
                   GestureDetector(
   onTap: () {
-
     final temp = sourceController.text;
-
-    sourceController.text =
-        destinationController.text;
-
+    sourceController.text = destinationController.text;
     destinationController.text = temp;
-
     setState(() {});
-
   },
-
   child: Container(
     width: 40,
     height: 40,
-
     decoration: BoxDecoration(
       color: Colors.grey.shade100,
       shape: BoxShape.circle,
     ),
-
     child: const Icon(
       Icons.swap_vert_rounded,
       color: Colors.black87,
@@ -463,32 +507,34 @@ if (!available) return;
   ),
 ),
 
-                  const SizedBox(height: 12),
+const SizedBox(height: 12),
 
-                  GestureDetector(
+GestureDetector(
   onTap: startVoiceSearch,
-
   child: Container(
     width: 40,
     height: 40,
-
     decoration: BoxDecoration(
       color: Colors.grey.shade100,
       shape: BoxShape.circle,
     ),
-
-    child: const Icon(
-      Icons.mic_none_rounded,
+    child: Icon(
+      isListening
+          ? Icons.mic
+          : Icons.mic_none_rounded,
       color: Colors.black87,
       size: 22,
     ),
   ),
 ),
-                ],
-              ),
-            ],
-          ),
-        ),
+              ],
+),
+
+],
+
+),
+
+),
 
         /// BACK BUTTON
 
