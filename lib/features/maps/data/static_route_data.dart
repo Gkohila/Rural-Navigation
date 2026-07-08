@@ -13,24 +13,15 @@ abstract final class StaticRouteData {
   static const String destination = 'Courtralam';
 
   static const List<TransportModeData> transportModes = [
-    TransportModeData(
-      icon: Icons.directions_car,
-      label: '23 min',
-    ),
-    TransportModeData(
-      icon: Icons.two_wheeler,
-      label: '19 min',
-    ),
+    TransportModeData(icon: Icons.directions_car, label: '23 min'),
+    TransportModeData(icon: Icons.two_wheeler, label: '19 min'),
     TransportModeData(
       icon: Icons.directions_bus,
       label: '32 min',
       isSelected: true,
       iconFilled: true,
     ),
-    TransportModeData(
-      icon: Icons.directions_walk,
-      label: '1 hr 38',
-    ),
+    TransportModeData(icon: Icons.directions_walk, label: '1 hr 38'),
   ];
 
   static const List<String> filterChips = [

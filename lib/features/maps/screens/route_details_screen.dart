@@ -23,7 +23,6 @@ import '../../../models/saved_route_model.dart';
 import '../../../services/saved_route_api_service.dart';
 
 class RouteDetailsScreen extends StatefulWidget {
-
   final String vehicleNumber;
   final String busName;
   final String source;
@@ -32,9 +31,9 @@ class RouteDetailsScreen extends StatefulWidget {
   final String departureTime;
   final String arrivalTime;
   final int duration;
-final double fare;
-final int transferCount;
-final double walkingDistance;
+  final double fare;
+  final int transferCount;
+  final double walkingDistance;
   final String transportMode;
   final bool isFromSavedRoute;
 
@@ -56,13 +55,10 @@ final double walkingDistance;
   });
 
   @override
-  State<RouteDetailsScreen> createState() =>
-      _RouteDetailsScreenState();
+  State<RouteDetailsScreen> createState() => _RouteDetailsScreenState();
 }
 
-class _RouteDetailsScreenState
-    extends State<RouteDetailsScreen> {
-
+class _RouteDetailsScreenState extends State<RouteDetailsScreen> {
   /// ===============================================================
   /// START / END STATE
   /// ===============================================================
@@ -75,7 +71,7 @@ class _RouteDetailsScreenState
 
   static const Color green = Color(0xFF008000);
   static const Color googleMapRed = Color(0xFFE94235);
-  
+
   List<dynamic> stops = [];
   bool isLoadingStops = true;
 
@@ -95,43 +91,33 @@ class _RouteDetailsScreenState
   bool isSaved = false;
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  loadStops();
-  loadProgress();
+    loadStops();
+    loadProgress();
 
-  isSaved = false;
-}
+    isSaved = false;
+  }
+
   Future<void> loadStops() async {
-
     print("LOAD STOPS CALLED");
     final response = await http.get(
-
-      Uri.parse(
-        "http://127.0.0.1:8081/api/bus-stops/${widget.vehicleNumber}"
-      ),
-
+      Uri.parse("http://127.0.0.1:8081/api/bus-stops/${widget.vehicleNumber}"),
     );
 
     print("STATUS = ${response.statusCode}");
     print("BODY = ${response.body}");
 
     if (response.statusCode == 200) {
-
       setState(() {
-
         stops = jsonDecode(response.body);
         isLoadingStops = false;
-
       });
-
     }
   }
 
   Future<void> loadProgress() async {
-
-
     progress = await routeProgressService.getProgress(widget.vehicleNumber);
     print("ETA = ${progress?.etaMinutes}");
     print("Current Stop = ${progress?.currentStop}");
@@ -139,12 +125,9 @@ void initState() {
     if (!mounted) return;
 
     setState(() {
-
       bool isLoadingProgress = false;
-
     });
-  } 
-
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,42 +137,30 @@ void initState() {
 
       body: Stack(
         children: [
-
           /// =====================================================
           /// MAP BACKGROUND
           /// =====================================================
-        Positioned.fill(
-          child: TripMapPreview(
-            vehicleNumber: widget.vehicleNumber,
+          Positioned.fill(
+            child: TripMapPreview(vehicleNumber: widget.vehicleNumber),
           ),
-        ),
 
           /// =====================================================
           /// TOP BAR
           /// =====================================================
           SafeArea(
             child: Padding(
-              padding:
-              const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 10,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
 
               child: Row(
                 children: [
-
                   /// BACK BUTTON
                   GestureDetector(
-
                     onTap: () {
                       Navigator.pop(context);
                     },
 
                     child: floatingButton(
-                      const Icon(
-                        Icons.arrow_back,
-                        size: 18,
-                      ),
+                      const Icon(Icons.arrow_back, size: 18),
                     ),
                   ),
 
@@ -197,8 +168,7 @@ void initState() {
 
                   /// BUS CHIP
                   Container(
-                    padding:
-                    const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 10,
                     ),
@@ -206,13 +176,11 @@ void initState() {
                     decoration: BoxDecoration(
                       color: Colors.white,
 
-                      borderRadius:
-                      BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(40),
 
                       boxShadow: [
                         BoxShadow(
-                          color:
-                          Colors.black.withOpacity(.06),
+                          color: Colors.black.withOpacity(.06),
 
                           blurRadius: 18,
                         ),
@@ -221,7 +189,6 @@ void initState() {
 
                     child: Row(
                       children: [
-
                         const Icon(
                           Icons.directions_bus,
                           color: green,
@@ -235,8 +202,7 @@ void initState() {
 
                           style: GoogleFonts.inter(
                             fontSize: 15,
-                            fontWeight:
-                            FontWeight.w600,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -251,7 +217,6 @@ void initState() {
           /// DRAGGABLE SHEET
           /// =====================================================
           DraggableScrollableSheet(
-
             initialChildSize: .78,
             minChildSize: .11,
             maxChildSize: .87,
@@ -260,22 +225,17 @@ void initState() {
             snapSizes: const [.78, .87],
 
             builder: (context, controller) {
-
               return Container(
-
                 decoration: BoxDecoration(
-
                   color: Colors.white,
 
-                  borderRadius:
-                  const BorderRadius.vertical(
+                  borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(40),
                   ),
 
                   boxShadow: [
                     BoxShadow(
-                      color:
-                      Colors.black.withOpacity(.10),
+                      color: Colors.black.withOpacity(.10),
 
                       blurRadius: 20,
                     ),
@@ -283,7 +243,6 @@ void initState() {
                 ),
 
                 child: ListView(
-
                   controller: controller,
 
                   padding: const EdgeInsets.only(
@@ -294,7 +253,6 @@ void initState() {
                   ),
 
                   children: [
-
                     /// HANDLE
                     Center(
                       child: Container(
@@ -302,11 +260,9 @@ void initState() {
                         height: 5,
 
                         decoration: BoxDecoration(
-                          color:
-                          Colors.grey.shade300,
+                          color: Colors.grey.shade300,
 
-                          borderRadius:
-                          BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),
@@ -323,8 +279,7 @@ void initState() {
                         size: 24,
                       ),
 
-                      lineAfter:
-                      dottedLine(40),
+                      lineAfter: dottedLine(40),
 
                       child: routeTitle(
                         widget.source,
@@ -339,12 +294,9 @@ void initState() {
                     timelineRow(
                       icon: walkNode(),
 
-                      lineAfter:
-                      dottedLine(40),
+                      lineAfter: dottedLine(40),
 
-                      child: walkTile(
-                        "Walk 2 min (120 m)",
-                      ),
+                      child: walkTile("Walk 2 min (120 m)"),
                     ),
 
                     /// =====================================================
@@ -353,48 +305,36 @@ void initState() {
                     timelineRow(
                       icon: busNode(),
 
-                      lineAfter:
-                      greenLine(90),
+                      lineAfter: greenLine(90),
 
                       child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
 
                         children: [
-
-                          routeHeader(
-                            widget.busName,
-                            "5:25 pm",
-                          ),
+                          routeHeader(widget.busName, "5:25 pm"),
 
                           const SizedBox(height: 14),
 
                           Row(
                             children: [
-
                               Container(
-                                padding:
-                                const EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 14,
                                   vertical: 8,
                                 ),
 
                                 decoration: BoxDecoration(
-                                  color:
-                                  const Color(0xFFEAF6EE),
+                                  color: const Color(0xFFEAF6EE),
 
-                                  borderRadius:
-                                  BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
 
                                 child: Text(
                                   widget.vehicleNumber,
 
-                                  style:
-                                  GoogleFonts.inter(
+                                  style: GoogleFonts.inter(
                                     fontSize: 14,
-                                    fontWeight:
-                                    FontWeight.w600,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -404,11 +344,9 @@ void initState() {
                               Text(
                                 "To ${widget.destination}",
 
-                                style:
-                                GoogleFonts.inter(
+                                style: GoogleFonts.inter(
                                   fontSize: 14,
-                                  color:
-                                  const Color(0xFF6F6F6F),
+                                  color: const Color(0xFF6F6F6F),
                                 ),
                               ),
                             ],
@@ -422,8 +360,7 @@ void initState() {
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               color: green,
-                              fontWeight:
-                              FontWeight.w500,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
 
@@ -442,8 +379,7 @@ void initState() {
                     timelineRow(
                       icon: stopDot(),
 
-                      lineAfter:
-                      greenLine(36),
+                      lineAfter: greenLine(36),
 
                       child: rideTitle(),
                     ),
@@ -452,35 +388,28 @@ void initState() {
                     /// STOPS
                     /// =====================================================
                     if (isLoadingStops)
-  const Center(
-    child: CircularProgressIndicator(),
-  )
-else
-  ...stops.asMap().entries.map((entry) {
+                      const Center(child: CircularProgressIndicator())
+                    else
+                      ...stops.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        var stop = entry.value;
 
-    int index = entry.key;
-    var stop = entry.value;
+                        return timelineRow(
+                          icon: index < currentStopIndex
+                              ? completedStopNode()
+                              : index == currentStopIndex
+                              ? busNode()
+                              : stopDot(),
 
-    return timelineRow(
+                          lineAfter: greenLine(36),
 
-      icon:
-        index < currentStopIndex
-          ? completedStopNode()
-          : index == currentStopIndex
-            ? busNode()
-            : stopDot(),
-
-      lineAfter: greenLine(36),
-
-      child: stopTile(
-        stop['stopName'],
-        stop['arrivalTime'],
-        index < currentStopIndex,
-      ),
-
-    );
-
-}).toList(),
+                          child: stopTile(
+                            stop['stopName'],
+                            stop['arrivalTime'],
+                            index < currentStopIndex,
+                          ),
+                        );
+                      }).toList(),
 
                     /// =====================================================
                     /// FINAL WALK
@@ -488,17 +417,12 @@ else
                     timelineRow(
                       icon: walkNode(),
 
-                      lineAfter:
-                      dottedLine(26),
+                      lineAfter: dottedLine(26),
 
                       child: Padding(
-                        padding:
-                        const EdgeInsets.only(
-                          bottom: 14,
-                        ),
+                        padding: const EdgeInsets.only(bottom: 14),
 
-                        child:
-                        walkTimeTile(),
+                        child: walkTimeTile(),
                       ),
                     ),
 
@@ -514,7 +438,7 @@ else
 
                       child: routeTitle(
                         widget.destination,
-                         "Tamil Nadu, India",
+                        "Tamil Nadu, India",
                         "5:40 pm",
                       ),
                     ),
@@ -528,140 +452,124 @@ else
 
                     const SizedBox(height: 14),
 
-/// =====================================================
-/// SAVE SHARE
-/// =====================================================
-Row(
-  children: [
+                    /// =====================================================
+                    /// SAVE SHARE
+                    /// =====================================================
+                    Row(
+                      children: [
+                        Expanded(
+                          child: bottomButton(
+                            isSaved ? Icons.bookmark : Icons.bookmark_border,
+                            isSaved ? "Saved" : "Save",
+                            () async {
+                              final prefs =
+                                  await SharedPreferences.getInstance();
 
-    Expanded(
-      child: bottomButton(
-        isSaved
-            ? Icons.bookmark
-            : Icons.bookmark_border,
-        isSaved
-            ? "Saved"
-            : "Save",
-        () async {
+                              final userId = prefs.getInt("userId");
 
-          final prefs =
-              await SharedPreferences.getInstance();
+                              if (userId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Color(0xFF0B5D1E),
+                                    content: Text(
+                                      "User not found",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
 
-          final userId =
-              prefs.getInt("userId");
+                              final route = SavedRouteModel(
+                                userId: userId,
+                                vehicleNumber: widget.vehicleNumber,
+                                busName: widget.busName,
+                                source: widget.source,
+                                destination: widget.destination,
+                                departureTime: widget.departureTime,
+                                arrivalTime: widget.arrivalTime,
+                                duration: widget.duration,
+                                fare: widget.fare,
+                                transportMode: widget.transportMode,
+                              );
 
-          if (userId == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                backgroundColor: Color(0xFF0B5D1E),
-                content: Text(
-                  "User not found",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            );
-            return;
-          }
+                              final success =
+                                  await SavedRouteApiService.saveRoute(route);
 
-          final route = SavedRouteModel(
-            userId: userId,
-            vehicleNumber: widget.vehicleNumber,
-            busName: widget.busName,
-            source: widget.source,
-            destination: widget.destination,
-            departureTime: widget.departureTime,
-            arrivalTime: widget.arrivalTime,
-            duration: widget.duration,
-            fare: widget.fare,
-            transportMode: widget.transportMode,
-          );
+                              if (success) {
+                                setState(() {
+                                  isSaved = true;
+                                });
 
-          final success =
-              await SavedRouteApiService.saveRoute(route);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: const Color(0xFF0B5D1E),
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.all(16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    content: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.check_circle,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Route saved successfully",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: Colors.orange.shade700,
+                                    behavior: SnackBarBehavior.floating,
+                                    margin: const EdgeInsets.all(16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    content: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.info_outline,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "Route already exists",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
 
-          if (success) {
+                        const SizedBox(width: 12),
 
-  setState(() {
-    isSaved = true;
-  });
-
-  ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    backgroundColor: const Color(0xFF0B5D1E),
-    behavior: SnackBarBehavior.floating,
-    margin: const EdgeInsets.all(16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    content: const Row(
-      children: [
-        Icon(
-          Icons.check_circle,
-          color: Colors.white,
-        ),
-        SizedBox(width: 10),
-        Text(
-          "Route saved successfully",
-          style: TextStyle(color: Colors.white),
-        ),
-      ],
-    ),
-  ),
-);
-
-          } else {
-
-            ScaffoldMessenger.of(context).showSnackBar(
-  SnackBar(
-    backgroundColor: Colors.orange.shade700,
-    behavior: SnackBarBehavior.floating,
-    margin: const EdgeInsets.all(16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-    content: const Row(
-      children: [
-        Icon(
-          Icons.info_outline,
-          color: Colors.white,
-        ),
-        SizedBox(width: 10),
-        Text(
-          "Route already exists",
-          style: TextStyle(color: Colors.white),
-        ),
-      ],
-    ),
-  ),
-);
-
-          }
-        },
-      ),
-    ),
-
-    const SizedBox(width: 12),
-
-    Expanded(
-      child: bottomButton(
-        Icons.share,
-        "Share",
-        () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              backgroundColor: Color(0xFF0B5D1E),
-              content: Text(
-                "Share Clicked",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          );
-        },
-      ),
-    ),
-
-  ],
-),
+                        Expanded(
+                          child: bottomButton(Icons.share, "Share", () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Color(0xFF0B5D1E),
+                                content: Text(
+                                  "Share Clicked",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               );
@@ -673,206 +581,154 @@ Row(
   }
 
   void startJourney() {
-
-  timer = Timer.periodic(
-    const Duration(seconds: 5),
-    (_) {
-
+    timer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (currentStopIndex < stops.length - 1) {
-
         setState(() {
           currentStopIndex++;
-          remainingMinutes = ((stops.length-1)-currentStopIndex)*3;
+          remainingMinutes = ((stops.length - 1) - currentStopIndex) * 3;
         });
 
         /// Final stop-ku munnaadi alert
-        if(remainingMinutes <= 5 && !arrivalAlertShown){
-
+        if (remainingMinutes <= 5 && !arrivalAlertShown) {
           arrivalAlertShown = true;
 
           showArrivalAlertDialog(context);
-
         }
+      } else {
+        timer?.cancel();
 
-      }
+        if (!destinationReached) {
+          destinationReached = true;
 
-      else {
+          Future.delayed(const Duration(seconds: 2), () {
+            if (!mounted) return;
 
-  timer?.cancel();
-
-  if (!destinationReached) {
-
-    destinationReached = true;
-
-    Future.delayed(
-      const Duration(seconds: 2),
-      () {
-
-        if (!mounted) return;
-
-        showDialog(
-  context: context,
-  barrierDismissible: false,
-  builder: (_) => Dialog(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(28),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.all(28),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-
-          const Text(
-            "🎉",
-            style: TextStyle(fontSize: 42),
-          ),
-
-          const SizedBox(height: 18),
-
-          Text(
-            "You have arrived at",
-            style: GoogleFonts.inter(
-              fontSize: 18,
-              color: Colors.grey.shade700,
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          Text(
-            widget.destination,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-
-          const SizedBox(height: 30),
-
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: green,
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (_) => Dialog(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(28),
                 ),
-              ),
-              onPressed: () {
+                child: Padding(
+                  padding: const EdgeInsets.all(28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text("🎉", style: TextStyle(fontSize: 42)),
 
-                Navigator.pop(context);
+                      const SizedBox(height: 18),
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const LastMileScreen(),
+                      Text(
+                        "You have arrived at",
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      Text(
+                        widget.destination,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.inter(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+
+                      const SizedBox(height: 30),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LastMileScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Continue",
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-
-              },
-              child: Text(
-                "Continue",
-                style: GoogleFonts.inter(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
                 ),
               ),
-            ),
-          ),
+            );
+          });
+        } else {
+          timer?.cancel();
 
-        ],
-      ),
-    ),
-  ),
-);
-
-      },
-
-    );
-
+          setState(() {
+            isNavigationStarted = false;
+          });
+        }
+      }
+    });
   }
-  else {
-
-  timer?.cancel();
-
-  setState(() {
-    isNavigationStarted = false;
-  });
-
-}
-
-}
-
-    },
-
-  );
-
-}
 
   @override
-void dispose() {
+  void dispose() {
+    timer?.cancel();
 
-  timer?.cancel();
-
-  super.dispose();
-
-}
+    super.dispose();
+  }
 
   /// ===============================================================
   /// ARRIVAL CARD
   /// ===============================================================
 
   Widget arrivalCard() {
-
     return Container(
       width: double.infinity,
 
-      padding:
-      const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 14,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
 
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius:
-        BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24),
 
-        border: Border.all(
-          color:
-          const Color(0xFFE8E8E8),
-        ),
+        border: Border.all(color: const Color(0xFFE8E8E8)),
       ),
 
       child: Row(
-        crossAxisAlignment:
-        CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
 
         children: [
-
           Expanded(
             child: Column(
-              crossAxisAlignment:
-              CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
-              mainAxisSize:
-              MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
 
               children: [
-
                 Text(
                   "$remainingMinutes min",
 
-                  style:
-                  GoogleFonts.inter(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
-                    fontWeight:
-                    FontWeight.w700,
+                    fontWeight: FontWeight.w700,
                     color: green,
                   ),
                 ),
@@ -882,29 +738,25 @@ void dispose() {
                 RichText(
                   text: TextSpan(
                     children: [
-
                       TextSpan(
                         text: "Arrive at ",
 
-                        style:
-                        GoogleFonts.inter(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
                           color: Colors.grey,
                         ),
                       ),
 
                       TextSpan(
-                        text: remainingMinutes == 0 ? "Reached"
-                          : "${DateTime.now().hour}:${DateTime.now().minute}",
+                        text: remainingMinutes == 0
+                            ? "Reached"
+                            : "${DateTime.now().hour}:${DateTime.now().minute}",
 
-                        style:
-                        GoogleFonts.inter(
+                        style: GoogleFonts.inter(
                           fontSize: 12,
-                          fontWeight:
-                          FontWeight.w600,
+                          fontWeight: FontWeight.w600,
 
-                          color:
-                          googleMapRed,
+                          color: googleMapRed,
                         ),
                       ),
                     ],
@@ -918,106 +770,68 @@ void dispose() {
           /// START ↔ END BUTTON
           /// =====================================================
           GestureDetector(
+            onTap: () async {
+              if (!isNavigationStarted) {
+                final shouldStart = await showStartTripDialog(context);
 
-           onTap: () async {
+                if (shouldStart == true) {
+                  setState(() {
+                    isNavigationStarted = true;
+                  });
 
-  if (!isNavigationStarted) {
+                  startJourney();
+                }
+              } else {
+                timer?.cancel();
+                setState(() {
+                  isNavigationStarted = false;
+                });
 
-    final shouldStart =
-        await showStartTripDialog(context);
+                showDialog(
+                  context: context,
 
-    if (shouldStart == true) {
+                  builder: (_) => AlertDialog(
+                    title: const Text("Destination Reached 🎉"),
 
-  setState(() {
-    isNavigationStarted = true;
-  });
+                    content: Text("You have arrived at ${widget.destination}"),
 
-  startJourney();
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
 
-}
-  }
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const LastMileScreen(),
+                            ),
+                          );
+                        },
 
-  else {
-    timer?.cancel();
-    setState(() {
-      isNavigationStarted = false;
-    });
-
-    showDialog(
-
-  context: context,
-
-  builder: (_) => AlertDialog(
-
-    title: const Text(
-      "Destination Reached 🎉",
-    ),
-
-    content: Text(
-      "You have arrived at ${widget.destination}",
-    ),
-
-    actions: [
-
-      TextButton(
-
-        onPressed: () {
-
-          Navigator.pop(context);
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => const LastMileScreen(),
-            ),
-          );
-
-        },
-
-        child: const Text(
-          "Continue",
-        ),
-
-      ),
-
-    ],
-
-  ),
-
-);
-  }
-},
+                        child: const Text("Continue"),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
 
             child: Container(
-
               height: 46,
               width: 112,
 
               decoration: BoxDecoration(
-
-                borderRadius:
-                BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(24),
 
                 gradient: LinearGradient(
-
                   colors: isNavigationStarted
-
-                      ? [
-                    const Color(0xFFC62828),
-                    const Color(0xFFE94235),
-                  ]
-
-                      : [
-                    const Color(0xFF006400),
-                    const Color(0xFF008000),
-                  ],
+                      ? [const Color(0xFFC62828), const Color(0xFFE94235)]
+                      : [const Color(0xFF006400), const Color(0xFF008000)],
                 ),
 
                 boxShadow: [
-
                   BoxShadow(
-                    color:
-                    Colors.black.withOpacity(.10),
+                    color: Colors.black.withOpacity(.10),
 
                     blurRadius: 10,
                     offset: const Offset(0, 4),
@@ -1026,13 +840,10 @@ void dispose() {
               ),
 
               child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
-
                   Container(
-
                     width: 18,
                     height: 18,
 
@@ -1042,17 +853,12 @@ void dispose() {
                     ),
 
                     child: Center(
-
                       child: Icon(
-                        isNavigationStarted
-                            ? Icons.stop
-                            : Icons.navigation,
+                        isNavigationStarted ? Icons.stop : Icons.navigation,
 
                         size: 10,
 
-                        color: isNavigationStarted
-                            ? Colors.red
-                            : green,
+                        color: isNavigationStarted ? Colors.red : green,
                       ),
                     ),
                   ),
@@ -1060,16 +866,11 @@ void dispose() {
                   const SizedBox(width: 8),
 
                   Text(
+                    isNavigationStarted ? "End" : "Start",
 
-                    isNavigationStarted
-                        ? "End"
-                        : "Start",
-
-                    style:
-                    GoogleFonts.inter(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
-                      fontWeight:
-                      FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                       color: Colors.white,
                     ),
                   ),
@@ -1087,73 +888,53 @@ void dispose() {
     required Widget child,
     Widget? lineAfter,
   }) {
-
     return IntrinsicHeight(
       child: Row(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-
           SizedBox(
             width: 34,
 
             child: Column(
               children: [
+                SizedBox(width: 34, child: Center(child: icon)),
 
-                SizedBox(
-                  width: 34,
-                  child: Center(
-                    child: icon,
-                  ),
-                ),
-
-                if (lineAfter != null)
-                  lineAfter,
+                if (lineAfter != null) lineAfter,
               ],
             ),
           ),
 
           const SizedBox(width: 14),
 
-          Expanded(
-            child: child,
-          ),
+          Expanded(child: child),
         ],
       ),
     );
   }
 
   Widget greenLine(double height) {
-
-    return Container(
-      width: 3,
-      height: height,
-      color: green,
-    );
+    return Container(width: 3, height: height, color: green);
   }
 
   Widget dottedLine(double height) {
-
     return SizedBox(
       height: height,
 
       child: Column(
-        mainAxisAlignment:
-        MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 
         children: List.generate(
           6,
 
-              (_) => Container(
+          (_) => Container(
             width: 4,
             height: 4,
 
             decoration: BoxDecoration(
               color: Colors.grey,
 
-              borderRadius:
-              BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(30),
             ),
           ),
         ),
@@ -1162,7 +943,6 @@ void dispose() {
   }
 
   Widget stopDot() {
-
     return Container(
       width: 16,
       height: 16,
@@ -1171,16 +951,12 @@ void dispose() {
         color: Colors.white,
         shape: BoxShape.circle,
 
-        border: Border.all(
-          color: green,
-          width: 3,
-        ),
+        border: Border.all(color: green, width: 3),
       ),
     );
   }
 
   Widget walkNode() {
-
     return Container(
       width: 32,
       height: 32,
@@ -1189,23 +965,14 @@ void dispose() {
         color: Colors.white,
         shape: BoxShape.circle,
 
-        border: Border.all(
-          color:
-          const Color(0xFFE2E2E2),
-        ),
+        border: Border.all(color: const Color(0xFFE2E2E2)),
       ),
 
-      child: const Center(
-        child: Icon(
-          Icons.directions_walk,
-          size: 15,
-        ),
-      ),
+      child: const Center(child: Icon(Icons.directions_walk, size: 15)),
     );
   }
 
   Widget busNode() {
-
     return Container(
       width: 44,
       height: 44,
@@ -1214,43 +981,27 @@ void dispose() {
         color: Colors.white,
         shape: BoxShape.circle,
 
-        border: Border.all(
-          color: green,
-          width: 2,
-        ),
+        border: Border.all(color: green, width: 2),
       ),
 
       child: const Center(
-        child: Icon(
-          Icons.directions_bus,
-          color: green,
-          size: 18,
-        ),
+        child: Icon(Icons.directions_bus, color: green, size: 18),
       ),
     );
   }
 
   Widget completedStopNode() {
+    return Container(
+      width: 22,
+      height: 22,
 
-  return Container(
-    width: 22,
-    height: 22,
+      decoration: const BoxDecoration(color: green, shape: BoxShape.circle),
 
-    decoration: const BoxDecoration(
-      color: green,
-      shape: BoxShape.circle,
-    ),
-
-    child: const Icon(
-      Icons.check,
-      size: 14,
-      color: Colors.white,
-    ),
-  );
-}
+      child: const Icon(Icons.check, size: 14, color: Colors.white),
+    );
+  }
 
   Widget floatingButton(Widget child) {
-
     return Container(
       width: 46,
       height: 46,
@@ -1260,12 +1011,7 @@ void dispose() {
         shape: BoxShape.circle,
 
         boxShadow: [
-          BoxShadow(
-            color:
-            Colors.black.withOpacity(.06),
-
-            blurRadius: 18,
-          ),
+          BoxShadow(color: Colors.black.withOpacity(.06), blurRadius: 18),
         ],
       ),
 
@@ -1273,35 +1019,24 @@ void dispose() {
     );
   }
 
-  Widget routeTitle(
-      String title,
-      String subtitle,
-      String time,
-      ) {
-
+  Widget routeTitle(String title, String subtitle, String time) {
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-      crossAxisAlignment:
-      CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
-
         Expanded(
           child: Column(
-            crossAxisAlignment:
-            CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-
               Text(
                 title,
 
                 style: GoogleFonts.inter(
                   fontSize: 16,
-                  fontWeight:
-                  FontWeight.w600,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
 
@@ -1310,233 +1045,149 @@ void dispose() {
               Text(
                 subtitle,
 
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+                style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
               ),
             ],
           ),
         ),
 
-        Text(
-          time,
-
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
+        Text(time, style: GoogleFonts.inter(fontSize: 12, color: Colors.grey)),
       ],
     );
   }
 
-  Widget routeHeader(
-      String title,
-      String time,
-      ) {
-
+  Widget routeHeader(String title, String time) {
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
       children: [
-
         Text(
           title,
 
-          style: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight:
-            FontWeight.w600,
-          ),
+          style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
         ),
 
-        Text(
-          time,
-
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
-        ),
+        Text(time, style: GoogleFonts.inter(fontSize: 12, color: Colors.grey)),
       ],
     );
   }
 
   Widget walkTile(String title) {
-
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
       children: [
-
         Text(
           title,
 
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight:
-            FontWeight.w500,
-          ),
+          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500),
         ),
 
-        const Icon(
-          Icons.chevron_right,
-          color: Colors.grey,
-          size: 18,
-        ),
+        const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
       ],
     );
   }
 
   Widget walkTimeTile() {
-
     return Row(
-      mainAxisAlignment:
-      MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
       children: [
-
         Text(
           "Walk 1 min (50 m)",
 
-          style: GoogleFonts.inter(
-            fontSize: 15,
-            fontWeight:
-            FontWeight.w500,
-          ),
+          style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w500),
         ),
 
         Row(
           children: [
-
             Text(
               "5:35 pm",
 
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
+              style: GoogleFonts.inter(fontSize: 12, color: Colors.grey),
             ),
 
             const SizedBox(width: 4),
 
-            const Icon(
-              Icons.chevron_right,
-              color: Colors.grey,
-              size: 18,
-            ),
+            const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
           ],
         ),
       ],
     );
   }
 
-  Widget stopTile(
-  String title,
-  String time,
-  bool completed,
-) {
+  Widget stopTile(String title, String time, bool completed) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
 
-    children: [
-
-      Text(
-        title,
-
-        style: GoogleFonts.inter(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: completed
-              ? Colors.grey
-              : Colors.black,
+          style: GoogleFonts.inter(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: completed ? Colors.grey : Colors.black,
+          ),
         ),
-      ),
 
-      Text(
-        time,
+        Text(
+          time,
 
-        style: GoogleFonts.inter(
-          fontSize: 12,
-          color: completed
-              ? Colors.grey
-              : Colors.black54,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            color: completed ? Colors.grey : Colors.black54,
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget rideTitle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-  return Row(
+      children: [
+        Text(
+          destinationReached
+              ? "Destination reached"
+              : "${(stops.length - 1) - currentStopIndex} stops left • $remainingMinutes min",
 
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-    children: [
-
-      Text(
-
-        destinationReached
-            ? "Destination reached"
-            : "${(stops.length - 1) - currentStopIndex} stops left • $remainingMinutes min",
-
-        style: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: const Color(0xFF188038),
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF188038),
+          ),
         ),
-      ),
 
-      const Icon(
-        Icons.keyboard_arrow_up,
-        size: 18,
-        color: Colors.grey,
-      ),
-
-    ],
-  );
-}
+        const Icon(Icons.keyboard_arrow_up, size: 18, color: Colors.grey),
+      ],
+    );
+  }
 
   Widget floatingCrowdCard() {
-
     return Container(
-
-      padding:
-      const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
 
       decoration: BoxDecoration(
-        color:
-        const Color(0xFFF8F8F8),
+        color: const Color(0xFFF8F8F8),
 
-        borderRadius:
-        BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24),
 
-        border: Border.all(
-          color:
-          const Color(0xFFEDEDED),
-        ),
+        border: Border.all(color: const Color(0xFFEDEDED)),
       ),
 
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
-
           Text(
             "WHAT'S IT LIKE ON BOARD?",
 
             style: GoogleFonts.inter(
               fontSize: 10,
-              fontWeight:
-              FontWeight.w600,
-              color:
-              Colors.grey.shade700,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
             ),
           ),
 
@@ -1544,22 +1195,11 @@ void dispose() {
 
           Row(
             children: [
-
-              Expanded(
-                child: infoChip(
-                  Icons.groups,
-                  "Crowded",
-                ),
-              ),
+              Expanded(child: infoChip(Icons.groups, "Crowded")),
 
               const SizedBox(width: 10),
 
-              Expanded(
-                child: infoChip(
-                  Icons.thermostat,
-                  "Warm",
-                ),
-              ),
+              Expanded(child: infoChip(Icons.thermostat, "Warm")),
             ],
           ),
         ],
@@ -1567,114 +1207,78 @@ void dispose() {
     );
   }
 
-  Widget infoChip(
-      IconData icon,
-      String text,
-      ) {
-
+  Widget infoChip(IconData icon, String text) {
     return Container(
-      padding:
-      const EdgeInsets.symmetric(
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 12),
 
       decoration: BoxDecoration(
         color: Colors.white,
 
-        border: Border.all(
-          color:
-          const Color(0xFFD8EFD9),
-        ),
+        border: Border.all(color: const Color(0xFFD8EFD9)),
 
-        borderRadius:
-        BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(18),
       ),
 
       child: Row(
-        mainAxisAlignment:
-        MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
 
         children: [
-
-          Icon(
-            icon,
-            size: 14,
-            color: green,
-          ),
+          Icon(icon, size: 14, color: green),
 
           const SizedBox(width: 5),
 
           Text(
             text,
 
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight:
-              FontWeight.w500,
-            ),
+            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500),
           ),
         ],
       ),
     );
   }
 
-  Widget bottomButton(
-  IconData icon,
-  String text,
-  VoidCallback onTap,
-) {
-
-  return Material(
-    color: Colors.transparent,
-    borderRadius: BorderRadius.circular(20),
-
-    child: InkWell(
+  Widget bottomButton(IconData icon, String text, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(20),
 
-      splashColor: const Color(0xFFE8F5E9),
-      highlightColor: const Color(0xFFE8F5E9),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
 
-      onTap: onTap,
+        splashColor: const Color(0xFFE8F5E9),
+        highlightColor: const Color(0xFFE8F5E9),
 
-      child: Ink(
-        height: 50,
+        onTap: onTap,
 
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0xFFE8E8E8),
+        child: Ink(
+          height: 50,
+
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFE8E8E8)),
+          ),
+
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+
+            children: [
+              Icon(icon, color: text == "Saved" ? green : green),
+
+              const SizedBox(width: 6),
+
+              Text(
+                text,
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: text == "Saved" ? green : Colors.black,
+                ),
+              ),
+            ],
           ),
         ),
-
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-
-          children: [
-
-           Icon(
-  icon,
-  color: text == "Saved"
-      ? green
-      : green,
-),
-
-            const SizedBox(width: 6),
-
-           Text(
-  text,
-  style: GoogleFonts.inter(
-    fontSize: 13,
-    fontWeight: FontWeight.w600,
-    color: text == "Saved"
-        ? green
-        : Colors.black,
-  ),
-),
-          ],
-        ),
       ),
-    ),
-  );
+    );
+  }
 }
-    }

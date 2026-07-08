@@ -21,6 +21,46 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
   GoogleMapController? mapController;
 
   @override
+  void didUpdateWidget(covariant RouteMapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.source != widget.source ||
+        oldWidget.destination != widget.destination ||
+        oldWidget.polylinePoints.length != widget.polylinePoints.length) {
+      _moveCameraToRoute();
+    }
+  }
+
+  Future<void> _moveCameraToRoute() async {
+    if (mapController == null) return;
+
+    final List<LatLng> points = widget.polylinePoints.isNotEmpty
+        ? widget.polylinePoints
+        : [widget.source, widget.destination];
+
+    double minLat = points.first.latitude;
+    double maxLat = points.first.latitude;
+    double minLng = points.first.longitude;
+    double maxLng = points.first.longitude;
+
+    for (final point in points) {
+      if (point.latitude < minLat) minLat = point.latitude;
+      if (point.latitude > maxLat) maxLat = point.latitude;
+      if (point.longitude < minLng) minLng = point.longitude;
+      if (point.longitude > maxLng) maxLng = point.longitude;
+    }
+
+    final bounds = LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
+
+    await mapController!.animateCamera(
+      CameraUpdate.newLatLngBounds(bounds, 80),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GoogleMap(
       initialCameraPosition: CameraPosition(
@@ -38,60 +78,28 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
         Marker(
           markerId: const MarkerId("source"),
           position: widget.source,
-          infoWindow: const InfoWindow(
-            title: "Source",
-          ),
+          infoWindow: const InfoWindow(title: "Source"),
         ),
-
         Marker(
           markerId: const MarkerId("destination"),
           position: widget.destination,
-          infoWindow: const InfoWindow(title: "Destination",),
+          infoWindow: const InfoWindow(title: "Destination"),
         ),
       },
 
       polylines: {
         Polyline(
           polylineId: const PolylineId("route"),
-          width: 5,
+          points: widget.polylinePoints,
           color: Colors.blue,
-          points: getPolylinePoints(),
+          width: 6,
         ),
       },
 
-onMapCreated: (controller) async {
-  mapController = controller;
-
-  final bounds = LatLngBounds(
-    southwest: LatLng(
-      widget.source.latitude < widget.destination.latitude
-          ? widget.source.latitude
-          : widget.destination.latitude,
-      widget.source.longitude < widget.destination.longitude
-          ? widget.source.longitude
-          : widget.destination.longitude,
-    ),
-    northeast: LatLng(
-      widget.source.latitude > widget.destination.latitude
-          ? widget.source.latitude
-          : widget.destination.latitude,
-      widget.source.longitude > widget.destination.longitude
-          ? widget.source.longitude
-          : widget.destination.longitude,
-    ),
-  );
-
-  await controller.animateCamera(
-    CameraUpdate.newLatLngBounds(
-      bounds,
-      80,
-    ),
-  );
-},
+      onMapCreated: (controller) async {
+        mapController = controller;
+        await _moveCameraToRoute();
+      },
     );
-  }
-
-  List<LatLng> getPolylinePoints() {
-    return widget.polylinePoints;
   }
 }

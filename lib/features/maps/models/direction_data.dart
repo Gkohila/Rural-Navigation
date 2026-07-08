@@ -1,5 +1,4 @@
 class DirectionData {
-
   final String duration;
 
   final String distance;
@@ -11,7 +10,6 @@ class DirectionData {
   final List<dynamic> polyline;
 
   DirectionData({
-
     required this.duration,
 
     required this.distance,
@@ -21,7 +19,5 @@ class DirectionData {
     required this.directions,
 
     required this.polyline,
-
   });
-
 }
