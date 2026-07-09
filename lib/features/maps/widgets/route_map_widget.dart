@@ -6,11 +6,15 @@ class RouteMapWidget extends StatefulWidget {
   final LatLng destination;
   final List<LatLng> polylinePoints;
 
+  /// Optional markers (example: moving bus marker)
+  final Set<Marker> extraMarkers;
+
   const RouteMapWidget({
     super.key,
     required this.source,
     required this.destination,
     required this.polylinePoints,
+    this.extraMarkers = const {},
   });
 
   @override
@@ -67,10 +71,8 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
         target: widget.source,
         zoom: 13,
       ),
-
       myLocationEnabled: true,
       myLocationButtonEnabled: true,
-
       zoomControlsEnabled: false,
       mapToolbarEnabled: false,
 
@@ -80,11 +82,15 @@ class _RouteMapWidgetState extends State<RouteMapWidget> {
           position: widget.source,
           infoWindow: const InfoWindow(title: "Source"),
         ),
+
         Marker(
           markerId: const MarkerId("destination"),
           position: widget.destination,
           infoWindow: const InfoWindow(title: "Destination"),
         ),
+
+        // Additional markers (bus, etc.)
+        ...widget.extraMarkers,
       },
 
       polylines: {

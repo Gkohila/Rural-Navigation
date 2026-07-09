@@ -49,6 +49,4 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/images/welcome_bg.png
-
-
+    - assets/markers/

@@ -173,10 +173,9 @@ class DirectionPreviewCard extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (_) => LiveNavigationScreen(
                               directionData: directionData,
-
                               source: source,
-
                               destination: destination,
+                              transportIndex: transportIndex,
                             ),
                           ),
                         );
